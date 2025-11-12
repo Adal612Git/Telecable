@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artefacto 2: Backlog de Historias de Usuario (MVP)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --epic-1: #3498db;
+            --epic-2: #9b59b6;
+            --epic-3: #f39c12;
+            --epic-4: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .description {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .epics-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .epic-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .epic-header {
+            padding: 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .epic-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .epic-objective {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .user-stories-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .user-stories-table th {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .user-stories-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        
+        .user-stories-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .id-cell {
+            font-weight: bold;
+            color: var(--primary);
+            width: 80px;
+        }
+        
+        .persona-cell {
+            width: 120px;
+        }
+        
+        .description-cell {
+            min-width: 300px;
+        }
+        
+        .acceptance-criteria-cell {
+            min-width: 300px;
+        }
+        
+        .priority-cell {
+            width: 100px;
+            text-align: center;
+        }
+        
+        .priority-high {
+            background-color: #ffeaea;
+            color: var(--danger);
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .priority-medium {
+            background-color: #fff4e6;
+            color: var(--warning);
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .criteria-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .criteria-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .criteria-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .persona-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .persona-1 { background-color: #3498db; }
+        .persona-2 { background-color: #2ecc71; }
+        .persona-3 { background-color: #f39c12; }
+        .persona-4 { background-color: #9b59b6; }
+        .persona-5 { background-color: #e74c3c; }
+        
+        .epic-1 .epic-header { background-color: var(--epic-1); }
+        .epic-2 .epic-header { background-color: var(--epic-2); }
+        .epic-3 .epic-header { background-color: var(--epic-3); }
+        .epic-4 .epic-header { background-color: var(--epic-4); }
+        
+        .summary {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .summary h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .summary-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .user-stories-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Artefacto 2: Backlog de Historias de Usuario (MVP)</h1>
+            <p class="subtitle">Listado maestro de funcionalidades priorizadas para la primera versión del sistema</p>
+        </header>
+        
+        <div class="description">
+            <p>Este documento contiene las historias de usuario organizadas por épicos, con sus criterios de aceptación y prioridades definidas para el desarrollo del Producto Mínimo Viable (MVP).</p>
+        </div>
+        
+        <div class="epics-container" id="epicsContainer">
+            <!-- Los épicos se insertarán aquí mediante JavaScript -->
+        </div>
+        
+        <div class="summary">
+            <h2>Resumen del Backlog</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-number" id="totalStories">0</div>
+                    <div class="summary-label">Historias Totales</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number" id="highPriority">0</div>
+                    <div class="summary-label">Prioridad ALTA</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number" id="mediumPriority">0</div>
+                    <div class="summary-label">Prioridad MEDIA</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number" id="epicsCount">0</div>
+                    <div class="summary-label">Épicos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de los épicos e historias de usuario
+        const epics = [
+            {
+                id: 1,
+                title: "Épico 1: Gestión de Clientes y Red",
+                objective: "Controlar quién tiene acceso al servicio y gestionar el padrón de clientes.",
+                colorClass: "epic-1",
+                userStories: [
+                    {
+                        id: "US-001",
+                        persona: "Cobranza",
+                        description: "Como Cobranza, quiero crear un nuevo cliente en el sistema con su nombre, domicilio, plan contratado e IP, para darlo de alta oficialmente y que pueda ser facturado.",
+                        acceptanceCriteria: [
+                            "El formulario valida campos obligatorios.",
+                            "Al guardar, el cliente se crea en la base de datos.",
+                            "El cliente aparece en la lista general de clientes con estado 'Activo'."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-002",
+                        persona: "Cobranza",
+                        description: "Como Cobranza, quiero hacer clic en un botón 'Cortar Servicio' en el perfil de un cliente moroso, para bloquear su acceso a internet a través del Mikrotik.",
+                        acceptanceCriteria: [
+                            "El sistema pide confirmación.",
+                            "Al confirmar, se ejecuta el comando en la API de Mikrotik para añadir la IP del cliente a la address-list de 'Morosos'.",
+                            "La interfaz del admin refleja el estado del cliente como 'Cortado'."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-003",
+                        persona: "Cobranza",
+                        description: "Como Cobranza, quiero hacer clic en un botón 'Activar Servicio' cuando un cliente paga, para restaurarle el acceso a internet inmediatamente.",
+                        acceptanceCriteria: [
+                            "Al hacer clic, se ejecuta el comando en la API de Mikrotik para quitar la IP del cliente de la address-list de 'Morosos'.",
+                            "La interfaz del admin refleja el estado del cliente como 'Activo'.",
+                            "(Opcional) Se registra la reactivación en el historial del cliente."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-004",
+                        persona: "Cobranza",
+                        description: "Como Cobranza, quiero editar la información de un cliente (ej. cambiarlo de plan o corregir su domicilio), para mantener los datos actualizados.",
+                        acceptanceCriteria: [
+                            "Se puede acceder a un formulario de 'Editar' desde el perfil del cliente.",
+                            "Los cambios se guardan y reflejan en todo el sistema."
+                        ],
+                        priority: "MEDIA"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Épico 2: Facturación y Pagos",
+                objective: "Asegurar que el ISP cobre por el servicio prestado.",
+                colorClass: "epic-2",
+                userStories: [
+                    {
+                        id: "US-005",
+                        persona: "Cobranza",
+                        description: "Como Cobranza, quiero que el sistema genere automáticamente las facturas (o recibos de cobro) de todos los clientes 'Activos' el día 1 de cada mes, para iniciar el ciclo de cobro.",
+                        acceptanceCriteria: [
+                            "Un proceso automático (cron job) se ejecuta el día 1.",
+                            "Se crea un registro de 'Factura' para cada cliente, asociado a su plan y monto.",
+                            "Las facturas se crean con estado 'Pendiente de Pago'."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-006",
+                        persona: "Cliente",
+                        description: "Como Cliente, quiero ver mi factura actual y un botón para pagarla con tarjeta (usando la pasarela de pago), para no tener que ir a la oficina.",
+                        acceptanceCriteria: [
+                            "El portal de cliente muestra el monto a pagar.",
+                            "El botón de pago redirige a la pasarela (Stripe/MercadoPago).",
+                            "Al recibir la confirmación de la pasarela, la factura se marca como 'Pagada'."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-007",
+                        persona: "Cobranza",
+                        description: "Como Cobranza, quiero registrar un pago en efectivo en el perfil del cliente, para marcar manualmente su factura como 'Pagada' cuando paga en la oficina.",
+                        acceptanceCriteria: [
+                            "Hay un botón 'Registrar Pago Manual' en el perfil del cliente.",
+                            "Se puede especificar el monto.",
+                            "La factura asociada se marca como 'Pagada'."
+                        ],
+                        priority: "MEDIA"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Épico 3: Soporte Técnico (Ticketing)",
+                objective: "Gestionar las fallas e instalaciones de los clientes.",
+                colorClass: "epic-3",
+                userStories: [
+                    {
+                        id: "US-008",
+                        persona: "Cliente",
+                        description: "Como Cliente, quiero crear un ticket de soporte (ej. 'Sin servicio') desde mi portal o app, para reportar una falla fácilmente.",
+                        acceptanceCriteria: [
+                            "El formulario es simple (categoría y un comentario opcional).",
+                            "Al enviar, se crea un ticket en estado 'Nuevo' en el sistema.",
+                            "El cliente puede ver el historial de sus tickets."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-009",
+                        persona: "Jefe de Técnicos",
+                        description: "Como Jefe de Técnicos, quiero ver una lista de todos los tickets 'Nuevos' y asignárselos a un técnico específico, para distribuir el trabajo.",
+                        acceptanceCriteria: [
+                            "El panel de 'Gestión de Tickets' muestra los tickets no asignados.",
+                            "Se puede seleccionar un técnico de una lista.",
+                            "Al asignar, el ticket cambia a 'Asignado' y se vincula al técnico."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-010",
+                        persona: "Técnico",
+                        description: "Como Técnico, quiero ver una lista simple de mis tickets asignados en mi app móvil, para saber qué trabajos tengo que hacer hoy.",
+                        acceptanceCriteria: [
+                            "La app móvil se sincroniza y descarga solo los tickets asignados a mí.",
+                            "La lista muestra nombre de cliente, tipo de falla y domicilio."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-011",
+                        persona: "Técnico",
+                        description: "Como Técnico, quiero ver la dirección del cliente en el ticket y un botón para abrirla en Google Maps, para poder navegar hasta el lugar.",
+                        acceptanceCriteria: [
+                            "La dirección en el ticket es un enlace.",
+                            "Al hacer clic, se abre la app de Mapas (Google/Waze) con la dirección."
+                        ],
+                        priority: "MEDIA"
+                    },
+                    {
+                        id: "US-012",
+                        persona: "Técnico",
+                        description: "Como Técnico, quiero marcar un ticket como 'Resuelto' y añadir una nota simple (ej. 'Se cambió conector'), para cerrar el trabajo desde campo.",
+                        acceptanceCriteria: [
+                            "El ticket en la app tiene un botón 'Resolver'.",
+                            "Permite añadir notas (texto).",
+                            "Al guardar, el ticket cambia a 'Resuelto' y se sincroniza con el servidor."
+                        ],
+                        priority: "ALTA"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Épico 4: Visibilidad del Negocio (Dashboard)",
+                objective: "Dar al dueño la información que necesita para tomar decisiones.",
+                colorClass: "epic-4",
+                userStories: [
+                    {
+                        id: "US-013",
+                        persona: "Dueño",
+                        description: "Como Dueño, quiero ver un dashboard principal con 4 métricas clave: Clientes Activos, Clientes Cortados, Facturación del Mes y Tickets Abiertos, para saber la salud del negocio de un vistazo.",
+                        acceptanceCriteria: [
+                            "Es la primera pantalla al entrar al panel de Admin.",
+                            "Muestra 4 'tarjetas' con los números.",
+                            "Los datos se actualizan en tiempo real (o con un caché de 15 min)."
+                        ],
+                        priority: "ALTA"
+                    },
+                    {
+                        id: "US-014",
+                        persona: "Jefe de Técnicos",
+                        description: "Como Jefe de Técnicos, quiero ver un mapa con pines que muestren dónde están los tickets abiertos, para identificar zonas problemáticas y optimizar rutas.",
+                        acceptanceCriteria: [
+                            "Se usa una API de Mapas (Google/Leaflet).",
+                            "Se dibujan pines en las coordenadas de los tickets 'Nuevos' y 'Asignados'."
+                        ],
+                        priority: "ALTA"
+                    }
+                ]
+            }
+        ];
+
+        // Función para renderizar los épicos
+        function renderEpics() {
+            const container = document.getElementById('epicsContainer');
+            container.innerHTML = '';
+            
+            let totalStories = 0;
+            let highPriority = 0;
+            let mediumPriority = 0;
+            
+            epics.forEach(epic => {
+                const epicCard = document.createElement('div');
+                epicCard.className = `epic-card ${epic.colorClass}`;
+                
+                let storiesHTML = '';
+                epic.userStories.forEach(story => {
+                    totalStories++;
+                    if (story.priority === "ALTA") highPriority++;
+                    if (story.priority === "MEDIA") mediumPriority++;
+                    
+                    // Determinar clase de persona para el badge
+                    let personaClass = "persona-4"; // Por defecto Cobranza
+                    if (story.persona === "Dueño") personaClass = "persona-1";
+                    if (story.persona === "Jefe de Técnicos") personaClass = "persona-2";
+                    if (story.persona === "Técnico") personaClass = "persona-3";
+                    if (story.persona === "Cliente") personaClass = "persona-5";
+                    
+                    storiesHTML += `
+                        <tr>
+                            <td class="id-cell">${story.id}</td>
+                            <td class="persona-cell">
+                                <span class="persona-badge ${personaClass}">${story.persona}</span>
+                            </td>
+                            <td class="description-cell">${story.description}</td>
+                            <td class="acceptance-criteria-cell">
+                                <ul class="criteria-list">
+                                    ${story.acceptanceCriteria.map(criteria => `<li>${criteria}</li>`).join('')}
+                                </ul>
+                            </td>
+                            <td class="priority-cell">
+                                <span class="${story.priority === 'ALTA' ? 'priority-high' : 'priority-medium'}">${story.priority}</span>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                epicCard.innerHTML = `
+                    <div class="epic-header">
+                        <div>
+                            <div class="epic-title">${epic.title}</div>
+                            <div class="epic-objective">${epic.objective}</div>
+                        </div>
+                    </div>
+                    <div class="epic-body">
+                        <table class="user-stories-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Persona</th>
+                                    <th>Descripción (Historia de Usuario)</th>
+                                    <th>Criterios de Aceptación (AC)</th>
+                                    <th>Prioridad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${storiesHTML}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                container.appendChild(epicCard);
+            });
+            
+            // Actualizar resumen
+            document.getElementById('totalStories').textContent = totalStories;
+            document.getElementById('highPriority').textContent = highPriority;
+            document.getElementById('mediumPriority').textContent = mediumPriority;
+            document.getElementById('epicsCount').textContent = epics.length;
+        }
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', renderEpics);
+    </script>
+</body>
+</html>

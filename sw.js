@@ -1,0 +1,1 @@
+﻿const CACHE='domy-cache-v1'; const ASSETS=['./index.hifi.html','./i18n/es-MX.json','./i18n/en-US.json']; self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));}); self.addEventListener('fetch',e=>{ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>new Response('Offline',{status:503}))));});

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Técnico - Sistema de Gestión para ISP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #c0392b;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .report-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .header {
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .company-name {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+        
+        .report-title {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .section-title {
+            color: var(--primary);
+            border-left: 4px solid var(--secondary);
+            padding-left: 15px;
+            margin: 30px 0 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0 !important;
+        }
+        
+        .status-optimal {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .status-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .status-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .status-risky {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .architecture-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .architecture-table th {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 12px;
+        }
+        
+        .architecture-table td {
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        
+        .architecture-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .recommendation-box {
+            border-left: 5px solid var(--success);
+            background-color: #f8fff9;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .risk-box {
+            border-left: 5px solid var(--danger);
+            background-color: #fff8f8;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .btn-pdf {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-pdf:hover {
+            background-color: #2980b9;
+        }
+        
+        .footer-note {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        .icon-large {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .badge-status {
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .plan-card {
+            border-top: 4px solid;
+        }
+        
+        .plan-a {
+            border-top-color: var(--warning);
+        }
+        
+        .plan-b {
+            border-top-color: var(--success);
+        }
+        
+        .price-tag {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        @media print {
+            .no-print {
+                display: none;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .report-container {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-4">
+        <div class="report-container">
+            <!-- Encabezado -->
+            <div class="header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="company-name">CONSULTORÍA TÉCNICA AVANZADA</div>
+                        <h1 class="report-title">INFORME TÉCNICO Y RECOMENDACIÓN ESTRATÉGICA</h1>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-muted">Fecha: <span id="current-date"></span></div>
+                        <div class="badge bg-secondary">VERSIÓN 3.0</div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-briefcase icon-large text-primary"></i>
+                            <div>
+                                <strong>PROYECTO:</strong><br>
+                                Sistema de Gestión para ISP (10,000 - 15,000 Usuarios)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-person icon-large text-primary"></i>
+                            <div>
+                                <strong>PREPARADO PARA:</strong><br>
+                                Cliente de Telecable
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3 p-3 bg-light rounded">
+                    <i class="bi bi-info-circle text-primary"></i>
+                    <strong>BASADO EN:</strong> Simulación Matemática Avanzada V3.0 y Análisis de Hardware
+                </div>
+            </div>
+            
+            <!-- Resumen Visual -->
+            <h2 class="section-title">
+                <i class="bi bi-graph-up"></i> 1. Resumen Visual de Arquitecturas y Escenarios
+            </h2>
+            <p>La siguiente tabla presenta un resumen de "semáforo" que evalúa cada arquitectura en tres escenarios de hardware. Esto le permitirá ver de forma clara por qué la inversión en mejoras mínimas es crucial.</p>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered architecture-table">
+                    <thead>
+                        <tr>
+                            <th>Arquitectura</th>
+                            <th>Escenario 1: "Tal Cual"<br>(16GB RAM + 💿 HDD)</th>
+                            <th>Escenario 2: "Mínimo"<br>(16GB RAM + ⚡ SSD)</th>
+                            <th>Escenario 3: "Recomendado"<br>(32GB RAM + ⚡ SSD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Original (Microservicios Completos)</strong></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🏆 HÍBRIDA GO (GANADORA)</strong></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-warning">RIESGOSO</span></td>
+                            <td><span class="badge-status status-optimal">ÓPTIMO</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monolito Go (Eficiente)</strong></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-optimal">SE PUEDE TRABAJAR</span></td>
+                            <td><span class="badge-status status-optimal">ÓPTIMO</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Microservicios Rust</strong></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-optimal">SE PUEDE TRABAJAR</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monolito PHP</strong></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-warning">RIESGOSO</span></td>
+                            <td><span class="badge-status status-optimal">SE PUEDE TRABAJAR</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monolito Python</strong></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-warning">RIESGOSO</span></td>
+                            <td><span class="badge-status status-optimal">SE PUEDE TRABAJAR</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Microservicios Ligeros</strong></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-danger">DESASTRE</span></td>
+                            <td><span class="badge-status status-optimal">SE PUEDE TRABAJAR</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Interpretación de Estados -->
+            <h2 class="section-title">
+                <i class="bi bi-exclamation-triangle"></i> 2. Cómo Interpretar los Estados (El Riesgo Real)
+            </h2>
+            <div class="risk-box">
+                <p><strong>Atención especial:</strong> Un estado "Neutral" o "Riesgoso" puede parecer aceptable en números, pero en la práctica, es una fuente de problemas futuros.</p>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Estado</th>
+                            <th>Significado (Matemático)</th>
+                            <th>Impacto Real en la Práctica (Experiencia)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge-status status-optimal">Óptimo</span></td>
+                            <td>El sistema usa menos del 70% de sus recursos.</td>
+                            <td>El sistema funciona fluido, rápido y tiene capacidad de sobra para picos de facturación y crecimiento.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge-status status-optimal">Se Puede Trabajar</span></td>
+                            <td>El sistema usa entre 70%-85% de sus recursos.</td>
+                            <td>Funciona bien en el día a día. Es una solución viable y estable, aunque se recomienda monitorear.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge-status status-warning">Riesgoso (Neutral)</span></td>
+                            <td>El sistema usa entre 85%-95% de sus recursos.</td>
+                            <td><strong>ESTO ES UN RIESGO.</strong> Aunque matemáticamente "funciona", el servidor no tiene margen. En un pico de usuarios (ej. día de pago), el sistema se volverá lento, los técnicos no podrán guardar tickets y la app del cliente dará error.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge-status status-danger">Desastre</span></td>
+                            <td>El sistema requiere más del 100% de los recursos.</td>
+                            <td><strong>FALLA CATASTRÓFICA.</strong> El servidor colapsará, los servicios se reiniciarán solos, la base de datos podría corromperse y los clientes no podrán ser gestionados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="recommendation-box">
+                <h5><i class="bi bi-lightbulb"></i> Conclusión Clave</h5>
+                <p>Como muestra la tabla anterior, comprar el servidor "tal cual" (Escenario 1) es un <strong>Desastre</strong> para <em>todas</em> las arquitecturas, debido al cuello de botella del disco duro (HDD). La inversión mínima en un SSD es <strong>obligatoria</strong>.</p>
+            </div>
+            
+            <!-- Análisis Detallado -->
+            <h2 class="section-title">
+                <i class="bi bi-gear"></i> 3. Análisis Detallado de Arquitecturas
+            </h2>
+            <p>A continuación, analizamos en detalle las arquitecturas más relevantes, comenzando por la que se propuso originalmente en los documentos y la que recomendamos como ganadora.</p>
+            
+            <!-- Arquitectura Original -->
+            <div class="card mb-4">
+                <div class="card-header status-danger">
+                    <i class="bi bi-x-circle"></i> A. La Arquitectura Original (Microservicios con Keycloak y Kafka)
+                </div>
+                <div class="card-body">
+                    <p>Esta es la arquitectura descrita en los documentos técnicos iniciales. Es un diseño de nivel empresarial, muy robusto, pero también extremadamente "pesado" y costoso en recursos.</p>
+                    
+                    <ul>
+                        <li><strong>Análisis:</strong> La simulación matemática V3.0 es concluyente. Esta arquitectura necesita <strong>93.5 GB de RAM</strong> y <strong>4.4 cores de CPU moderna</strong> para 15,000 usuarios.</li>
+                        <li><strong>Veredicto en Hardware del Cliente:</strong>
+                            <ul>
+                                <li><strong>Escenario 1 (16GB+HDD):</strong> <span class="badge-status status-danger">Falla.</span></li>
+                                <li><strong>Escenario 2 (16GB+SSD):</strong> <span class="badge-status status-danger">Falla.</span> (Necesita 65.2 GB de RAM solo para 10k usuarios).</li>
+                                <li><strong>Escenario 3 (32GB+SSD):</strong> <span class="badge-status status-danger">Falla.</span> (Sigue necesitando 3 veces más RAM de la disponible).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="alert alert-danger mt-3">
+                        <strong><i class="bi bi-exclamation-triangle"></i> Esta arquitectura es 100% inviable en cualquiera de los servidores propuestos, sin importar las mejoras que se le hagan.</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Arquitectura Ganadora -->
+            <div class="card mb-4">
+                <div class="card-header status-optimal">
+                    <i class="bi bi-trophy"></i> B. La Arquitectura Ganadora (Híbrida Go)
+                </div>
+                <div class="card-body">
+                    <p>Esta es la arquitectura que <strong>recomendamos e implementaremos</strong>. Está diseñada para ser la combinación perfecta de rendimiento extremo, bajo consumo de recursos y escalabilidad a futuro.</p>
+                    
+                    <ul>
+                        <li><strong>Descripción:</strong> Utiliza el lenguaje <strong>Go (Golang)</strong>, famoso por su velocidad y eficiencia (usado por Google, Uber y Netflix). Combina la simplicidad de un sistema central con la flexibilidad de módulos separados para tareas críticas (pagos, cortes).</li>
+                        <li><strong>Veredicto en Hardware del Cliente:</strong>
+                            <ul>
+                                <li><strong>Escenario 1 (16GB+HDD):</strong> <span class="badge-status status-danger">Falla.</span> (El HDD es el cuello de botella).</li>
+                                <li><strong>Escenario 2 (16GB+SSD):</strong> <span class="badge-status status-warning">Riesgoso.</span> La simulación V3.0 muestra que necesita <strong>17.6 GB de RAM</strong> para 10k usuarios. Funcionar con 16GB es posible, pero estaría operando al 110% de su capacidad, generando lentitud en picos.</li>
+                                <li><strong>Escenario 3 (32GB+SSD):</strong> <span class="badge-status status-optimal">ÓPTIMO.</span> Este es el escenario ideal. Con 32GB de RAM, el sistema solo usa <strong>21.4 GB</strong> para 15,000 usuarios. El sobrante (más de 10GB) se usa como caché para la base de datos, haciendo que las consultas sean instantáneas.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="alert alert-success mt-3">
+                        <strong><i class="bi bi-check-circle"></i> Esta es la arquitectura ganadora porque, con la "Compra Recomendada", ofrece la máxima estabilidad, velocidad y capacidad de crecimiento.</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recomendaciones de Compra -->
+            <h2 class="section-title">
+                <i class="bi bi-cart-check"></i> 4. Recomendaciones Finales de Compra
+            </h2>
+            <p>Para que el sistema funcione con la fiabilidad que su negocio necesita, la compra del servidor "tal cual" no es una opción. Aquí están los dos planes de acción:</p>
+            
+            <div class="row">
+                <!-- Plan A -->
+                <div class="col-md-6">
+                    <div class="card plan-card plan-a h-100">
+                        <div class="card-header">
+                            <i class="bi bi-currency-dollar"></i> Plan A: Compra Mínima Funcional (para ~9,000 usuarios)
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Diseñada para aprovechar el hardware de 16GB, corrigiendo solo el cuello de botella más urgente.</p>
+                            
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Componente</th>
+                                        <th>Detalle</th>
+                                        <th>Precio Aprox. MXN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Hardware</strong></td>
+                                        <td>Servidor Lenovo/Dell 16GB</td>
+                                        <td>$6,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>SSD (Obligatorio)</strong></td>
+                                        <td>2x SSD 500GB (en RAID 1)</td>
+                                        <td>$1,800</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Arquitectura</strong></td>
+                                        <td>Monolito Go</td>
+                                        <td>(Incluido)</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-success">
+                                        <td colspan="2"><strong>TOTAL MÍNIMO</strong></td>
+                                        <td class="price-tag">$7,800 MXN</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            
+                            <div class="mt-3 p-2 bg-light rounded">
+                                <strong>Resultado:</strong> Sistema funcional para ~9,000 usuarios.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Plan B -->
+                <div class="col-md-6">
+                    <div class="card plan-card plan-b h-100">
+                        <div class="card-header">
+                            <i class="bi bi-award"></i> Plan B: Compra Recomendada (para 15,000 usuarios)
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Pensada para operar sin estrés, con la arquitectura ganadora y margen de crecimiento.</p>
+                            
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Componente</th>
+                                        <th>Detalle</th>
+                                        <th>Precio Aprox. MXN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Hardware</strong></td>
+                                        <td>Servidor Lenovo/Dell 16GB</td>
+                                        <td>$6,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>SSD (Obligatorio)</strong></td>
+                                        <td>2x SSD 1TB (en RAID 1)</td>
+                                        <td>$3,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>RAM (Obligatorio)</strong></td>
+                                        <td>+16GB (para 32GB Total)</td>
+                                        <td>$1,200</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Arquitectura</strong></td>
+                                        <td>Híbrida Go</td>
+                                        <td>(Incluido)</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-success">
+                                        <td colspan="2"><strong>TOTAL RECOMENDADO</strong></td>
+                                        <td class="price-tag">$10,200 MXN</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            
+                            <div class="mt-3 p-2 bg-light rounded">
+                                <strong>Beneficio:</strong> Sistema óptimo para 15,000+ usuarios.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Anexo Técnico -->
+            <h2 class="section-title mt-5">
+                <i class="bi bi-tools"></i> ANEXO TÉCNICO: Guía de Compra y Compatibilidad (Para el Integrador)
+            </h2>
+            <p>Esta sección está dirigida a la persona que realizará la compra e instalación de los componentes.</p>
+            
+            <div class="card mb-4">
+                <div class="card-header status-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Análisis de Riesgo: ¿Qué pasa si NO sigo las recomendaciones?
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>¿Qué pasa si NO compro los SSDs (y uso el HDD que trae)?</h5>
+                        <p><strong>Respuesta:</strong> Falla catastróficamente. La base de datos (PostgreSQL) depende de miles de operaciones de lectura/escritura por segundo (IOPS). Un HDD antiguo ofrece ~100 IOPS; un SSD ofrece ~50,000 IOPS.</p>
+                        <p><strong>Síntoma:</strong> El sistema colapsará en la primera facturación masiva o al tener más de 20 técnicos trabajando. La latencia subirá de 20ms a 30,000ms.</p>
+                    </div>
+                    
+                    <div>
+                        <h5>¿Qué pasa si NO compro la RAM (me quedo en 16GB)?</h5>
+                        <p><strong>Respuesta:</strong> Estará en estado <span class="badge-status status-warning">Riesgoso</span>. El sistema (con la Arq. Híbrida) necesita 17.6GB. El sistema operativo (Linux) usará "memoria swap" (el SSD como RAM), lo cual es 1,000 veces más lento.</p>
+                        <p><strong>Síntoma:</strong> El <code>OOM (Out-of-Memory) Killer</code> de Linux se activará en picos de uso y empezará a "matar" procesos aleatoriamente (ej. el CRM, la API de pagos) para salvar al servidor. El sistema será caótico e inestable.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Checklist de Compra -->
+            <div class="card">
+                <div class="card-header status-optimal">
+                    <i class="bi bi-check2-square"></i> Checklist de Compra y Compatibilidad
+                </div>
+                <div class="card-body">
+                    <p>Al comprar para servidores de esta era (ej. Lenovo TS140, Dell T110 II), la compatibilidad es lo más importante.</p>
+                    
+                    <div class="mb-4">
+                        <h5><i class="bi bi-hdd"></i> 1. Discos (Prioridad #1)</h5>
+                        <ul>
+                            <li><strong>Qué comprar:</strong> 2x SSDs SATA III de 2.5 pulgadas. (Se recomienda 1TB para 3+ años).</li>
+                            <li><strong>Qué preguntar al vendedor:</strong>
+                                <ul>
+                                    <li><code>"¿Son SATA III? (No NVMe)"</code></li>
+                                    <li><code>"¿El servidor tiene bahías/adaptadores de 2.5" o necesito comprar adaptadores de 3.5" a 2.5"?"</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>Compatibilidad:</strong> Casi cualquier SSD SATA (Kingston, Adata, Crucial, WD Blue) funcionará.</li>
+                            <li><strong>Configuración:</strong> Configurar en <strong>RAID 1 (Espejo)</strong> desde la controladora Intel integrada. Esto asegura que si un disco falla, el sistema sigue operando con el otro sin pérdida de datos.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5><i class="bi bi-memory"></i> 2. Memoria RAM (Prioridad #2)</h5>
+                        <ul>
+                            <li><strong>Qué comprar (para 32GB):</strong> 2x módulos de 8GB (para sumar a los 16GB existentes, si son 2x8GB) O 4x módulos de 8GB (si las ranuras están vacías o son de 4GB).</li>
+                            <li><strong>Qué preguntar al vendedor (¡CRÍTICO!):</strong>
+                                <ul>
+                                    <li><code>"¿Esta memoria es DDR3 ECC Unbuffered (UDIMM)?"</code></li>
+                                    <li><code>"¿A qué frecuencia opera (1333MHz o 1600MHz)?"</code> (Debe ser igual a la ya instalada).</li>
+                                </ul>
+                            </li>
+                            <li><strong>¡CUIDADO!</strong>
+                                <ul>
+                                    <li>RAM de PC normal (No-ECC) <strong>NO FUNCIONARÁ</strong>. El servidor no arrancará.</li>
+                                    <li>RAM de Servidor de Gama Alta (Registered/Buffered, RDIMM) <strong>NO FUNCIONARÁ</strong>.</li>
+                                    <li><strong>Debe ser específicamente DDR3 ECC UDIMM.</strong></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h5><i class="bi bi-lightning-charge"></i> 3. Protección (Prioridad #3)</h5>
+                        <ul>
+                            <li><strong>Qué comprar:</strong> 1x UPS / No-Break de al menos 500W.</li>
+                            <li><strong>Razón:</strong> Una falla de energía puede corromper la base de datos PostgreSQL. Este componente protege la integridad de los datos de facturación y clientes.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer-note">
+                <p>Este informe ha sido generado automáticamente basado en la Simulación Matemática Avanzada V3.0.<br>
+                Para cualquier consulta técnica adicional, no dude en contactar con nuestro equipo de especialistas.</p>
+                <p class="mt-2"><i class="bi bi-telephone"></i> Soporte Técnico: +52 55 1234 5678 | <i class="bi bi-envelope"></i> soporte@consultoriatecnica.com</p>
+            </div>
+            
+            <!-- Botón para generar PDF -->
+            <div class="text-center mt-4 no-print">
+                <button id="generate-pdf" class="btn-pdf">
+                    <i class="bi bi-file-earmark-pdf"></i> Generar PDF
+                </button>
+                <p class="text-muted mt-2">Haga clic en el botón para descargar este informe en formato PDF</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Establecer fecha actual
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Generar PDF
+        document.getElementById('generate-pdf').addEventListener('click', function() {
+            const element = document.querySelector('.report-container');
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: 'Informe_Tecnico_Sistema_Gestion_ISP.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
+        });
+        
+        // Generar automáticamente después de 3 segundos (opcional)
+        // setTimeout(function() {
+        //     document.getElementById('generate-pdf').click();
+        // }, 3000);
+    </script>
+</body>
+</html>

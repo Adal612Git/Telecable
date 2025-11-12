@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Personas - Sistema de Gestión ISP</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .persona-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .persona-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .persona-header {
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .persona-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 3px solid rgba(255,255,255,0.3);
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        
+        .persona-info h2 {
+            margin-bottom: 5px;
+            font-size: 1.4rem;
+        }
+        
+        .persona-info .role {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .persona-body {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            margin: 15px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            color: var(--primary);
+        }
+        
+        .context-item, .needs-item, .metric-item {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .context-item:before, .needs-item:before, .metric-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .pain-point {
+            background-color: #fff5f5;
+            border-left: 4px solid var(--danger);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .quote {
+            font-style: italic;
+            color: #666;
+            margin: 10px 0;
+            padding-left: 15px;
+            border-left: 3px solid var(--secondary);
+        }
+        
+        .persona-1 .persona-header { background-color: #3498db; }
+        .persona-2 .persona-header { background-color: #2ecc71; }
+        .persona-3 .persona-header { background-color: #f39c12; }
+        .persona-4 .persona-header { background-color: #9b59b6; }
+        .persona-5 .persona-header { background-color: #e74c3c; }
+        
+        .persona-details {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .persona-details.active {
+            display: block;
+        }
+        
+        .back-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #1a252f;
+        }
+        
+        .persona-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .persona-details-left {
+            border-right: 1px solid #eee;
+            padding-right: 20px;
+        }
+        
+        .persona-details-right {
+            padding-left: 20px;
+        }
+        
+        .persona-details-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 5px solid #eee;
+            font-size: 70px;
+            background-color: #f8f9fa;
+        }
+        
+        .persona-details-info {
+            text-align: center;
+        }
+        
+        .persona-details-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .persona-details-info .role {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .persona-details-info .archetype {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .persona-details-info .bio {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .persona-details-section {
+            margin-bottom: 25px;
+        }
+        
+        .persona-details-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            padding-bottom: 5px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .persona-details-list {
+            list-style-type: none;
+        }
+        
+        .persona-details-list li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .persona-details-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .tech-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .tech-spec {
+            background-color: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .scenario {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .scenario h4 {
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .persona-details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .persona-details-left {
+                border-right: none;
+                padding-right: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .persona-details-right {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>User Personas - Sistema de Gestión ISP</h1>
+            <p class="subtitle">Arquetipos de usuarios para el desarrollo de software de gestión para proveedores de internet</p>
+        </header>
+        
+        <div class="personas-grid" id="personasGrid">
+            <!-- Las tarjetas de persona se insertarán aquí mediante JavaScript -->
+        </div>
+        
+        <div class="persona-details" id="personaDetails">
+            <!-- Los detalles de persona se insertarán aquí mediante JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Datos de las personas
+        const personas = [
+            {
+                id: 1,
+                name: "El Dueño",
+                role: "Administrador General / Dueño del ISP",
+                archetype: "El 'tomador de decisiones'",
+                avatar: "👨‍💼",
+                colorClass: "persona-1",
+                bio: "Es el propietario del ISP. No es técnico pero tiene una visión clara del negocio desde una perspectiva financiera y estratégica. Toma decisiones basadas en datos y necesita información rápida y concisa.",
+                context: {
+                    device: "PC de escritorio en su oficina (90%) y Laptop personal (10%)",
+                    usage: "Revisa el sistema 1 o 2 veces al día. Necesita 'el pulso' del negocio en menos de 5 minutos. Odia las pantallas con miles de botones."
+                },
+                needs: [
+                    "Dashboard principal que muestre: facturación diaria/mensual, nuevos clientes, clientes morosos, tickets de soporte abiertos",
+                    "Acceso independiente a la información sin depender de su equipo técnico o administrativo",
+                    "Interfaz simplificada que muestre solo lo esencial para la toma de decisiones"
+                ],
+                painPoints: [
+                    "WispHub es muy complejo, tiene 1000 opciones que no entiendo",
+                    "Solo quiero saber si estamos ganando dinero y si los clientes están contentos",
+                    "Necesito información rápida sin tener que navegar por múltiples pantallas"
+                ],
+                quote: "Solo quiero saber si estamos ganando dinero y si los clientes están contentos.",
+                successMetric: "Poder ver la 'salud' del ISP en 1 minuto desde su panel",
+                scenarios: [
+                    {
+                        title: "Revisión Matutina",
+                        description: "El Dueño llega a la oficina y en menos de 5 minutos revisa el dashboard para ver el estado del negocio: facturación del día anterior, nuevos clientes registrados y tickets de soporte críticos."
+                    }
+                ],
+                techSpecs: ["Dashboard visual", "KPIs clave", "Exportación de reportes", "Alertas automáticas"]
+            },
+            {
+                id: 2,
+                name: "Jefe de Técnicos",
+                role: "Coordinador de Operaciones / Soporte Nivel 2",
+                archetype: "El 'controlador de tráfico aéreo'",
+                avatar: "👨‍🔧",
+                colorClass: "persona-2",
+                bio: "Está en la oficina central, gestionando al equipo técnico en campo. Es el puente entre la administración y los técnicos. Necesita visibilidad completa de las operaciones.",
+                context: {
+                    device: "PC de escritorio con monitor grande (o dos monitores)",
+                    usage: "Está todo el día en esta pantalla. Es su herramienta de trabajo principal. Necesita ver un mapa y una lista de tareas en tiempo real."
+                },
+                needs: [
+                    "Gestión centralizada de tickets: nuevos reportes, instalaciones pendientes",
+                    "Asignación intuitiva de tickets a técnicos (preferiblemente con arrastrar y soltar)",
+                    "Visibilidad en mapa de ubicación de técnicos y tickets abiertos",
+                    "Seguimiento del progreso de cada técnico en tiempo real"
+                ],
+                painPoints: [
+                    "Actualmente todo es por WhatsApp. El cliente me reporta, yo lo mando al grupo, el técnico dice 'yo voy', y luego no sé si ya fue, qué hizo, o si el cliente quedó satisfecho",
+                    "Falta de visibilidad del progreso de las reparaciones e instalaciones",
+                    "Dificultad para optimizar rutas y asignaciones"
+                ],
+                quote: "Es un caos. No tengo control sobre qué está haciendo cada técnico ni cuándo terminan los trabajos.",
+                successMetric: "Asignar un ticket nuevo en menos de 1 minuto y saber el estatus de todos sus técnicos en tiempo real",
+                scenarios: [
+                    {
+                        title: "Gestión de Emergencia",
+                        description: "Un cliente importante reporta una falla crítica. El Jefe de Técnicos necesita identificar rápidamente qué técnico está más cerca y tiene la capacidad para atender la emergencia, y asignarle el ticket inmediatamente."
+                    }
+                ],
+                techSpecs: ["Mapa interactivo", "Sistema de asignación drag-and-drop", "Notificaciones en tiempo real", "App móvil para técnicos"]
+            },
+            {
+                id: 3,
+                name: "Técnico",
+                role: "Técnico de Instalaciones y Soporte",
+                archetype: "El 'soldado en el campo'",
+                avatar: "👷",
+                colorClass: "persona-3",
+                bio: "Está en la calle, en la camioneta, subido en postes. Es quien resuelve los problemas físicamente. Trabaja en condiciones difíciles y necesita herramientas simples y efectivas.",
+                context: {
+                    device: "App Móvil (Android/iOS)",
+                    usage: "Está bajo el sol, con guantes, con poca batería. La app debe ser simple, con botones grandes y funcionar rápido (o incluso offline). No usa laptop en campo."
+                },
+                needs: [
+                    "Lista simple de tickets asignados, ordenados por prioridad o ruta optimizada",
+                    "Integración con mapas para navegación directa a la ubicación del cliente",
+                    "Información básica del cliente: nombre, plan contratado, estado de cuenta",
+                    "Formulario simplificado para cerrar tickets con notas predefinidas"
+                ],
+                painPoints: [
+                    "El Jefe de Técnicos me manda las direcciones por WhatsApp y se me pierden entre los mensajes del grupo",
+                    "Llego a la casa y no sé qué plan tiene el cliente o qué falla reportó específicamente",
+                    "Tengo que llamar a la oficina para reportar que terminé un trabajo"
+                ],
+                quote: "Llego a la casa y no sé qué plan tiene el cliente o qué falla reportó específicamente.",
+                successMetric: "Terminar su día habiendo marcado todos sus tickets como 'resueltos' desde la app, sin tener que llamar a la oficina",
+                scenarios: [
+                    {
+                        title: "Día de Trabajo Típico",
+                        description: "El Técnico inicia su día revisando en la app móvil los tickets asignados. La app le muestra una ruta optimizada. En cada ubicación, accede a la información del cliente y al terminar, marca el trabajo como completado con notas específicas."
+                    }
+                ],
+                techSpecs: ["App móvil offline", "Integración con Google Maps", "Formularios simplificados", "Sincronización automática"]
+            },
+            {
+                id: 4,
+                name: "Cobranza",
+                role: "Administración y Cobranza",
+                archetype: "La 'guardiana del dinero'",
+                avatar: "👩‍💼",
+                colorClass: "persona-4",
+                bio: "Maneja la caja, las altas de clientes y los procesos de cobranza. Atiende clientes en persona y por teléfono, por lo que necesita procesos rápidos y eficientes.",
+                context: {
+                    device: "PC de escritorio",
+                    usage: "En la oficina, atendiendo clientes por teléfono y en persona. Necesita que el sistema sea rápido para no hacer esperar a la gente durante los procesos."
+                },
+                needs: [
+                    "Formulario claro y rápido para registro de nuevos clientes",
+                    "Integración automática con pasarelas de pago (Stripe/MercadoPago)",
+                    "Sistema de corte y reactivación de servicio con un solo clic",
+                    "Reportes automáticos de morosidad y pagos pendientes"
+                ],
+                painPoints: [
+                    "Tengo que ver quién debe en WispHub, luego ir a un Excel para ver quién pagó, y luego pedirle al Jefe de Técnicos que corte a los morosos",
+                    "El proceso de alta de clientes es lento y requiere múltiples pasos",
+                    "Falta de integración entre los sistemas de pago y la base de datos de clientes"
+                ],
+                quote: "Es un proceso de 3 sistemas diferentes que me toma demasiado tiempo.",
+                successMetric: "Poder dar de alta a un cliente nuevo en 2 minutos y que el proceso de 'corte por falta de pago' sea automático",
+                scenarios: [
+                    {
+                        title: "Cobranza de Fin de Mes",
+                        description: "A fin de mes, Cobranza genera automáticamente la lista de clientes morosos. Con un solo clic, envía recordatorios de pago y programa cortes automáticos para quienes no han pagado después de la fecha límite."
+                    }
+                ],
+                techSpecs: ["Formularios optimizados", "Integración con APIs de pago", "Automatización de cortes", "Sistema de alertas"]
+            },
+            {
+                id: 5,
+                name: "Cliente",
+                role: "Cliente Final",
+                archetype: "Usuario doméstico",
+                avatar: "👨‍💻",
+                colorClass: "persona-5",
+                bio: "No sabe qué es un ISP ni un Mikrotik. Solo quiere que su internet funcione para ver Netflix, estar en WhatsApp y trabajar desde casa ocasionalmente.",
+                context: {
+                    device: "App Móvil y Portal Web (visto desde su celular)",
+                    usage: "En su casa, usualmente cuando el internet falla o cuando recuerda que tiene que pagar. Necesita procesos simples y autoservicio."
+                },
+                needs: [
+                    "Pago en línea fácil con tarjeta desde el celular",
+                    "Sistema simple para reportar fallas con categorías predefinidas",
+                    "Seguimiento del estado de sus tickets de soporte",
+                    "Recordatorios automáticos de fechas de pago y corte"
+                ],
+                painPoints: [
+                    "No sé cuándo es mi fecha de corte exacta",
+                    "Cuando falla el internet mando un WhatsApp y no sé si lo leyeron",
+                    "Pagar es un problema porque tengo que ir a la oficina en horario laboral"
+                ],
+                quote: "Solo quiero que funcione y poder pagar fácilmente cuando toca.",
+                successMetric: "Pagar su factura en 1 minuto y saber el estatus de su reporte de falla sin tener que llamar a nadie",
+                scenarios: [
+                    {
+                        title: "Reporte de Falla",
+                        description: "El Cliente nota que su internet está lento. Abre la app del ISP, selecciona 'Reportar problema', elige 'Internet lento' de una lista, envía el reporte y recibe confirmación inmediata con un número de ticket para seguimiento."
+                    }
+                ],
+                techSpecs: ["Portal de autoservicio", "App móvil para clientes", "Pasarela de pagos integrada", "Sistema de notificaciones"]
+            }
+        ];
+
+        // Función para renderizar las tarjetas de persona
+        function renderPersonaCards() {
+            const grid = document.getElementById('personasGrid');
+            grid.innerHTML = '';
+            
+            personas.forEach(persona => {
+                const card = document.createElement('div');
+                card.className = `persona-card ${persona.colorClass}`;
+                card.innerHTML = `
+                    <div class="persona-header">
+                        <div class="persona-avatar">${persona.avatar}</div>
+                        <div class="persona-info">
+                            <h2>${persona.name}</h2>
+                            <div class="role">${persona.role}</div>
+                        </div>
+                    </div>
+                    <div class="persona-body">
+                        <div class="section-title">Arquetipo</div>
+                        <p>${persona.archetype}</p>
+                        
+                        <div class="section-title">Contexto</div>
+                        <div class="context-item">${persona.context.device}</div>
+                        <div class="context-item">${persona.context.usage}</div>
+                        
+                        <div class="section-title">Necesidades Clave</div>
+                        ${persona.needs.map(need => `<div class="needs-item">${need}</div>`).join('')}
+                        
+                        <div class="section-title">Métrica de Éxito</div>
+                        <div class="metric-item">${persona.successMetric}</div>
+                        
+                        <div class="pain-point">
+                            <strong>Dolor Principal:</strong> ${persona.painPoints[0]}
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => showPersonaDetails(persona.id));
+                grid.appendChild(card);
+            });
+        }
+
+        // Función para mostrar los detalles de una persona
+        function showPersonaDetails(personaId) {
+            const persona = personas.find(p => p.id === personaId);
+            const detailsContainer = document.getElementById('personaDetails');
+            const grid = document.getElementById('personasGrid');
+            
+            grid.style.display = 'none';
+            detailsContainer.innerHTML = `
+                <button class="back-button" onclick="showPersonaGrid()">← Volver a la lista</button>
+                
+                <div class="persona-details-grid">
+                    <div class="persona-details-left">
+                        <div class="persona-details-avatar">${persona.avatar}</div>
+                        <div class="persona-details-info">
+                            <h2>${persona.name}</h2>
+                            <div class="role">${persona.role}</div>
+                            <div class="archetype">${persona.archetype}</div>
+                            <div class="bio">${persona.bio}</div>
+                            
+                            <div class="persona-details-section">
+                                <h3>Cita Característica</h3>
+                                <div class="quote">"${persona.quote}"</div>
+                            </div>
+                            
+                            <div class="persona-details-section">
+                                <h3>Métrica de Éxito</h3>
+                                <p>${persona.successMetric}</p>
+                            </div>
+                            
+                            <div class="persona-details-section">
+                                <h3>Tecnologías Clave</h3>
+                                <div class="tech-specs">
+                                    ${persona.techSpecs.map(spec => `<span class="tech-spec">${spec}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="persona-details-right">
+                        <div class="persona-details-section">
+                            <h3>Contexto de Uso</h3>
+                            <ul class="persona-details-list">
+                                <li><strong>Dispositivo Principal:</strong> ${persona.context.device}</li>
+                                <li><strong>Patrón de Uso:</strong> ${persona.context.usage}</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="persona-details-section">
+                            <h3>Necesidades Clave</h3>
+                            <ul class="persona-details-list">
+                                ${persona.needs.map(need => `<li>${need}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="persona-details-section">
+                            <h3>Puntos de Dolor</h3>
+                            <ul class="persona-details-list">
+                                ${persona.painPoints.map(pain => `<li>${pain}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="persona-details-section">
+                            <h3>Escenarios de Uso</h3>
+                            ${persona.scenarios.map(scenario => `
+                                <div class="scenario">
+                                    <h4>${scenario.title}</h4>
+                                    <p>${scenario.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            detailsContainer.classList.add('active');
+        }
+
+        // Función para volver a la vista de grid
+        function showPersonaGrid() {
+            const detailsContainer = document.getElementById('personaDetails');
+            const grid = document.getElementById('personasGrid');
+            
+            detailsContainer.classList.remove('active');
+            grid.style.display = 'grid';
+        }
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', renderPersonaCards);
+    </script>
+</body>
+</html>

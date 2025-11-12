@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo DOMY - Sistema de Gestión ISP</title>
+  <style>
+    :root {
+      --primary: #3B82F6;
+      --primary-dark: #1E3A8A;
+      --neutral-900: #111827;
+      --neutral-700: #374151;
+      --neutral-500: #6B7280;
+      --neutral-200: #E5E7EB;
+      --neutral-100: #F3F4F6;
+      --neutral-white: #FFFFFF;
+      --success: #10B981; --success-bg: rgba(16,185,129,0.1); --success-text: #065F46;
+      --danger: #EF4444; --danger-bg: rgba(239,68,68,0.1); --danger-text: #991B1B;
+      --warning: #F59E0B; --warning-bg: rgba(245,158,11,0.1); --warning-text: #92400E;
+      --info: #06B6D4; --info-bg: rgba(6,182,212,0.1); --info-text: #155E75;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica Neue,Arial;color:var(--neutral-900);background:var(--neutral-100);line-height:1.4}
+    h1,h2,h3{margin:0 0 12px 0;color:var(--neutral-900)} p{margin:0 0 8px 0;color:var(--neutral-700)}
+    .container{max-width:1200px;margin:0 auto;padding:24px}
+    .page{display:none} .page.is-active{display:block}
+    .admin-layout{display:grid;grid-template-columns:260px 1fr;gap:16px;padding:16px}
+    .sidebar{background:#fff;border:1px solid var(--neutral-200);border-radius:12px;padding:16px}
+    .admin-content{min-height:60vh}
+    .mobile-layout{max-width:640px;margin:0 auto;padding:16px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid transparent;cursor:pointer;font-weight:600;transition:transform .08s ease,filter .12s ease,background .2s ease}
+    .btn-primary{background:var(--primary);color:#fff} .btn-secondary{background:#e8ecf3;color:#0f172a;border-color:var(--neutral-200)} .btn-danger{background:var(--danger);color:#fff}
+    .btn:hover{filter:brightness(.95);transform:scale(1.02)} .btn:active{transform:scale(.98)} .btn:disabled{background:var(--neutral-200);color:var(--neutral-500);cursor:not-allowed} .btn-sm{padding:6px 10px;font-size:12px;border-radius:8px}
+    @keyframes spin{to{transform:rotate(360deg)}} .btn.is-loading{position:relative;color:transparent!important;pointer-events:none}
+    .btn.is-loading::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.8);border-top-color:rgba(255,255,255,.2);animation:spin 1s linear infinite}
+    .btn-secondary.is-loading::after{border-color:var(--neutral-700);border-top-color:transparent}
+    .btn:disabled.is-loading::after{border-color:var(--neutral-500);border-top-color:transparent}
+    .card{background:#fff;border:1px solid var(--neutral-200);border-radius:12px;padding:24px;box-shadow:0 4px 10px rgba(0,0,0,.05)} .card-interactive{transition:all .2s ease;cursor:pointer} .card-interactive:hover{transform:translateY(-4px);box-shadow:0 8px 15px rgba(0,0,0,.08)}
+    .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    .badge-success{background:var(--success-bg);color:var(--success-text)} .badge-danger{background:var(--danger-bg);color:var(--danger-text)} .badge-warning{background:var(--warning-bg);color:var(--warning-text)} .badge-info{background:var(--info-bg);color:var(--info-text)}
+    .form-group{margin-bottom:14px} .form-label{display:block;font-weight:600;margin-bottom:6px;color:var(--neutral-700)}
+    .form-input,.form-select,.form-textarea{width:100%;padding:10px 12px;border:1px solid var(--neutral-200);border-radius:10px;font-size:14px;color:var(--neutral-900);background:#fff;outline:none;transition:border-color .15s ease,box-shadow .15s ease}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,.15)} .form-textarea{min-height:120px;resize:vertical}
+    .form-group.has-error .form-input,.form-group.has-error .form-textarea{border-color:var(--danger)} .error-message{margin-top:6px;font-size:12px;color:var(--danger-text)}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden} thead th{text-align:left;padding:12px;background:#f8fafc;color:#0f172a;border-bottom:1px solid var(--neutral-200);font-size:14px} tbody td{padding:12px;border-bottom:1px solid var(--neutral-200);color:var(--neutral-700);font-size:14px} tbody tr:last-child td{border-bottom:none}
+    @keyframes slide-down{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}} @keyframes fade-out{to{opacity:0}}
+    .toast-notification{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 16px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);font-weight:600;animation:slide-down 220ms ease-out;border:1px solid var(--neutral-200);background:#fff;color:var(--neutral-900)}
+    .toast-notification.success{background:var(--success-bg);color:var(--success-text);border-color:rgba(16,185,129,.25)} .toast-notification.error{background:var(--danger-bg);color:var(--danger-text);border-color:rgba(239,68,68,.25)} .toast-notification.fade-out{animation:fade-out 420ms ease forwards}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9998;padding:16px} .modal-overlay.is-active{display:flex} .modal-card{width:100%;max-width:520px} .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    @keyframes loading{0%{background-position:200% 0}100%{background-position:-200% 0}} .skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:loading 1.5s infinite} .skeleton-line{height:12px;border-radius:8px;margin:10px 0} .skeleton-card{height:140px;border-radius:12px}
+    .row{display:grid;grid-template-columns:repeat(12,1fr);gap:16px} .col-3{grid-column:span 3} .col-4{grid-column:span 4} .col-6{grid-column:span 6} .col-12{grid-column:span 12}
+    .muted{color:var(--neutral-500)} .space-y-2>*+*{margin-top:8px} .space-y-3>*+*{margin-top:12px} .space-y-4>*+*{margin-top:16px} .mt-2{margin-top:8px} .mt-3{margin-top:12px} .mt-4{margin-top:16px} .mb-0{margin-bottom:0} .text-right{text-align:right} .text-center{text-align:center} .w-100{width:100%} .hidden{display:none}
+  </style>
+</head>
+<body>
+  <!-- FLUJO 0: Login -->
+  <div class="page is-active" id="page-login-chooser">
+    <div class="mobile-layout">
+      <div class="card" style="text-align:center;">
+        <h1>¿Quién eres hoy?</h1>
+        <p class="muted">Elige un rol para explorar el sistema.</p>
+        <div class="space-y-3 mt-4">
+          <button class="btn btn-secondary w-100" onclick="login('dueño')">Dueño</button>
+          <button class="btn btn-secondary w-100" onclick="login('jefe-tecnico')">Jefe de Técnicos</button>
+          <button class="btn btn-secondary w-100" onclick="login('cobranza')">Cobranza</button>
+          <button class="btn btn-secondary w-100" onclick="login('tecnico')">Técnico (Sergio)</button>
+          <button class="btn btn-secondary w-100" onclick="login('cliente')">Cliente (Ana García)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLUJO 1: Dueño - Dashboard -->
+  <div class="page" id="page-admin-dashboard">
+    <div class="admin-layout">
+      <aside class="sidebar">
+        <h3>Panel</h3>
+        <div class="space-y-2">
+          <div><span class="badge badge-info">Demo</span> Vista de Dueño</div>
+          <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-login-chooser')">Cerrar sesión</button>
+        </div>
+      </aside>
+      <main class="admin-content">
+        <div id="dashboard-loader" class="card skeleton skeleton-card"></div>
+        <div id="dashboard-content" class="hidden">
+          <div class="row">
+            <div class="col-3"><div class="card"><div class="muted">Clientes</div><h2 id="kpi-clientes">–</h2></div></div>
+            <div class="col-3"><div class="card"><div class="muted">Tickets Abiertos</div><h2 id="kpi-tickets">–</h2></div></div>
+            <div class="col-3"><div class="card"><div class="muted">Facturado</div><h2 id="kpi-facturado">–</h2></div></div>
+            <div class="col-3"><div class="card"><div class="muted">Técnicos Activos</div><h2 id="kpi-tecnicos">–</h2></div></div>
+          </div>
+          <div class="card mt-4">
+            <h3 class="mb-0">Tickets Recientes</h3>
+            <p class="muted">Listado simulado desde AppState</p>
+            <div class="mt-3">
+              <table>
+                <thead><tr><th>ID</th><th>Cliente</th><th>Problema</th><th>Estado</th><th>Técnico</th></tr></thead>
+                <tbody id="tabla-tickets-recientes"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- FLUJO 2: Cobranza -->
+  <div class="page" id="page-cobranza-clientes">
+    <div class="admin-layout">
+      <aside class="sidebar">
+        <h3>Cobranza</h3>
+        <div class="space-y-2">
+          <div><span class="badge badge-info">Demo</span> Gestión de Clientes</div>
+          <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-login-chooser')">Cerrar sesión</button>
+        </div>
+      </aside>
+      <main class="admin-content">
+        <div class="card">
+          <div class="text-right"><button id="btn-show-alta" class="btn btn-primary">Agregar Cliente</button></div>
+          <div class="mt-3">
+            <table>
+              <thead><tr><th>ID</th><th>Nombre</th><th>Plan</th><th>Estado</th><th>Saldo</th></tr></thead>
+              <tbody id="tabla-clientes"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Alta Cliente -->
+  <div id="modal-alta-cliente" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card card" role="dialog" aria-modal="true">
+      <h3>Alta de Cliente</h3>
+      <div class="form-group"><label class="form-label" for="alta-nombre">Nombre</label><input id="alta-nombre" class="form-input" placeholder="Ej. Juan Pérez" /></div>
+      <div class="form-group"><label class="form-label" for="alta-plan">Plan</label>
+        <select id="alta-plan" class="form-select"><option value="50MB">50MB</option><option value="100MB">100MB</option><option value="200MB">200MB</option></select>
+      </div>
+      <div class="modal-actions"><button class="btn btn-secondary" onclick="hideModal('modal-alta-cliente')">Cancelar</button><button id="btn-guardar-cliente" class="btn btn-primary">Guardar Cliente</button></div>
+    </div>
+  </div>
+  <!-- FLUJO 3: Jefe de Técnicos -->
+  <div class="page" id="page-jefe-tickets">
+    <div class="admin-layout">
+      <aside class="sidebar">
+        <h3>Jefe de Técnicos</h3>
+        <div class="space-y-2">
+          <div><span class="badge badge-info">Demo</span> Tickets</div>
+          <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-login-chooser')">Cerrar sesión</button>
+        </div>
+      </aside>
+      <main class="admin-content">
+        <div class="card">
+          <h3 class="mb-0">Tickets</h3>
+          <p class="muted">Asigna tickets nuevos a Sergio</p>
+          <div class="mt-3">
+            <table>
+              <thead><tr><th>ID</th><th>Cliente</th><th>Problema</th><th>Estado</th><th>Técnico</th><th>Acciones</th></tr></thead>
+              <tbody id="tabla-jefe-tickets"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Asignar Ticket -->
+  <div id="modal-asignar-ticket" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card card" role="dialog" aria-modal="true">
+      <h3>Asignar Ticket <span id="modal-ticket-id" class="badge badge-info"></span></h3>
+      <div class="form-group mt-3"><label class="form-label" for="select-tecnico">Técnico</label>
+        <select id="select-tecnico" class="form-select"><option value="Sergio">Sergio</option><option value="Luisa">Luisa</option><option value="Miguel">Miguel</option></select>
+      </div>
+      <div class="modal-actions"><button class="btn btn-secondary" onclick="hideModal('modal-asignar-ticket')">Cancelar</button><button id="btn-confirmar-asignar" class="btn btn-primary">Confirmar</button></div>
+    </div>
+  </div>
+
+  <!-- FLUJO 4: Técnico - Lista -->
+  <div class="page" id="page-tech-tickets">
+    <div class="mobile-layout">
+      <div class="card">
+        <h3>Mis Tickets (Sergio)</h3>
+        <div id="lista-tickets-tecnico" class="space-y-3 mt-3"></div>
+        <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-login-chooser')">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLUJO 4: Técnico - Detalle -->
+  <div class="page" id="page-tech-detalle">
+    <div class="mobile-layout">
+      <div class="card">
+        <h3>Ticket #1055</h3>
+        <p class="muted">Cliente: Carlos Ruiz</p>
+        <p class="muted">Problema: Internet lento</p>
+        <div class="form-group mt-3">
+          <label class="form-label" for="notas-tecnico">Notas del Técnico</label>
+          <textarea id="notas-tecnico" class="form-textarea" placeholder="Describe el trabajo realizado..."></textarea>
+          <div class="error-message hidden" id="notas-error">Las notas deben tener más de 10 caracteres.</div>
+        </div>
+        <button id="btn-resolver-ticket" class="btn btn-primary" style="width: 100%;" disabled>Completar Ticket</button>
+        <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-tech-tickets')">Volver</button>
+      </div>
+    </div>
+  </div>
+  <!-- FLUJO 5-6: Cliente - Home -->
+  <div class="page" id="page-client-home">
+    <div class="mobile-layout">
+      <div class="card">
+        <h3>Hola, Ana García</h3>
+        <div class="mt-2">Saldo actual: <strong id="saldo-cliente">$0.00</strong> <span id="badge-pagado" class="badge badge-success hidden">Pagado</span></div>
+        <div class="space-y-3 mt-3">
+          <button id="btn-ir-pago" class="btn btn-primary w-100 hidden">Pagar</button>
+          <button id="btn-ir-reporte" class="btn btn-danger w-100">Reportar Falla</button>
+        </div>
+      </div>
+      <div class="card mt-3">
+        <h3>Mis Tickets</h3>
+        <div id="lista-tickets-cliente" class="space-y-2 mt-2"></div>
+        <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-login-chooser')">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-client-pago">
+    <div class="mobile-layout">
+      <div class="card">
+        <h3>Pago de Servicio</h3>
+        <p class="muted">Saldo a pagar: <strong id="pago-saldo">$0.00</strong></p>
+        <div class="form-group mt-3"><label class="form-label" for="num-tarjeta">Tarjeta</label><input id="num-tarjeta" class="form-input" placeholder="**** **** **** 4242" /></div>
+        <button id="btn-confirmar-pago" class="btn btn-primary w-100">Confirmar Pago</button>
+        <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-client-home')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pago Exitoso -->
+  <div id="modal-pago-exitoso" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card card text-center" role="dialog" aria-modal="true">
+      <h3>Pago procesado</h3>
+      <p class="muted mt-2">Gracias por tu pago.</p>
+      <div class="modal-actions" style="justify-content:center;"><button class="btn btn-primary" onclick="hideModal('modal-pago-exitoso')">Cerrar</button></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-client-reporte">
+    <div class="mobile-layout">
+      <div class="card">
+        <h3>Reportar Falla</h3>
+        <div class="form-group mt-3"><label class="form-label" for="reporte-tipo">Tipo</label>
+          <select id="reporte-tipo" class="form-select"><option value="Sin servicio">Sin servicio</option><option value="Internet lento">Internet lento</option><option value="Intermitencias">Intermitencias</option></select>
+        </div>
+        <div class="form-group"><label class="form-label" for="reporte-desc">Descripción</label><textarea id="reporte-desc" class="form-textarea" placeholder="Describe el problema..."></textarea></div>
+        <button id="btn-enviar-reporte" class="btn btn-danger w-100">Enviar Reporte</button>
+        <button class="btn btn-secondary w-100 mt-3" onclick="navigateTo('page-client-home')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <!-- MOTOR DE SIMULACIÓN -->
+  <script>
+    let AppState = {
+      loggedInUser: null,
+      tickets: {
+        '1054': { id: '1054', cliente: 'Ana García', problema: 'Sin servicio', estado: 'Nuevo', tecnico: null },
+        '1055': { id: '1055', cliente: 'Carlos Ruiz', problema: 'Internet lento', estado: 'Asignado', tecnico: 'Sergio' }
+      },
+      clientes: {
+        '1204': { id: '1204', nombre: 'Ana García', plan: '50MB', estado: 'Activo', saldo: 350.00 },
+        '1205': { id: '1205', nombre: 'Carlos Ruiz', plan: '50MB', estado: 'Activo', saldo: 0.00 }
+      }
+    };
+    const $ = (s, r=document)=>r.querySelector(s); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s)); const fmt=n=>`$${n.toFixed(2)}`;
+    function navigateTo(id){$$('.page').forEach(p=>p.classList.remove('is-active')); const el=document.getElementById(id); if(el) el.classList.add('is-active'); window.scrollTo(0,0);} 
+    function showModal(id){const el=document.getElementById(id); if(el) el.classList.add('is-active');}
+    function hideModal(id){const el=document.getElementById(id); if(el) el.classList.remove('is-active');}
+    function showToast(msg,t='success'){const el=document.createElement('div'); el.className=`toast-notification ${t}`; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.classList.add('fade-out'),1800); setTimeout(()=>el.remove(),2300);}
+
+    function login(u){ AppState.loggedInUser=u; $('#page-login-chooser').classList.remove('is-active');
+      switch(u){
+        case 'dueño': navigateTo('page-admin-dashboard'); renderDashboard(); break;
+        case 'jefe-tecnico': navigateTo('page-jefe-tickets'); renderJefeTickets(); break;
+        case 'cobranza': navigateTo('page-cobranza-clientes'); renderCobranzaClientes(); break;
+        case 'tecnico': navigateTo('page-tech-tickets'); renderTechTickets(); break;
+        case 'cliente': navigateTo('page-client-home'); renderClientHome(); break;
+      }
+    }
+
+    function renderDashboard(){
+      const loader=$('#dashboard-loader'), content=$('#dashboard-content'); content.classList.add('hidden'); loader.classList.remove('hidden'); loader.classList.add('skeleton','skeleton-card');
+      setTimeout(()=>{
+        const numClientes=Object.keys(AppState.clientes).length;
+        const ticketsAbiertos=Object.values(AppState.tickets).filter(t=>t.estado!=='Resuelto').length;
+        const facturado=1205*299.00; const tecnicosActivos=5;
+        $('#kpi-clientes').textContent=String(numClientes); $('#kpi-tickets').textContent=String(ticketsAbiertos); $('#kpi-facturado').textContent=fmt(facturado); $('#kpi-tecnicos').textContent=String(tecnicosActivos);
+        const tb=$('#tabla-tickets-recientes'); tb.innerHTML=''; Object.values(AppState.tickets).forEach(t=>{ const tr=document.createElement('tr'); const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); tr.innerHTML=`<td>#${t.id}</td><td>${t.cliente}</td><td>${t.problema}</td><td><span class="badge ${badge}">${t.estado}</span></td><td>${t.tecnico||'-'}</td>`; tb.appendChild(tr); });
+        loader.classList.add('hidden'); content.classList.remove('hidden');
+      },1000);
+    }
+
+    function renderCobranzaClientes(){ const tb=$('#tabla-clientes'); if(!tb) return; tb.innerHTML=''; Object.values(AppState.clientes).forEach(c=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${c.id}</td><td>${c.nombre}</td><td>${c.plan}</td><td>${c.estado}</td><td>${fmt(c.saldo)}</td>`; tb.appendChild(tr); }); }
+
+    function renderJefeTickets(){ const tb=$('#tabla-jefe-tickets'); if(!tb) return; tb.innerHTML=''; Object.values(AppState.tickets).forEach(t=>{ const tr=document.createElement('tr'); const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); const action=t.estado==='Nuevo'?`<button class="btn btn-secondary btn-sm" onclick="showAsignarModal('${t.id}')">Asignar</button>`:''; tr.innerHTML=`<td>#${t.id}</td><td>${t.cliente}</td><td>${t.problema}</td><td><span class="badge ${badge}">${t.estado}</span></td><td>${t.tecnico||'-'}</td><td>${action}</td>`; tb.appendChild(tr); }); }
+    let currentAssignTicketId=null; function showAsignarModal(id){ currentAssignTicketId=id; const span=$('#modal-ticket-id'); if(span) span.textContent='#'+id; showModal('modal-asignar-ticket'); }
+
+    function renderTechTickets(){ const cont=$('#lista-tickets-tecnico'); if(!cont) return; cont.innerHTML=''; const assigned=Object.values(AppState.tickets).filter(t=>t.tecnico==='Sergio'); if(assigned.length===0){ const e=document.createElement('div'); e.className='muted'; e.textContent='Sin tickets asignados.'; cont.appendChild(e); return;} assigned.forEach(t=>{ const card=document.createElement('div'); const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); const clickable=t.id==='1055'; card.className='card '+(clickable?'card-interactive':''); card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><div><div><strong>Ticket #${t.id}</strong> · <span class="badge ${badge}">${t.estado}</span></div><div class="muted">${t.cliente} — ${t.problema}</div></div>${clickable?'<span class="muted">Ver ›</span>':''}</div>`; if(clickable){ card.onclick=()=>navigateTo('page-tech-detalle'); } cont.appendChild(card); }); }
+
+    function renderClientHome(){ const ana=AppState.clientes['1204']; const saldoEl=$('#saldo-cliente'); const pagarBtn=$('#btn-ir-pago'); const pagadoBadge=$('#badge-pagado'); const lista=$('#lista-tickets-cliente'); if(!ana||!saldoEl||!pagarBtn||!pagadoBadge) return; saldoEl.textContent=fmt(ana.saldo); $('#pago-saldo').textContent=fmt(ana.saldo); if(ana.saldo>0){ pagarBtn.classList.remove('hidden'); pagadoBadge.classList.add('hidden'); } else { pagarBtn.classList.add('hidden'); pagadoBadge.classList.remove('hidden'); } if(lista){ lista.innerHTML=''; Object.values(AppState.tickets).filter(t=>t.cliente==='Ana García').forEach(t=>{ const div=document.createElement('div'); const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); div.innerHTML=`<strong>#${t.id}</strong> · ${t.problema} · <span class="badge ${badge}">${t.estado}</span>`; lista.appendChild(div); }); } }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btnShowAlta=$('#btn-show-alta'); if(btnShowAlta){ btnShowAlta.onclick=()=>showModal('modal-alta-cliente'); }
+      const btnGuardar=$('#btn-guardar-cliente'); if(btnGuardar){ btnGuardar.onclick=()=>{ btnGuardar.classList.add('is-loading'); btnGuardar.disabled=true; setTimeout(()=>{ const nombre=($('#alta-nombre').value||'').trim(); const plan=$('#alta-plan').value; const ids=Object.keys(AppState.clientes).map(k=>parseInt(k,10)); const nextId=Math.max(...ids)+1; AppState.clientes[String(nextId)]={id:String(nextId),nombre,plan,estado:'Activo',saldo:0}; btnGuardar.classList.remove('is-loading'); btnGuardar.disabled=false; hideModal('modal-alta-cliente'); renderCobranzaClientes(); showToast('Cliente creado exitosamente','success'); $('#alta-nombre').value=''; $('#alta-plan').value='50MB'; },1000); } }
+      const btnAsignar=$('#btn-confirmar-asignar'); if(btnAsignar){ btnAsignar.onclick=()=>{ btnAsignar.classList.add('is-loading'); btnAsignar.disabled=true; setTimeout(()=>{ const tecnico=$('#select-tecnico')?$('#select-tecnico').value:'Sergio'; if(currentAssignTicketId&&AppState.tickets[currentAssignTicketId]){ AppState.tickets[currentAssignTicketId].estado='Asignado'; AppState.tickets[currentAssignTicketId].tecnico=tecnico; } btnAsignar.classList.remove('is-loading'); btnAsignar.disabled=false; hideModal('modal-asignar-ticket'); renderJefeTickets(); showToast(`Ticket asignado a ${tecnico}`,'success'); },500); } }
+      const notas=$('#notas-tecnico'), notasErr=$('#notas-error'), btnResolver=$('#btn-resolver-ticket'); if(notas&&btnResolver){ notas.oninput=()=>{ const ok=notas.value.trim().length>10; btnResolver.disabled=!ok; if(notasErr) notasErr.classList.toggle('hidden',ok); }; btnResolver.onclick=()=>{ btnResolver.classList.add('is-loading'); btnResolver.disabled=true; setTimeout(()=>{ AppState.tickets['1055'].estado='Resuelto'; btnResolver.classList.remove('is-loading'); navigateTo('page-tech-tickets'); showToast('Ticket #1055 resuelto','success'); renderTechTickets(); },1500); }; }
+      const btnIrPago=$('#btn-ir-pago'); if(btnIrPago) btnIrPago.onclick=()=>navigateTo('page-client-pago'); const btnIrReporte=$('#btn-ir-reporte'); if(btnIrReporte) btnIrReporte.onclick=()=>navigateTo('page-client-reporte');
+      const btnConfirmarPago=$('#btn-confirmar-pago'); if(btnConfirmarPago){ btnConfirmarPago.onclick=()=>{ btnConfirmarPago.classList.add('is-loading'); btnConfirmarPago.disabled=true; showModal('modal-pago-exitoso'); setTimeout(()=>{ AppState.clientes['1204'].saldo=0; hideModal('modal-pago-exitoso'); btnConfirmarPago.classList.remove('is-loading'); btnConfirmarPago.disabled=false; navigateTo('page-client-home'); renderClientHome(); showToast('¡Pago exitoso!','success'); },2000); }; }
+      const btnEnviarReporte=$('#btn-enviar-reporte'); if(btnEnviarReporte){ btnEnviarReporte.onclick=()=>{ btnEnviarReporte.classList.add('is-loading'); btnEnviarReporte.disabled=true; setTimeout(()=>{ const ids=Object.keys(AppState.tickets).map(k=>parseInt(k,10)); const next=Math.max(...ids)+1; const tipo=$('#reporte-tipo').value; const desc=($('#reporte-desc').value||'').trim(); AppState.tickets[String(next)]={ id:String(next), cliente:'Ana García', problema: tipo + (desc?` - ${desc}`:''), estado:'Nuevo', tecnico:null }; btnEnviarReporte.classList.remove('is-loading'); btnEnviarReporte.disabled=false; navigateTo('page-client-home'); renderClientHome(); showToast(`Ticket #${next} creado`,'success'); $('#reporte-desc').value=''; $('#reporte-tipo').value='Sin servicio'; },1000); }; }
+    });
+  </script>
+</body>
+</html>

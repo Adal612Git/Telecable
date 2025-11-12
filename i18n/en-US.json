@@ -1,0 +1,7 @@
+﻿{
+  "cta.pay": "Pay",
+  "toast.payment_ok": "Payment received!",
+  "toast.sync_ok": "Sync completed",
+  "error.timeout": "Request timed out",
+  "empty.customers": "No customers yet — Create customer"
+}

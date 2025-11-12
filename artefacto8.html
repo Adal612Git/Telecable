@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artefacto 7: Kit de Interfaz de Usuario (UI Kit)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #111827;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .artifact-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            border-left: 5px solid #3B82F6;
+        }
+        
+        .section-title {
+            color: #111827;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+        
+        .section-description {
+            color: #374151;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        /* Paleta de Colores */
+        .colors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .color-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .color-swatch {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .color-info {
+            padding: 15px;
+            background: white;
+        }
+        
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #111827;
+        }
+        
+        .color-hex {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+        
+        /* Tipografía */
+        .typography-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .type-sample {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #3B82F6;
+        }
+        
+        .type-name {
+            color: #6B7280;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        /* Botones */
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .button-sample {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .button-primary {
+            background: #3B82F6;
+            color: white;
+        }
+        
+        .button-primary:hover {
+            background: #1E3A8A;
+        }
+        
+        .button-secondary {
+            background: white;
+            color: #374151;
+            border: 1px solid #E5E7EB;
+        }
+        
+        .button-secondary:hover {
+            background: #F3F4F6;
+        }
+        
+        .button-danger {
+            background: #EF4444;
+            color: white;
+        }
+        
+        .button-danger:hover {
+            background: #DC2626;
+        }
+        
+        .button:disabled {
+            background: #E5E7EB;
+            color: #6B7280;
+            cursor: not-allowed;
+        }
+        
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Formularios */
+        .forms-grid {
+            display: grid;
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .form-input {
+            padding: 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-input.error {
+            border-color: #EF4444;
+        }
+        
+        .form-help {
+            font-size: 14px;
+            color: #6B7280;
+        }
+        
+        .form-help.error {
+            color: #EF4444;
+        }
+        
+        /* Badges */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065F46;
+        }
+        
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #991B1B;
+        }
+        
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #92400E;
+        }
+        
+        .badge-info {
+            background: rgba(6, 182, 212, 0.1);
+            color: #155E75;
+        }
+        
+        /* Tarjetas */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        
+        .card-content {
+            color: #374151;
+            line-height: 1.5;
+        }
+        
+        /* Iconos */
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .icon-sample {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .icon {
+            width: 24px;
+            height: 24px;
+            color: #374151;
+        }
+        
+        .icon-name {
+            font-size: 12px;
+            color: #6B7280;
+            text-align: center;
+        }
+        
+        /* Estados */
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .state-sample {
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .skeleton-line {
+            height: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .skeleton-short {
+            width: 60%;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            color: #6B7280;
+        }
+        
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            color: #9CA3AF;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .colors-grid,
+            .buttons-grid,
+            .badges-grid,
+            .cards-grid,
+            .icons-grid,
+            .states-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="artifact-badge">7/9</div>
+            <h1>Kit de Interfaz de Usuario (UI Kit)</h1>
+            <p class="subtitle">Manual de identidad visual para asegurar una experiencia de usuario coherente, profesional y reconocible</p>
+        </header>
+        
+        <div class="content">
+            <!-- 1. Paleta de Colores -->
+            <div class="section">
+                <h2 class="section-title">🎨 Paleta de Colores</h2>
+                <p class="section-description">Una paleta limitada pero flexible, con un color de marca y colores semánticos claros para los estados.</p>
+                
+                <div class="colors-grid">
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #3B82F6">Azul ISP</div>
+                        <div class="color-info">
+                            <div class="color-name">Primario (Marca)</div>
+                            <div class="color-hex">#3B82F6</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #1E3A8A; color: white">Azul Oscuro</div>
+                        <div class="color-info">
+                            <div class="color-name">Secundario (Marca)</div>
+                            <div class="color-hex">#1E3A8A</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #111827; color: white">Gris-900</div>
+                        <div class="color-info">
+                            <div class="color-name">Neutral - Títulos</div>
+                            <div class="color-hex">#111827</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #374151; color: white">Gris-700</div>
+                        <div class="color-info">
+                            <div class="color-name">Neutral - Texto</div>
+                            <div class="color-hex">#374151</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #6B7280; color: white">Gris-500</div>
+                        <div class="color-info">
+                            <div class="color-name">Neutral - Secundario</div>
+                            <div class="color-hex">#6B7280</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #E5E7EB; color: #374151">Gris-200</div>
+                        <div class="color-info">
+                            <div class="color-name">Neutral - Bordes</div>
+                            <div class="color-hex">#E5E7EB</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #F3F4F6; color: #374151">Gris-100</div>
+                        <div class="color-info">
+                            <div class="color-name">Neutral - Fondos</div>
+                            <div class="color-hex">#F3F4F6</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #FFFFFF; color: #374151; border: 1px solid #E5E7EB">Blanco</div>
+                        <div class="color-info">
+                            <div class="color-name">Neutral - Principal</div>
+                            <div class="color-hex">#FFFFFF</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #10B981; color: white">Verde</div>
+                        <div class="color-info">
+                            <div class="color-name">Semántico - Éxito</div>
+                            <div class="color-hex">#10B981</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #EF4444; color: white">Rojo</div>
+                        <div class="color-info">
+                            <div class="color-name">Semántico - Peligro</div>
+                            <div class="color-hex">#EF4444</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #F59E0B; color: white">Naranja</div>
+                        <div class="color-info">
+                            <div class="color-name">Semántico - Alerta</div>
+                            <div class="color-hex">#F59E0B</div>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #06B6D4; color: white">Cian</div>
+                        <div class="color-info">
+                            <div class="color-name">Semántico - Info</div>
+                            <div class="color-hex">#06B6D4</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. Tipografía -->
+            <div class="section">
+                <h2 class="section-title">✒️ Tipografía</h2>
+                <p class="section-description">Se usará "Inter" para todo el sistema. Es moderna, legible en pantallas pequeñas y profesional en pantallas grandes.</p>
+                
+                <div class="typography-grid">
+                    <div class="type-sample">
+                        <div class="type-name">H1 (Título Página) - 700 Bold - 30px</div>
+                        <div style="font-weight: 700; font-size: 30px; color: #111827">Sistema de Gestión ISP</div>
+                    </div>
+                    <div class="type-sample">
+                        <div class="type-name">H2 (Título Sección) - 600 SemiBold - 24px</div>
+                        <div style="font-weight: 600; font-size: 24px; color: #111827">Gestión de Clientes</div>
+                    </div>
+                    <div class="type-sample">
+                        <div class="type-name">H3 (Subtítulo) - 600 SemiBold - 20px</div>
+                        <div style="font-weight: 600; font-size: 20px; color: #111827">Lista de Tickets Activos</div>
+                    </div>
+                    <div class="type-sample">
+                        <div class="type-name">Cuerpo (Párrafos) - 400 Regular - 16px</div>
+                        <div style="font-weight: 400; font-size: 16px; color: #374151; line-height: 1.6">Este es un párrafo de ejemplo que muestra cómo se verá el texto del cuerpo en toda la aplicación. Debe ser legible y claro.</div>
+                    </div>
+                    <div class="type-sample">
+                        <div class="type-name">Label / Ayuda - 500 Medium - 14px</div>
+                        <div style="font-weight: 500; font-size: 14px; color: #374151">Dirección del cliente</div>
+                    </div>
+                    <div class="type-sample">
+                        <div class="type-name">Botón - 500 Medium - 16px</div>
+                        <button class="button button-primary" style="font-weight: 500; font-size: 16px">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. Botones -->
+            <div class="section">
+                <h2 class="section-title">🔳 Botones (Acciones)</h2>
+                <p class="section-description">El componente de acción principal. Deben tener estados claros y ser consistentes en toda la aplicación.</p>
+                
+                <div class="buttons-grid">
+                    <div class="button-sample">
+                        <div class="form-label">Primario (Acción Principal)</div>
+                        <button class="button button-primary">Guardar Cambios</button>
+                        <button class="button button-primary" style="background: #1E3A8A">Hover State</button>
+                    </div>
+                    <div class="button-sample">
+                        <div class="form-label">Secundario (Acción Alternativa)</div>
+                        <button class="button button-secondary">Cancelar</button>
+                        <button class="button button-secondary" style="background: #F3F4F6">Hover State</button>
+                    </div>
+                    <div class="button-sample">
+                        <div class="form-label">Peligro (Acción Destructiva)</div>
+                        <button class="button button-danger">Cortar Servicio</button>
+                        <button class="button button-danger" style="background: #DC2626">Hover State</button>
+                    </div>
+                    <div class="button-sample">
+                        <div class="form-label">Estados Especiales</div>
+                        <button class="button" disabled>Deshabilitado</button>
+                        <button class="button button-primary" disabled>
+                            <span class="spinner"></span>
+                            Cargando...
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 4. Formularios -->
+            <div class="section">
+                <h2 class="section-title">📝 Formularios (Inputs, Selects)</h2>
+                <p class="section-description">Crítico para "Alta de Cliente" y "Cierre de Ticket". Deben ser claros, accesibles y fáciles de usar.</p>
+                
+                <div class="forms-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Cliente</label>
+                        <input type="text" class="form-input" placeholder="Ingresa el nombre completo">
+                        <div class="form-help">Este es el nombre que aparecerá en las facturas</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Dirección IP</label>
+                        <input type="text" class="form-input" placeholder="192.168.1.1" value="192.168.1.1">
+                        <div class="form-help">Focus State - Borde azul con sombra</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Plan de Servicio</label>
+                        <select class="form-input">
+                            <option>Selecciona un plan</option>
+                            <option>Plan Básico 10MB - $250</option>
+                            <option>Plan Avanzado 50MB - $450</option>
+                            <option>Plan Premium 100MB - $650</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-input error" placeholder="cliente@ejemplo.com" value="correo-invalido">
+                        <div class="form-help error">Por favor ingresa un correo electrónico válido</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 5. Badges -->
+            <div class="section">
+                <h2 class="section-title">🏷️ Etiquetas de Estado (Badges)</h2>
+                <p class="section-description">Componente vital para listas y dashboards. Son etiquetas pequeñas, no interactivas, con esquinas redondeadas.</p>
+                
+                <div class="badges-grid">
+                    <div class="badge-sample">
+                        <div class="form-label">Estado "Éxito"</div>
+                        <div class="badge badge-success">Activo</div>
+                        <div class="badge badge-success">Pagado</div>
+                        <div class="badge badge-success">Resuelto</div>
+                    </div>
+                    <div class="badge-sample">
+                        <div class="form-label">Estado "Peligro"</div>
+                        <div class="badge badge-danger">Cortado</div>
+                        <div class="badge badge-danger">Moroso</div>
+                        <div class="badge badge-danger">Error</div>
+                    </div>
+                    <div class="badge-sample">
+                        <div class="form-label">Estado "Alerta"</div>
+                        <div class="badge badge-warning">Pendiente</div>
+                        <div class="badge badge-warning">Vencido</div>
+                        <div class="badge badge-warning">En Revisión</div>
+                    </div>
+                    <div class="badge-sample">
+                        <div class="form-label">Estado "Info"</div>
+                        <div class="badge badge-info">Asignado</div>
+                        <div class="badge badge-info">En Proceso</div>
+                        <div class="badge badge-info">Nuevo</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 6. Tarjetas -->
+            <div class="section">
+                <h2 class="section-title">📦 Tarjetas (Contenedores)</h2>
+                <p class="section-description">El contenedor principal para agrupar información como "Detalles del Cliente" o "Ticket #501".</p>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-title">Cliente #1234 - Juan Pérez</div>
+                        <div class="card-content">
+                            <p><strong>Plan:</strong> Premium 100MB</p>
+                            <p><strong>Estado:</strong> <span class="badge badge-success">Activo</span></p>
+                            <p><strong>Último pago:</strong> 15 Mar 2024</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Ticket #501 - Sin Servicio</div>
+                        <div class="card-content">
+                            <p><strong>Cliente:</strong> María García</p>
+                            <p><strong>Estado:</strong> <span class="badge badge-info">Asignado</span></p>
+                            <p><strong>Técnico:</strong> Carlos Rodríguez</p>
+                            <p><strong>Reportado:</strong> Hoy, 10:30 AM</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Resumen del Mes</div>
+                        <div class="card-content">
+                            <p><strong>Facturación:</strong> $45,670</p>
+                            <p><strong>Clientes Activos:</strong> 156</p>
+                            <p><strong>Tickets Resueltos:</strong> 42</p>
+                            <p><strong>Morosidad:</strong> <span class="badge badge-warning">8.2%</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 7. Iconografía -->
+            <div class="section">
+                <h2 class="section-title">✨ Iconografía</h2>
+                <p class="section-description">Se usará Lucide Icons para mantener la coherencia visual en toda la aplicación.</p>
+                
+                <div class="icons-grid">
+                    <div class="icon-sample">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <div class="icon-name">user-plus</div>
+                        <div class="form-help">Alta Cliente</div>
+                    </div>
+                    <div class="icon-sample">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>
+                        </svg>
+                        <div class="icon-name">ticket</div>
+                        <div class="form-help">Tickets</div>
+                    </div>
+                    <div class="icon-sample">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h6l-2 8 10-12h-6l2-8z"/>
+                        </svg>
+                        <div class="icon-name">zap-off</div>
+                        <div class="form-help">Cortar Servicio</div>
+                    </div>
+                    <div class="icon-sample">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h6l-2 8 10-12h-6l2-8z"/>
+                        </svg>
+                        <div class="icon-name">zap</div>
+                        <div class="form-help">Reactivar</div>
+                    </div>
+                    <div class="icon-sample">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        <div class="icon-name">dollar-sign</div>
+                        <div class="form-help">Facturación</div>
+                    </div>
+                    <div class="icon-sample">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                        <div class="icon-name">tool</div>
+                        <div class="form-help">App Técnico</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 8. Estados de Carga y Vacío -->
+            <div class="section">
+                <h2 class="section-title">⏳ Estados de Carga y Vacío</h2>
+                <p class="section-description">Estados importantes para mejorar la experiencia de usuario durante la carga y cuando no hay datos.</p>
+                
+                <div class="states-grid">
+                    <div class="state-sample">
+                        <div class="form-label">Carga - Skeleton Screens</div>
+                        <div class="skeleton skeleton-line"></div>
+                        <div class="skeleton skeleton-line skeleton-short"></div>
+                        <div class="skeleton skeleton-line"></div>
+                        <div class="skeleton skeleton-line"></div>
+                        <div class="skeleton skeleton-line skeleton-short"></div>
+                    </div>
+                    <div class="state-sample">
+                        <div class="form-label">Vacío - Sin Tickets</div>
+                        <div class="empty-state">
+                            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <div style="font-weight: 600; color: #374151">¡Todo resuelto!</div>
+                            <div>No hay tickets por asignar en este momento.</div>
+                        </div>
+                    </div>
+                    <div class="state-sample">
+                        <div class="form-label">Vacío - Sin Clientes</div>
+                        <div class="empty-state">
+                            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                            </svg>
+                            <div style="font-weight: 600; color: #374151">No hay clientes</div>
+                            <div>Comienza agregando tu primer cliente al sistema.</div>
+                            <button class="button button-primary" style="margin-top: 10px">Agregar Cliente</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Artefacto 7 de 9 - Kit de Interfaz de Usuario (UI Kit) | Sistema de Gestión para ISP</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

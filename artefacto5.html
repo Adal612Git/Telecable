@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artefacto 4: Matriz de Requerimientos de Calidad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .artifact-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .intro {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .intro p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .matrix-table th {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .matrix-table td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        
+        .matrix-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .characteristic-cell {
+            width: 180px;
+            font-weight: 600;
+            color: #2c3e50;
+            background: #f8f9fa;
+        }
+        
+        .requirement-cell {
+            min-width: 300px;
+            border-right: 1px solid #e9ecef;
+        }
+        
+        .metric-cell {
+            min-width: 400px;
+        }
+        
+        .requirement-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .requirement-list li {
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .requirement-list li:before {
+            content: "•";
+            position: absolute;
+            left: 10px;
+            color: #3498db;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .metric-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .metric-list li {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .metric-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .metric-description {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .characteristic-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary {
+            margin-top: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+        }
+        
+        .summary-title {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .summary-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .matrix-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .matrix-table th,
+            .matrix-table td {
+                white-space: nowrap;
+                min-width: 200px;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="artifact-badge">4/9</div>
+            <h1>Matriz de Requerimientos de Calidad</h1>
+            <p class="subtitle">ISO 25010 - Traducción de características de calidad estándar en reglas de negocio y métricas medibles</p>
+        </header>
+        
+        <div class="content">
+            <div class="intro">
+                <p>Este documento establece los requerimientos de calidad del Sistema de Gestión del ISP, transformando características estándar ISO 25010 en reglas de negocio específicas y métricas medibles que garantizan la excelencia operativa.</p>
+            </div>
+            
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th>Característica ISO</th>
+                        <th>Requerimiento Específico (para el ISP)</th>
+                        <th>Métrica de Aceptación (Medible)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">🔄</span>
+                                <span>Adecuación Funcional</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>El sistema debe implementar el 100% de los flujos críticos definidos en el Artefacto 3</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">✅ Pruebas UAT (User Acceptance Testing)</div>
+                                    <div class="metric-description">100% de los flujos críticos (Alta, Corte, Reactivación, Pago, Reporte, Resolución de Ticket) completados exitosamente sin errores bloqueantes</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">⚡</span>
+                                <span>Eficiencia de Desempeño</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>El comando de "Cortar" o "Reactivar" servicio debe sentirse instantáneo para el admin</li>
+                                <li>El Dashboard del Dueño (con las 4 métricas) debe cargar rápido, incluso con miles de clientes</li>
+                                <li>La App del Técnico debe ser rápida en campo</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">⏱️ Pruebas de API (Postman/JMeter)</div>
+                                    <div class="metric-description">El tiempo de respuesta total del endpoint (API Interna + Comando a Mikrotik) debe ser < 3 segundos en el 95% de los casos</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">📊 Pruebas de Carga</div>
+                                    <div class="metric-description">El TTFB (Time to First Byte) del dashboard debe ser < 1 segundo con la base de datos poblada con 10,000 clientes</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">📱 Pruebas de Red (DevTools)</div>
+                                    <div class="metric-description">La app (PWA) debe cargar la lista de tickets en < 5 segundos bajo un perfil de red "Slow 3G"</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">🔒</span>
+                                <span>Compatibilidad</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>El sistema debe interoperar con la API de Mikrotik (RouterOS) para el control de servicio</li>
+                                <li>El sistema debe integrarse con la Pasarela de Pagos (Stripe/MercadoPago) para pagos automáticos</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">🔄 Prueba de Integración Mikrotik</div>
+                                    <div class="metric-description">El sistema es capaz de conectarse, añadir una IP a una address list y quitarla exitosamente</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">💳 Prueba de Webhook Pagos</div>
+                                    <div class="metric-description">Un pago exitoso en la pasarela (modo sandbox) debe marcar la factura como "Pagada" en la BBDD en < 1 minuto</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">🛡️</span>
+                                <span>Usabilidad</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>El flujo de "Resolver Ticket" del técnico debe ser simple y con botones grandes (contexto "con guantes / sol")</li>
+                                <li>El Dashboard del Dueño debe ser intuitivo para un perfil no-técnico</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">👆 Prueba de Clics Técnico</div>
+                                    <div class="metric-description">El técnico puede marcar un ticket como "Resuelto" (desde que abre el ticket en su lista) en < 5 toques en la pantalla</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">👑 Prueba de Usuario Dueño</div>
+                                    <div class="metric-description">El Dueño (Persona 1) puede identificar las 4 métricas clave en < 1 minuto sin entrenamiento previo</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">💾</span>
+                                <span>Fiabilidad</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>Si la API de Mikrotik está caída o inaccesible, el sistema NO debe corromper el estado del cliente</li>
+                                <li>La App del Técnico debe funcionar sin conexión (offline-first)</li>
+                                <li>Las notificaciones de pago (WhatsApp/Email) no deben perderse si la API externa falla</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">🚨 Simulación de Caos Mikrotik</div>
+                                    <div class="metric-description">Al ejecutar "Cortar" con la IP del MKT bloqueada (timeout), el sistema debe mostrar un error claro al admin y el estado del cliente en la BBDD debe permanecer "Activo". No hay falsos positivos</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">📴 Prueba "Modo Avión"</div>
+                                    <div class="metric-description">El técnico puede abrir su app, ver sus tickets, añadir notas y marcar un ticket como "Resuelto", todo en modo avión. Los cambios se sincronizan automáticamente al recuperar la conexión</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">🔄 Prueba de Cola (Queue)</div>
+                                    <div class="metric-description">Simular caída de la API de WhatsApp. La notificación se encola (ej. en una tabla jobs) y se reintenta automáticamente. 0 notificaciones perdidas</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">🔐</span>
+                                <span>Seguridad</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>Segregación de Roles: Un técnico NO debe poder acceder a la facturación</li>
+                                <li>Segregación de Datos (Cliente): Un cliente NO debe poder ver los datos (facturas, tickets) de otro cliente</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">👮 Prueba de API Roles</div>
+                                    <div class="metric-description">Una petición a un endpoint /api/facturacion usando un token de autenticación de un usuario con rol "Técnico" debe devolver un error 403 Forbidden</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">🔒 Prueba de Segregación Datos</div>
+                                    <div class="metric-description">El Cliente A (con id: 123) al intentar GET /api/facturas?cliente_id=456 debe recibir una respuesta vacía o un error 403 Forbidden, no los datos del Cliente B</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">🔧</span>
+                                <span>Mantenibilidad</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>Los microservicios deben ser independientes (como lo pidió el cliente)</li>
+                                <li>El código debe ser entendible y testeable</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">🐳 Prueba de Despliegue Independiente</div>
+                                    <div class="metric-description">El microservicio de "Tickets" puede ser actualizado y reiniciado (Docker) sin causar ningún tiempo de inactividad en el microservicio de "Facturación" o en el "API Gateway"</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">📊 Análisis de Código</div>
+                                    <div class="metric-description">La cobertura de pruebas unitarias (unit testing) en la lógica de negocio crítica (ej. módulo de generación de facturas, lógica de corte) debe ser > 80%</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="characteristic-cell">
+                            <div class="characteristic-header">
+                                <span class="icon">📦</span>
+                                <span>Portabilidad</span>
+                            </div>
+                        </td>
+                        <td class="requirement-cell">
+                            <ul class="requirement-list">
+                                <li>El sistema completo debe ser fácil de instalar en el servidor del cliente</li>
+                                <li>La app de Cliente/Técnico debe funcionar en la mayoría de dispositivos</li>
+                            </ul>
+                        </td>
+                        <td class="metric-cell">
+                            <ul class="metric-list">
+                                <li>
+                                    <div class="metric-title">🚀 Prueba de Instalación</div>
+                                    <div class="metric-description">El sistema completo (BBDD, APIs, Frontends) debe poder desplegarse en un servidor Linux limpio (Ubuntu 22.04) en < 15 minutos usando Docker Compose</div>
+                                </li>
+                                <li>
+                                    <div class="metric-title">📱 Pruebas de Dispositivo</div>
+                                    <div class="metric-description">La PWA debe ser 100% funcional en los navegadores Chrome, Firefox, Safari y en dispositivos Android/iOS con versiones no menores a 2 años de antigüedad</div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="summary">
+                <h3 class="summary-title">Resumen de Métricas de Calidad</h3>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-number">8</div>
+                        <div class="summary-label">Características ISO 25010</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number">15</div>
+                        <div class="summary-label">Requerimientos Específicos</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number">18</div>
+                        <div class="summary-label">Métricas de Aceptación</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number">100%</div>
+                        <div class="summary-label">Cobertura Funcional</div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Artefacto 4 de 9 - Matriz de Requerimientos de Calidad ISO 25010 | Sistema de Gestión para ISP</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

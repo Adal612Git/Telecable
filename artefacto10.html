@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artefacto 6: Wireframes (Baja Fidelidad)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #111827;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .artifact-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .intro-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-left: 5px solid #3B82F6;
+        }
+        
+        .intro-title {
+            color: #111827;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .intro-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .intro-card-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .intro-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .intro-list li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .intro-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3B82F6;
+            font-weight: bold;
+        }
+        
+        /* Wireframes Section */
+        .wireframes-section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            color: #111827;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+        
+        .wireframes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .wireframe-card {
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .wireframe-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #111827;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        .wireframe-container {
+            background: #f8f9fa;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        /* Wireframe Elements */
+        .header {
+            background: #E5E7EB;
+            height: 60px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 30px;
+            background: #9CA3AF;
+            border-radius: 4px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-item {
+            width: 60px;
+            height: 20px;
+            background: #9CA3AF;
+            border-radius: 3px;
+        }
+        
+        .sidebar {
+            width: 200px;
+            background: #E5E7EB;
+            border-radius: 6px;
+            padding: 15px;
+            float: left;
+            margin-right: 20px;
+            min-height: 300px;
+        }
+        
+        .sidebar-item {
+            height: 20px;
+            background: #9CA3AF;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .content-area {
+            overflow: hidden;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            height: 20px;
+            background: #9CA3AF;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            width: 60%;
+        }
+        
+        .card-content {
+            height: 15px;
+            background: #E5E7EB;
+            border-radius: 3px;
+            margin-bottom: 8px;
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background: white;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            height: 30px;
+            background: #9CA3AF;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            height: 15px;
+            background: #E5E7EB;
+            border-radius: 3px;
+            width: 80%;
+            margin: 0 auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-header {
+            background: #E5E7EB;
+            height: 25px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .table-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .table-cell {
+            flex: 1;
+            height: 20px;
+            background: #E5E7EB;
+            border-radius: 3px;
+        }
+        
+        .table-cell-small {
+            flex: 0.5;
+            height: 20px;
+            background: #E5E7EB;
+            border-radius: 3px;
+        }
+        
+        .button {
+            height: 35px;
+            background: #9CA3AF;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .button-primary {
+            background: #374151;
+        }
+        
+        .button-small {
+            height: 25px;
+            width: 80px;
+            background: #9CA3AF;
+            border-radius: 3px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            height: 15px;
+            background: #9CA3AF;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            width: 40%;
+        }
+        
+        .form-input {
+            height: 35px;
+            background: white;
+            border: 1px solid #D1D5DB;
+            border-radius: 4px;
+            width: 100%;
+        }
+        
+        .mobile-header {
+            background: #E5E7EB;
+            height: 50px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+        }
+        
+        .mobile-nav {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        
+        .mobile-nav-item {
+            width: 40px;
+            height: 40px;
+            background: #9CA3AF;
+            border-radius: 50%;
+        }
+        
+        .map-container {
+            height: 200px;
+            background: #E5E7EB;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .map-pin {
+            width: 20px;
+            height: 20px;
+            background: #374151;
+            border-radius: 50%;
+            position: absolute;
+            top: 40%;
+            left: 30%;
+        }
+        
+        .status-badge {
+            width: 70px;
+            height: 20px;
+            background: #E5E7EB;
+            border-radius: 10px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .verification-section {
+            background: #fff3e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 40px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .verification-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .verification-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .verification-card {
+            background: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .verification-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .verification-answer {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .wireframes-grid,
+            .intro-grid,
+            .verification-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                float: none;
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="artifact-badge">6/9</div>
+            <h1>Wireframes (Baja Fidelidad)</h1>
+            <p class="subtitle">Mapeo ISO 25010: Usabilidad (Aprendizaje) y Usabilidad (Protección contra Errores)</p>
+        </header>
+        
+        <div class="content">
+            <!-- Introducción -->
+            <div class="intro-section">
+                <h2 class="intro-title">📐 ¿Qué son los Wireframes?</h2>
+                <p style="color: #374151; margin-bottom: 20px; line-height: 1.6;">Los "planos" de CADA pantalla de los 5 sistemas. Hechos en blanco y negro, se enfocan 100% en la ESTRUCTURA sin distracciones de colores o diseños visuales.</p>
+                
+                <div class="intro-grid">
+                    <div class="intro-card">
+                        <div class="intro-card-title">🎯 ¿Para qué sirven?</div>
+                        <ul class="intro-list">
+                            <li>Es el momento más BARATO para descubrir que "falta un botón"</li>
+                            <li>Identificar problemas en el flujo antes del desarrollo</li>
+                            <li>Validar la estructura de información con usuarios</li>
+                            <li>Enfocarse en usabilidad sin distracciones visuales</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="intro-card-title">🛠️ ¿Cómo obtenerlos?</div>
+                        <ul class="intro-list">
+                            <li>Crear un wireframe por cada pantalla en los Flujos de Usuario</li>
+                            <li>Usar solo cajas y líneas (sin colores)</li>
+                            <li>Enfocarse en estructura y flujos</li>
+                            <li>Validar con usuarios: "¿Entiendes qué hace esta pantalla?"</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="intro-card-title">📱 Sistemas a Wireframear</div>
+                        <ul class="intro-list">
+                            <li>Panel de Administración</li>
+                            <li>Portal del Cliente</li>
+                            <li>App del Técnico</li>
+                            <li>Módulo de Facturación</li>
+                            <li>Sistema de Reportes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Administración -->
+            <div class="wireframes-section">
+                <h2 class="section-title">🏢 Panel de Administración</h2>
+                
+                <div class="wireframes-grid">
+                    <!-- Dashboard Admin -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Dashboard Principal</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                    <div class="nav-item"></div>
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="sidebar">
+                                <div class="sidebar-item"></div>
+                                <div class="sidebar-item"></div>
+                                <div class="sidebar-item"></div>
+                                <div class="sidebar-item"></div>
+                                <div class="sidebar-item"></div>
+                            </div>
+                            
+                            <div class="content-area">
+                                <div style="margin-bottom: 20px;">
+                                    <div class="card-title"></div>
+                                    <div class="metric-grid">
+                                        <div class="metric-card">
+                                            <div class="metric-value"></div>
+                                            <div class="metric-label"></div>
+                                        </div>
+                                        <div class="metric-card">
+                                            <div class="metric-value"></div>
+                                            <div class="metric-label"></div>
+                                        </div>
+                                        <div class="metric-card">
+                                            <div class="metric-value"></div>
+                                            <div class="metric-label"></div>
+                                        </div>
+                                        <div class="metric-card">
+                                            <div class="metric-value"></div>
+                                            <div class="metric-label"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-title"></div>
+                                    <div class="table-row">
+                                        <div class="table-cell"></div>
+                                        <div class="table-cell"></div>
+                                        <div class="table-cell-small"></div>
+                                    </div>
+                                    <div class="table-row">
+                                        <div class="table-cell"></div>
+                                        <div class="table-cell"></div>
+                                        <div class="table-cell-small"></div>
+                                    </div>
+                                    <div class="table-row">
+                                        <div class="table-cell"></div>
+                                        <div class="table-cell"></div>
+                                        <div class="table-cell-small"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Clientes -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Lista de Clientes</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                                <div class="button" style="width: 200px;"></div>
+                                <div class="button" style="width: 150px;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                    <div class="form-input" style="width: 300px;"></div>
+                                    <div class="button-small"></div>
+                                    <div class="button-small"></div>
+                                </div>
+                                
+                                <div class="table-header"></div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Facturas -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Gestión de Facturas</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div class="button" style="width: 180px; float: right;"></div>
+                                <div style="clear: both;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                    <div class="button-small"></div>
+                                    <div class="button-small"></div>
+                                    <div class="button-small"></div>
+                                </div>
+                                
+                                <div class="table-header"></div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reportes Financieros -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Reportes Financieros</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div class="card" style="height: 200px;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="table-header"></div>
+                                <div class="table-row">
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portal del Cliente -->
+            <div class="wireframes-section">
+                <h2 class="section-title">👤 Portal del Cliente</h2>
+                
+                <div class="wireframes-grid">
+                    <!-- Home Portal Cliente -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Home - Portal Cliente</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                                <div class="card-title" style="width: 200px; margin: 0 auto 15px;"></div>
+                                <div class="metric-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value"></div>
+                                        <div class="metric-label"></div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value"></div>
+                                        <div class="metric-label"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="button" style="width: 200px; margin: 20px auto;"></div>
+                            <div class="button" style="width: 200px; margin: 10px auto;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pago de Facturas -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Pago de Facturas</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="card" style="margin-bottom: 20px;">
+                                <div class="card-title"></div>
+                                <div class="card-content" style="width: 80%;"></div>
+                                <div class="card-content" style="width: 60%;"></div>
+                                <div class="button" style="width: 150px; margin-top: 15px;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-title"></div>
+                                <div class="form-group">
+                                    <div class="form-label"></div>
+                                    <div class="form-input"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label"></div>
+                                    <div class="form-input"></div>
+                                </div>
+                                <div class="button-primary" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte de Problemas -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Reporte de Problemas</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="form-group">
+                                    <div class="form-label"></div>
+                                    <div class="form-input"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label"></div>
+                                    <div class="form-input" style="height: 100px;"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label"></div>
+                                    <div class="button-small"></div>
+                                </div>
+                                <div class="button-primary" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historial de Pagos -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Historial de Pagos</div>
+                        <div class="wireframe-container">
+                            <div class="header">
+                                <div class="logo"></div>
+                                <div class="nav">
+                                    <div class="nav-item"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="table-header"></div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell-small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- App del Técnico -->
+            <div class="wireframes-section">
+                <h2 class="section-title">👷 App del Técnico</h2>
+                
+                <div class="wireframes-grid">
+                    <!-- Tickets del Técnico -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Lista de Tickets</div>
+                        <div class="wireframe-container">
+                            <div class="mobile-header">
+                                <div class="logo" style="width: 80px; height: 25px;"></div>
+                                <div class="nav-item" style="width: 30px; height: 30px;"></div>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <div class="button" style="width: 100%;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="status-badge"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="status-badge"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="status-badge"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-nav">
+                                <div class="mobile-nav-item"></div>
+                                <div class="mobile-nav-item"></div>
+                                <div class="mobile-nav-item"></div>
+                                <div class="mobile-nav-item"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mapa de Asignaciones -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Mapa de Asignaciones</div>
+                        <div class="wireframe-container">
+                            <div class="mobile-header">
+                                <div class="logo" style="width: 80px; height: 25px;"></div>
+                                <div class="nav-item" style="width: 30px; height: 30px;"></div>
+                            </div>
+                            
+                            <div class="map-container">
+                                <div class="map-pin"></div>
+                                <div class="map-pin" style="top: 60%; left: 60%;"></div>
+                                <div class="map-pin" style="top: 30%; left: 70%;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="button-small"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                    <div class="button-small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalle de Ticket -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Detalle de Ticket</div>
+                        <div class="wireframe-container">
+                            <div class="mobile-header">
+                                <div class="logo" style="width: 80px; height: 25px;"></div>
+                                <div class="nav-item" style="width: 30px; height: 30px;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-title"></div>
+                                <div class="card-content"></div>
+                                <div class="card-content" style="width: 70%;"></div>
+                                <div class="card-content" style="width: 50%;"></div>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 15px;">
+                                <div class="form-group">
+                                    <div class="form-label"></div>
+                                    <div class="form-input" style="height: 80px;"></div>
+                                </div>
+                                <div class="button-primary" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registro de Actividades -->
+                    <div class="wireframe-card">
+                        <div class="wireframe-title">Registro de Actividades</div>
+                        <div class="wireframe-container">
+                            <div class="mobile-header">
+                                <div class="logo" style="width: 80px; height: 25px;"></div>
+                                <div class="nav-item" style="width: 30px; height: 30px;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="table-cell-small"></div>
+                                    <div class="table-cell"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="button" style="width: 100%; margin-top: 15px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verificación de Wireframes -->
+            <div class="verification-section">
+                <h3 class="verification-title">🔍 Preguntas Clave para Validación</h3>
+                <div class="verification-grid">
+                    <div class="verification-card">
+                        <div class="verification-question">¿El usuario entiende qué puede hacer aquí?</div>
+                        <div class="verification-answer">Validar que las acciones principales sean claras y visibles para cada tipo de usuario.</div>
+                    </div>
+                    <div class="verification-card">
+                        <div class="verification-question">¿La información más importante es la más visible?</div>
+                        <div class="verification-answer">Asegurar que métricas clave y datos críticos tengan prominencia visual.</div>
+                    </div>
+                    <div class="verification-card">
+                        <div class="verification-question">¿Hay demasiados elementos en la pantalla?</div>
+                        <div class="verification-answer">Evaluar si la interfaz está sobrecargada y necesita simplificación.</div>
+                    </div>
+                    <div class="verification-card">
+                        <div class="verification-question">¿La navegación es intuitiva?</div>
+                        <div class="verification-answer">Verificar que los usuarios puedan moverse fácilmente entre secciones.</div>
+                    </div>
+                    <div class="verification-card">
+                        <div class="verification-question">¿Se previenen errores del usuario?</div>
+                        <div class="verification-answer">Confirmar que hay confirmaciones para acciones destructivas y validaciones claras.</div>
+                    </div>
+                    <div class="verification-card">
+                        <div class="verification-question">¿El flujo coincide con los mapas de usuario?</div>
+                        <div class="verification-answer">Asegurar coherencia entre wireframes y los flujos definidos anteriormente.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Artefacto 6 de 9 - Wireframes (Baja Fidelidad) | Sistema de Gestión para ISP</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artefacto 6/9 - Wireframes (Baja Fidelidad)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background: linear-gradient(135deg, #667eea, #764ba2); color: #111827; min-height: 100vh; padding: 20px; }
+    .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+    header { background: linear-gradient(135deg, #2c3e50, #3498db); color: #fff; text-align: center; padding: 40px; position: relative; }
+    .artifact-badge { position: absolute; top: 20px; right: 20px; background: #e74c3c; color: #fff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; }
+    h1 { font-size: 2.4rem; margin-bottom: 10px; }
+    .subtitle { font-size: 1.1rem; opacity: 0.9; }
+    .content { padding: 40px; }
+    .section { margin-bottom: 50px; background: #f8f9fa; border-radius: 15px; padding: 30px; border-left: 5px solid #3B82F6; }
+    .section-title { font-size: 1.6rem; margin-bottom: 20px; border-bottom: 2px solid #E5E7EB; padding-bottom: 10px; color: #111827; }
+    .wireframe { background: #fff; border: 2px solid #E5E7EB; border-radius: 10px; padding: 25px; margin-bottom: 20px; }
+    .wireframe-title { text-align: center; font-weight: 600; margin-bottom: 15px; }
+    .mockup { background: #f1f5f9; border: 1px solid #E5E7EB; border-radius: 8px; min-height: 300px; padding: 20px; position: relative; }
+    .header, .sidebar, .card, .button, .input, .table-row { background: #d1d5db; border-radius: 4px; margin-bottom: 10px; }
+    .header { height: 40px; width: 100%; }
+    .sidebar { width: 200px; float: left; height: 200px; margin-right: 20px; }
+    .card { height: 80px; padding: 10px; }
+    .button { width: 100px; height: 30px; }
+    .input { width: 80%; height: 25px; }
+    .table-row { height: 25px; width: 100%; }
+    footer { background: #2c3e50; color: #fff; text-align: center; padding: 15px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="artifact-badge">6/9</div>
+      <h1>Wireframes (Baja Fidelidad)</h1>
+      <p class="subtitle">Mapeo ISO 25010: Usabilidad (Aprendizaje) y Protección contra Errores</p>
+    </header>
+
+    <div class="content">
+
+      <section class="section">
+        <h2 class="section-title">🏢 Panel de Administración</h2>
+        <div class="wireframe">
+          <p class="wireframe-title">Dashboard Principal</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="sidebar"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+          </div>
+        </div>
+        <div class="wireframe">
+          <p class="wireframe-title">Gestión de Clientes</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="input"></div>
+            <div class="table-row"></div>
+            <div class="table-row"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">👤 Portal del Cliente</h2>
+        <div class="wireframe">
+          <p class="wireframe-title">Home del Cliente</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="card"></div>
+            <div class="button"></div>
+          </div>
+        </div>
+        <div class="wireframe">
+          <p class="wireframe-title">Pago de Facturas</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="input"></div>
+            <div class="button"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">👷 App del Técnico</h2>
+        <div class="wireframe">
+          <p class="wireframe-title">Lista de Tickets</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="table-row"></div>
+            <div class="table-row"></div>
+          </div>
+        </div>
+        <div class="wireframe">
+          <p class="wireframe-title">Mapa de Asignaciones</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="card"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">💳 Módulo de Facturación</h2>
+        <div class="wireframe">
+          <p class="wireframe-title">Panel de Facturación</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="table-row"></div>
+            <div class="button"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">📊 Sistema de Reportes</h2>
+        <div class="wireframe">
+          <p class="wireframe-title">Dashboard de KPIs</p>
+          <div class="mockup">
+            <div class="header"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer>
+      Artefacto 6/9 - Sistema de Gestión ISP | Usabilidad y Validación Visual
+    </footer>
+  </div>
+</body>
+</html>

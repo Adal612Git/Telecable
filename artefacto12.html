@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artefacto 6/9 – Wireframes (Baja fidelidad) v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg-1:#0f172a; /* slate-900 */
+      --bg-2:#111827; /* gray-900 */
+      --w-1:#f8fafc;  /* slate-50 */
+      --w-2:#f1f5f9;  /* slate-100 */
+      --w-3:#e5e7eb;  /* gray-200 */
+      --w-4:#d1d5db;  /* gray-300 */
+      --w-5:#9ca3af;  /* gray-400 */
+      --p-1:#3b82f6;  /* blue-500 */
+      --p-2:#93c5fd;  /* blue-300 */
+      --ok:#22c55e;   /* green-500 */
+      --warn:#f59e0b; /* amber-500 */
+      --err:#ef4444;  /* red-500 */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',"Apple Color Emoji","Segoe UI Emoji";background:linear-gradient(135deg,#667eea,#764ba2);padding:24px;color:#111827}
+    .container{max-width:1440px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.15);overflow:hidden}
+    header{background:linear-gradient(135deg,#1f2937,#2563eb);color:#fff;padding:36px 28px;position:relative}
+    h1{margin:0 0 6px;font-size:28px}
+    .subtitle{opacity:.9}
+    .badge{position:absolute;right:24px;top:24px;background:#ef4444;color:#fff;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-weight:700}
+
+    /* Top nav */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0}
+    .tab{display:inline-block;padding:10px 14px;border:2px dashed var(--p-2);border-radius:10px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:600}
+    .tab:hover{background:rgba(255,255,255,.18)}
+
+    .content{padding:32px}
+    .section{margin:0 0 32px;padding:24px;border-left:6px solid var(--p-1);background:var(--w-2);border-radius:14px}
+    .section h2{margin:0 0 6px;font-size:22px}
+    .section .note{font-size:14px;color:#475569;margin-bottom:14px}
+
+    /* Screen card */
+    .screen{background:#fff;border:2px solid var(--w-3);border-radius:12px;padding:18px;margin:18px 0}
+    .screen-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .tag{font-size:12px;border:1px dashed var(--w-4);color:#334155;border-radius:8px;padding:4px 8px}
+
+    /* Wire blocks */
+    .mock{background:var(--w-2);border:1px dashed var(--w-4);border-radius:10px;min-height:280px;padding:16px;position:relative;overflow:hidden}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .header{height:40px;background:var(--w-4);border-radius:6px;margin-bottom:12px}
+    .breadcrumb{height:26px;background:var(--w-4);border-radius:6px;margin-bottom:12px}
+    .sidebar{width:220px;min-width:220px;background:var(--w-4);border-radius:8px;padding:10px}
+    .tile,.card,.metric{background:#e2e8f0;border-radius:8px;height:80px}
+    .metric{height:64px}
+    .input{height:36px;border-radius:6px;background:#e5e7eb}
+    .btn{height:36px;width:120px;border-radius:8px;background:#cbd5e1}
+    .chip{height:22px;width:80px;border-radius:20px;background:#cbd5e1}
+    .table{border:1px dashed var(--w-4);border-radius:8px;overflow:hidden}
+    .trow{display:grid;grid-template-columns:40px 1fr 1fr 1fr 120px;gap:8px;padding:8px;background:#f8fafc;border-bottom:1px dashed var(--w-4)}
+    .trow.head{background:#e5e7eb;font-weight:600}
+    .empty{display:grid;place-items:center;height:120px;border:2px dotted var(--w-4);border-radius:10px;background:#f8fafc;color:#64748b}
+
+    /* Annotations */
+    .ann{position:absolute;right:10px;bottom:10px;background:#fff;border:1px dashed var(--p-2);border-radius:8px;padding:10px 12px;font-size:12px;color:#334155;max-width:320px}
+    .ann b{color:#111827}
+
+    /* Flow map */
+    .flow{display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
+    .node{background:#fff;border:2px dashed var(--w-4);border-radius:12px;padding:10px}
+    .node h4{margin:0 0 6px}
+    .arrow{height:2px;background:linear-gradient(90deg,var(--p-2) 33%,transparent 0);background-size:10px 2px}
+
+    /* Status examples (chips) */
+    .chip.ok{background:#d1fae5}
+    .chip.warn{background:#fef3c7}
+    .chip.err{background:#fee2e2}
+
+    /* Utilities */
+    .mt{margin-top:12px}
+    .mb{margin-bottom:12px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .right{margin-left:auto}
+
+    /* Local nav by :target */
+    .subnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .subnav a{font-size:12px;text-decoration:none;background:#e5e7eb;border:1px dashed #cbd5e1;color:#111827;border-radius:20px;padding:6px 10px}
+
+    .iso{font-size:12px;color:#475569}
+    footer{background:#1f2937;color:#fff;padding:18px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">6/9</div>
+      <h1>Wireframes (Baja fidelidad) – Sistema de Gestión ISP</h1>
+      <div class="subtitle">Mapeo ISO/IEC 25010 → <b>Usabilidad: Aprendizaje</b> · <b>Protección contra Errores</b> · <b>Calidad en uso</b></div>
+      <nav class="tabs" aria-label="Secciones">
+        <a class="tab" href="#admin">🏢 Admin</a>
+        <a class="tab" href="#cliente">👤 Cliente</a>
+        <a class="tab" href="#tecnico">👷 Técnico</a>
+        <a class="tab" href="#facturacion">💳 Facturación</a>
+        <a class="tab" href="#reportes">📊 Reportes</a>
+        <a class="tab" href="#flujo">🧭 Flujo E2E</a>
+      </nav>
+    </header>
+
+    <main class="content">
+
+      <!-- ADMIN -->
+      <section id="admin" class="section">
+        <h2>🏢 Panel de Administración</h2>
+        <p class="note">Metas: visibilidad inmediata, discoverability y accesos rápidos. Protección: vacíos con llamadas a la acción, filtros seguros, confirmaciones antes de acciones destructivas.</p>
+
+        <!-- Dashboard principal -->
+        <article class="screen">
+          <div class="screen-title">
+            <h3>Dashboard principal</h3>
+            <span class="tag">Inicio → Admin</span>
+          </div>
+          <div class="mock">
+            <div class="header"></div>
+            <div class="breadcrumb"></div>
+            <div class="row">
+              <aside class="sidebar"></aside>
+              <div class="col">
+                <div class="grid3 mb">
+                  <div class="metric"></div>
+                  <div class="metric"></div>
+                  <div class="metric"></div>
+                </div>
+                <div class="grid2 mb">
+                  <div class="tile"></div>
+                  <div class="tile"></div>
+                </div>
+                <div class="table">
+                  <div class="trow head"><div>#</div><div>Cliente</div><div>Plan</div><div>Estado</div><div>Acciones</div></div>
+                  <div class="trow"><div>1</div><div>Juan Pérez</div><div>100 Mbps</div><div><span class="chip ok"></span></div><div class="btn"></div></div>
+                  <div class="trow"><div>2</div><div>Ana Ruiz</div><div>50 Mbps</div><div><span class="chip warn"></span></div><div class="btn"></div></div>
+                  <div class="trow"><div>3</div><div>Comercial S.A.</div><div>Empresarial</div><div><span class="chip err"></span></div><div class="btn"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="ann">
+              <b>Aprendizaje:</b> tarjetas con métricas y glosa breve; <b>Error-proof:</b> chips de estado codificados por semántica (OK/Aviso/Falla) + acciones siempre no destructivas por defecto.
+            </div>
+          </div>
+          <div class="iso mt">ISO 25010 → Adecuación de reconocibilidad, protección contra errores de usuario (prevención primaria).</div>
+        </article>
+
+        <!-- Gestión de clientes -->
+        <article class="screen">
+          <div class="screen-title">
+            <h3>Gestión de clientes</h3>
+            <span class="tag">Admin → Clientes</span>
+          </div>
+          <div class="mock">
+            <div class="header"></div>
+            <nav class="subnav" aria-label="Subsecciones">
+              <a href="#alta-cliente">Alta</a>
+              <a href="#lista-clientes">Lista</a>
+              <a href="#det-cliente">Detalle</a>
+              <a href="#suspender">Suspender</a>
+            </nav>
+            <div class="grid2">
+              <div class="col">
+                <div class="input mb"></div>
+                <div class="table">
+                  <div class="trow head"><div>#</div><div>Nombre</div><div>Domicilio</div><div>Estado</div><div>Acción</div></div>
+                  <div class="trow"><div>1</div><div>Juan Pérez</div><div>Av. Centro 123</div><div><span class="chip ok"></span></div><div class="btn"></div></div>
+                  <div class="trow"><div>2</div><div>Ana Ruiz</div><div>Calle Norte 45</div><div><span class="chip warn"></span></div><div class="btn"></div></div>
+                  <div class="trow"><div>3</div><div>Comercial S.A.</div><div>Parque Ind. 9</div><div><span class="chip err"></span></div><div class="btn"></div></div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="empty">Selecciona un cliente para ver el panel lateral (resumen, últimas facturas, soporte).</div>
+                <div class="tile mt"></div>
+              </div>
+            </div>
+            <div class="ann"><b>Vacíos guiados</b> evitan acciones a ciegas. Búsqueda tolerante a errores (fuzzy) y filtros seguros (no se pierden por navegación).</div>
+          </div>
+          <div class="iso mt">ISO 25010 → Aprendizaje por consistencia, control explícito, mensajes de ayuda contextual.</div>
+        </article>
+      </section>
+
+      <!-- CLIENTE -->
+      <section id="cliente" class="section">
+        <h2>👤 Portal del Cliente</h2>
+        <p class="note">Metas: autoservicio, visibilidad de saldo/servicio, pagos simples y seguros con confirmaciones y reversión guiada.</p>
+
+        <article class="screen" id="home-cliente">
+          <div class="screen-title">
+            <h3>Home del cliente</h3>
+            <span class="tag">Cliente → Inicio</span>
+          </div>
+          <div class="mock">
+            <div class="header"></div>
+            <div class="grid3 mb">
+              <div class="metric"></div>
+              <div class="metric"></div>
+              <div class="metric"></div>
+            </div>
+            <div class="grid2">
+              <div class="card"></div>
+              <div class="card"></div>
+            </div>
+            <div class="ann"><b>Tip de aprendizaje:</b> KPIs nombrados en lenguaje natural ("Debes pagar antes de…"). Acceso rápido a "Pagar" y "Levantar ticket".</div>
+          </div>
+        </article>
+
+        <article class="screen" id="pago-facturas">
+          <div class="screen-title">
+            <h3>Pago de facturas</h3>
+            <span class="tag">Cliente → Pagos</span>
+          </div>
+          <div class="mock">
+            <div class="breadcrumb"></div>
+            <div class="table mb">
+              <div class="trow head"><div>#</div><div>Periodo</div><div>Importe</div><div>Estado</div><div>Acción</div></div>
+              <div class="trow"><div>1</div><div>Oct 2025</div><div>$550</div><div><span class="chip err"></span></div><div class="btn"></div></div>
+              <div class="trow"><div>2</div><div>Sep 2025</div><div>$550</div><div><span class="chip ok"></span></div><div class="btn"></div></div>
+            </div>
+            <div class="grid3">
+              <div class="input"></div>
+              <div class="input"></div>
+              <div class="btn"></div>
+            </div>
+            <div class="ann"><b>Protección:</b> paso de confirmación previo al cargo, validaciones de formato de tarjeta en tiempo real, opción de deshacer dentro de 10 min si es SPEI referenciado.</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- TECNICO -->
+      <section id="tecnico" class="section">
+        <h2>👷 App del Técnico</h2>
+        <p class="note">Metas: movilidad, pocas pulsaciones, estados claros (pendiente, en ruta, en sitio, resuelto), navegación segura offline-first.</p>
+
+        <article class="screen">
+          <div class="screen-title">
+            <h3>Lista de tickets</h3>
+            <span class="tag">Técnico → Tickets</span>
+          </div>
+          <div class="mock">
+            <div class="header"></div>
+            <div class="grid3 mb">
+              <div class="input"></div>
+              <div class="input"></div>
+              <div class="btn"></div>
+            </div>
+            <div class="table">
+              <div class="trow head"><div>#</div><div>Cliente</div><div>Tipo</div><div>Estado</div><div>Acción</div></div>
+              <div class="trow"><div>101</div><div>Juan Pérez</div><div>Sin señal</div><div><span class="chip warn"></span></div><div class="btn"></div></div>
+              <div class="trow"><div>102</div><div>Ana Ruiz</div><div>Intermitente</div><div><span class="chip ok"></span></div><div class="btn"></div></div>
+              <div class="trow"><div>103</div><div>Comercial S.A.</div><div>Instalación</div><div><span class="chip err"></span></div><div class="btn"></div></div>
+            </div>
+            <div class="ann"><b>Aprendizaje:</b> filtros por cercanía/prioridad; <b>Error-proof:</b> requiere checklists antes de cerrar, captura obligatoria de pruebas (foto/medición).</div>
+          </div>
+        </article>
+
+        <article class="screen">
+          <div class="screen-title">
+            <h3>Mapa de asignaciones</h3>
+            <span class="tag">Técnico → Mapa</span>
+          </div>
+          <div class="mock">
+            <div class="header"></div>
+            <div class="card mb"></div>
+            <div class="grid2">
+              <div class="card"></div>
+              <div class="card"></div>
+            </div>
+            <div class="ann">Plano wire de mapa + lista compacta. Si no hay GPS, se muestra <b>modo manual</b> para actualizar estado sin bloquear flujo.</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- FACTURACION -->
+      <section id="facturacion" class="section">
+        <h2>💳 Módulo de Facturación</h2>
+        <p class="note">Metas: generar, timbrar, reenviar y conciliar. Protección: borradores, prevalidación CFDI, estados de timbrado con recuperación.</p>
+
+        <article class="screen">
+          <div class="screen-title">
+            <h3>Panel de facturación</h3>
+            <span class="tag">Admin → Facturación</span>
+          </div>
+          <div class="mock">
+            <div class="breadcrumb"></div>
+            <div class="grid3 mb">
+              <div class="metric"></div>
+              <div class="metric"></div>
+              <div class="metric"></div>
+            </div>
+            <div class="table mb">
+              <div class="trow head"><div>#</div><div>Cliente</div><div>Periodo</div><div>Timbrado</div><div>Acción</div></div>
+              <div class="trow"><div>F-2001</div><div>Juan Pérez</div><div>Oct 2025</div><div><span class="chip ok"></span></div><div class="btn"></div></div>
+              <div class="trow"><div>F-2002</div><div>Ana Ruiz</div><div>Oct 2025</div><div><span class="chip warn"></span></div><div class="btn"></div></div>
+              <div class="trow"><div>F-2003</div><div>Comercial S.A.</div><div>Oct 2025</div><div><span class="chip err"></span></div><div class="btn"></div></div>
+            </div>
+            <div class="grid2">
+              <div class="input"></div>
+              <div class="btn"></div>
+            </div>
+            <div class="ann"><b>Controles de error:</b> simulación previa al timbrado, sandbox PAC; en fallos, reintento idempotente sin duplicar folios.</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- REPORTES -->
+      <section id="reportes" class="section">
+        <h2>📊 Sistema de Reportes</h2>
+        <p class="note">Metas: KPIs ejecutivos y operativos. Protección: definiciones visibles, filtros persistentes, exportaciones auditables.</p>
+
+        <article class="screen">
+          <div class="screen-title">
+            <h3>Dashboard de KPIs</h3>
+            <span class="tag">Reportes → KPIs</span>
+          </div>
+          <div class="mock">
+            <div class="header"></div>
+            <div class="grid3 mb">
+              <div class="metric"></div>
+              <div class="metric"></div>
+              <div class="metric"></div>
+            </div>
+            <div class="grid3">
+              <div class="tile"></div>
+              <div class="tile"></div>
+              <div class="tile"></div>
+            </div>
+            <div class="ann">Definiciones de métricas accesibles (hover/ayuda). Exportar respeta filtros visibles y adjunta diccionario de datos.</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- FLUJO END-TO-END -->
+      <section id="flujo" class="section">
+        <h2>🧭 Flujo de experiencia E2E (resumen)</h2>
+        <p class="note">Historia: <b>Alta de cliente → Instalación → Activación → Facturación → Cobro → Soporte → Cierre</b>. Cada paso evita errores por diseño y enseña el siguiente.</p>
+        <div class="flow">
+          <div class="node" style="grid-column: span 3">
+            <h4>1 · Alta cliente</h4>
+            <div class="chip mb"></div>
+            <small>Formulario guiado, validaciones en tiempo real. Borrador autosalvado.</small>
+          </div>
+          <div class="arrow" style="grid-column: span 1"></div>
+          <div class="node" style="grid-column: span 3">
+            <h4>2 · Agenda visita</h4>
+            <div class="chip mb"></div>
+            <small>Slots sugeridos por cobertura y ruta del técnico.</small>
+          </div>
+          <div class="arrow" style="grid-column: span 1"></div>
+          <div class="node" style="grid-column: span 4">
+            <h4>3 · Instalación (técnico)</h4>
+            <div class="chip mb"></div>
+            <small>Checklist obligatorio + fotos + pruebas de velocidad.</small>
+          </div>
+
+          <div class="node" style="grid-column: span 4">
+            <h4>4 · Activación</h4>
+            <div class="chip ok mb"></div>
+            <small>Activación idempotente; si falla, rollback seguro.</small>
+          </div>
+          <div class="arrow" style="grid-column: span 1"></div>
+          <div class="node" style="grid-column: span 3">
+            <h4>5 · Facturación</h4>
+            <div class="chip warn mb"></div>
+            <small>Previsualizar CFDI; sandbox PAC; timbrar en lote.</small>
+          </div>
+          <div class="arrow" style="grid-column: span 1"></div>
+          <div class="node" style="grid-column: span 3">
+            <h4>6 · Cobro</h4>
+            <div class="chip mb"></div>
+            <small>Confirmación + deshacer (SPEI) + recordatorios amables.</small>
+          </div>
+
+          <div class="node" style="grid-column: span 6">
+            <h4>7 · Soporte</h4>
+            <div class="chip err mb"></div>
+            <small>Autoservicio, chatbot, SLA visibles, escalamiento a técnico.</small>
+          </div>
+          <div class="arrow" style="grid-column: span 1"></div>
+          <div class="node" style="grid-column: span 5">
+            <h4>8 · Cierre / NPS</h4>
+            <div class="chip mb"></div>
+            <small>Encuesta NPS, resumen y siguientes pasos si hubo fallas.</small>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      Artefacto 6/9 – Wireframes (Baja fidelidad) • Usabilidad + Protección contra Errores (ISO/IEC 25010)
+    </footer>
+  </div>
+  
+  <!-- ===================== V3: EXPANSIÓN COMPLETA ===================== -->
+  <section class="section" id="historias-usuario">
+    <h2>🧩 Backlog de Historias de Usuario (alineado a personas)</h2>
+    <p class="note">Formato: <b>Como [persona]</b> quiero <b>[objetivo]</b> para <b>[beneficio]</b>. Incluye criterios de aceptación, errores, vacíos, microcopy y analítica.</p>
+
+    <article class="screen">
+      <div class="screen-title"><h3>Epic A · Alta & Activación</h3><span class="tag">Personas: Admin | Ventas | Técnico | Cliente</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>ID</div><div>Historia</div><div>Criterios de aceptación (GWT)</div><div>Errores/Vacíos</div><div>Eventos de tracking</div></div>
+          <div class="trow"><div>A-01</div><div>Como <b>vendedor</b> quiero registrar un <b>lead</b> con cobertura validada para predecir fecha de instalación.</div><div>
+            <ul>
+              <li><b>Dado</b> que capturo dirección válida,<br><b>cuando</b> consulto cobertura,<br><b>entonces</b> se muestran planes disponibles y fecha estimada.</li>
+              <li>Se guarda en borrador en 5s de inactividad.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>⚠️ Dirección ambigua → sugerencias tipo <i>"¿Es X, Col. Y, CP Z?"</i></li>
+              <li>🔌 API cobertura caída → modo diferido con ticket interno.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>lead_created</li>
+              <li>coverage_checked</li>
+              <li>lead_autosave</li>
+            </ul>
+          </div></div>
+          <div class="trow"><div>A-02</div><div>Como <b>admin</b> quiero <b>agendar instalación</b> en slot óptimo para minimizar desplazamientos.</div><div>
+            <ul>
+              <li><b>Dado</b> un lead aprobado,<br><b>cuando</b> abro agenda,<br><b>entonces</b> veo slots con score (ruta, tráfico, prioridad SLA).</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>🚗 Sin GPS del técnico → permitir asignación manual sin bloqueo.</li>
+              <li>📆 Conflicto de horario → resaltar choques y sugerir próxima ventana.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>appointment_scored</li>
+              <li>appointment_booked</li>
+            </ul>
+          </div></div>
+          <div class="trow"><div>A-03</div><div>Como <b>técnico</b> quiero un <b>checklist</b> para cerrar instalación con evidencia.</div><div>
+            <ul>
+              <li>Checklist con 100% requerido (ONU, potencia, speedtest, fotos).</li>
+              <li>Si <b>sin cobertura</b> en sitio → crear incidente automático.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>📶 Sin señal → flujos de reintento + sugerir cambio de puerto/OLT.</li>
+              <li>📷 Cámara denegada → subir foto desde galería.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>installation_checklist_opened</li>
+              <li>installation_proof_uploaded</li>
+              <li>installation_closed</li>
+            </ul>
+          </div></div>
+          <div class="trow"><div>A-04</div><div>Como <b>sistema</b> quiero <b>activar servicio</b> de forma idempotente.</div><div>
+            <ul>
+              <li>Si PAC/AAA/BRAS responde 5xx → reintento exponencial hasta 3x.</li>
+              <li>Garantizar no duplicar alta en OSS/BSS.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>🧰 Rollback automático si falla una dependencia crítica.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>activation_attempt</li>
+              <li>activation_success</li>
+              <li>activation_rollback</li>
+            </ul>
+          </div></div>
+        </div>
+        <div class="ann"><b>Microcopy clave:</b> "Guardamos tu progreso en automático" · "Puedes reprogramar hasta 2h antes" · "Si algo falla, no perderás tu lugar"</div>
+      </div>
+    </article>
+
+    <article class="screen">
+      <div class="screen-title"><h3>Epic B · Facturación & Cobro</h3><span class="tag">Personas: Cliente | Admin de cobranza</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>ID</div><div>Historia</div><div>Criterios</div><div>Protección/Errores</div><div>Analítica</div></div>
+          <div class="trow"><div>B-01</div><div>Como <b>cliente</b> quiero pagar mi factura en 3 clics.</div><div>
+            <ul>
+              <li>Resumen → Método → Confirmar (3 pasos máximo).</li>
+              <li>Validar formato de tarjeta en tiempo real.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>💳 Pago rechazado → feedback con razón del banco y sugerencias.</li>
+              <li>↩️ Deshacer en 10 min para SPEI referenciado.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>payment_initiated</li>
+              <li>payment_success</li>
+              <li>payment_failed</li>
+              <li>undo_window_opened</li>
+            </ul>
+          </div></div>
+          <div class="trow"><div>B-02</div><div>Como <b>admin</b> quiero conciliar pagos automáticamente por referencia SPEI.</div><div>
+            <ul>
+              <li>Conciliación cada 5 min; tolera duplicados.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>🔁 Idempotencia por <code>payment_id</code>.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>reconciliation_job_start</li>
+              <li>reconciliation_match</li>
+              <li>reconciliation_error</li>
+            </ul>
+          </div></div>
+          <div class="trow"><div>B-03</div><div>Como <b>cliente</b> quiero descargar CFDI y recibo.</div><div>
+            <ul>
+              <li>Disponibilidad 24/7; reintento si PAC lento.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>🧾 Foliado agotado → aviso al admin + cola de reintento.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>invoice_viewed</li>
+              <li>cfdi_downloaded</li>
+            </ul>
+          </div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="screen">
+      <div class="screen-title"><h3>Epic C · Soporte & Tickets</h3><span class="tag">Personas: Cliente | Agente | Técnico</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>ID</div><div>Historia</div><div>Criterios</div><div>Protección/Errores</div><div>Analítica</div></div>
+          <div class="trow"><div>C-01</div><div>Como <b>cliente</b> quiero probar mi conexión antes de abrir ticket.</div><div>
+            <ul>
+              <li>Speedtest embebido; si <b>&lt; x Mbps</b> sugiere reinicio de módem.</li>
+              <li>Si persiste &lt; x, crea ticket prellenado.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>🌐 Offline → modo diagnóstico local con instrucciones.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>selftest_run</li>
+              <li>selftest_fail</li>
+              <li>ticket_auto_created</li>
+            </ul>
+          </div></div>
+          <div class="trow"><div>C-02</div><div>Como <b>agente</b> quiero ver <b>historial</b> y <b>topología</b> del cliente.</div><div>
+            <ul>
+              <li>Timeline de incidentes, potencias, OLT/puerto, CPE.</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>🔒 Acceso según rol; oculta datos sensibles (PCI/PII).</li>
+            </ul>
+          </div><div>
+            <ul>
+              <li>agent_case_opened</li>
+              <li>agent_topology_viewed</li>
+            </ul>
+          </div></div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="section" id="variantes-estado">
+    <h2>🎛️ Estados, vacíos, esqueletos, toasts y modales</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Patrones de estado</h3><span class="tag">Aplican a todas las vistas</span></div>
+      <div class="mock">
+        <div class="grid3 mb">
+          <div class="tile"></div>
+          <div class="tile"></div>
+          <div class="tile"></div>
+        </div>
+        <div class="ann"><b>Esqueletos:</b> placeholders en tablas/cards; <b>Vacíos:</b> CTA claros ("Crear factura", "Levantar ticket"); <b>Toasts:</b> exitos no bloqueantes; <b>Modales:</b> sólo para confirmaciones destructivas.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="accesibilidad">
+    <h2>♿ Accesibilidad & Teclado</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Reglas</h3><span class="tag">WCAG 2.2 AA</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li>Contraste ≥ 4.5:1 en texto normal; foco visible en componentes.</li>
+          <li>Navegación por teclado (Tab, Shift+Tab, Enter, Space, Esc).</li>
+          <li>Anunciar cambios relevantes con <code>aria-live="polite"</code>.</li>
+          <li>Etiquetas y <code>aria-describedby</code> en inputs; errores junto al campo.</li>
+        </ul>
+        <div class="ann">Todos los formularios incluyen <b>ayuda contextual</b> y ejemplos (RFC, CP, número de cliente) y <b>máscaras</b> no obstructivas.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="nfr">
+    <h2>🧪 NFRs, KPIs y plan de verificación</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Métricas de producto</h3><span class="tag">ISO/IEC 25010</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Característica</div><div>Métrica</div><div>Objetivo</div><div>Prueba</div><div>Observaciones</div></div>
+          <div class="trow"><div>Usabilidad (Aprendizaje)</div><div>Tiempo al primer pago</div><div><b>&lt; 45 s</b></div><div>Test moderado (5 usuarios)</div><div>Iterar microcopy si ≥ 60 s</div></div>
+          <div class="trow"><div>Confiabilidad</div><div>Éxito de activación</div><div><b>&gt; 99.5%</b></div><div>Chaos testing API OSS/BSS</div><div>Idempotencia de jobs</div></div>
+          <div class="trow"><div>Eficiencia</div><div>TTX ticket → en ruta</div><div><b>&lt; 15 min</b></div><div>Datos reales con GPS simulado</div><div>Optimizar clustering de rutas</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="rastreo-analitica">
+    <h2>📈 Plan de tracking (evento → propiedades)</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Esquema</h3><span class="tag">GA4 / Segment</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Evento</div><div>Propiedades</div><div>Disparador</div><div>Privacidad</div><div>Destino</div></div>
+          <div class="trow"><div>payment_success</div><div>{ amount, method, invoice_id }</div><div>Webhook PSP OK</div><div>Sin PII de tarjeta</div><div>GA4, BigQuery</div></div>
+          <div class="trow"><div>ticket_auto_created</div><div>{ type, signal_dbm, latency_ms }</div><div>Selftest &lt; umbral</div><div>Anonimizado</div><div>GA4</div></div>
+          <div class="trow"><div>activation_rollback</div><div>{ reason, step }</div><div>Idempotencia fallida</div><div>Interno</div><div>Logs + PagerDuty</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="experimentos">
+    <h2>🧪 Experimentos & variantes (A/B)</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Hipótesis clave</h3><span class="tag">Pago · Soporte · Onboarding</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li><b>H1:</b> Botón "Pagar" sticky en Home reduce TTFP 20%.</li>
+          <li><b>H2:</b> Pre-selftest en Soporte reduce tickets en 15%.</li>
+          <li><b>H3:</b> Checklist visual reduce tiempo de cierre 10%.</li>
+        </ul>
+        <div class="ann">Cada experimento tiene <b>métrica objetivo</b>, ventana, segmentación y regla de paro (p-valor &lt; 0.05).</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="mobile-responsive">
+    <h2>📱 Variantes Responsive (PWA)</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Breakpoints</h3><span class="tag">sm / md / lg</span></div>
+      <div class="mock">
+        <div class="grid3">
+          <div class="card"><div class="card-title"></div><div class="card-content"></div><div class="card-content"></div></div>
+          <div class="card"><div class="card-title"></div><div class="card-content"></div><div class="card-content"></div></div>
+          <div class="card"><div class="card-title"></div><div class="card-content"></div><div class="card-content"></div></div>
+        </div>
+        <div class="ann">Listas en <b>cards</b> en móvil, tablas en desktop. Acciones prioritarias sticky en footer (pagar, ticket, llamar).</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="mapa-datos">
+    <h2>🗺️ Mapa de datos UI ←→ Backend</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Contratos mínimos</h3><span class="tag">DTOs esenciales</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Entidad</div><div>Campos mínimos</div><div>Notas</div><div>Errores</div><div>Versionado</div></div>
+          <div class="trow"><div>Customer</div><div>id, name, rfc, address, status</div><div>PII cifrada en backend</div><div>409 si RFC duplicado</div><div>v1</div></div>
+          <div class="trow"><div>Invoice</div><div>id, period, amount, status</div><div>status ∈ {draft, stamped, paid}</div><div>422 si timbrado inválido</div><div>v1</div></div>
+          <div class="trow"><div>Ticket</div><div>id, type, severity, sla, state</div><div>state ∈ {new, en_ruta, on_site, done}</div><div>409 si doble cierre</div><div>v1</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="qa-testcases">
+    <h2>🔍 QA: Casos de prueba orientados a UI</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Smoke + regresión</h3><span class="tag">Cypress/Playwright</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li>Pago feliz (tarjeta válida) → recibo visible &lt; 5s.</li>
+          <li>Pago rechazado (código do_not_honor) → UI sugiere SPEI.</li>
+          <li>Instalación sin señal → crear incidente y reprogramar.</li>
+          <li>Offline PWA → cachea Home Cliente y Soporte.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FIN V3 ===================== -->
+  
+  <!-- ===================== V4: MEGA-EXPANSIÓN (más específico, con siguientes pasos y sin relleno) ===================== -->
+  
+  <!-- LEYENDAS DE SIGUIENTE PASO POR PANTALLA -->
+  <section class="section" id="leyendas-siguiente-paso">
+    <h2>🧭 Leyendas de “Siguiente paso” (guían el flujo y reducen fricción)</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Mapa de leyendas</h3><span class="tag">UX Writing · Microcopy</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Vista</div><div>Acción primaria</div><div>Siguiente paso sugerido</div><div>Microcopy</div><div>Condiciones</div></div>
+          <div class="trow"><div>Admin → Dashboard</div><div>Revisar alertas</div><div>Ir a Clientes con estado “Aviso/Falla”</div><div>“Tienes <b>3 clientes</b> con incidentes. <u>Revísalos ahora</u>.”</div><div>Se muestra si ≥ 1 incidente abierto</div></div>
+          <div class="trow"><div>Admin → Clientes</div><div>Buscar cliente</div><div>Abrir Detalle → Facturación o Soporte</div><div>“Selecciona un cliente para ver <b>facturas</b> y <b>tickets</b> recientes.”</div><div>Vacío: panel lateral con CTA</div></div>
+          <div class="trow"><div>Cliente → Home</div><div>Pagar / Abrir soporte</div><div>Ir a Pagos o Self‑test</div><div>“Tu fecha límite es <b>15 Nov</b>. <u>Paga ahora</u> o <u>prueba tu conexión</u>.”</div><div>Mostrar ambas rutas siempre; resaltar la más relevante</div></div>
+          <div class="trow"><div>Cliente → Pagos</div><div>Confirmar pago</div><div>Descargar CFDI / Regresar a Home</div><div>“Pago recibido. Descarga tu <b>CFDI</b> o vuelve al inicio.”</div><div>Toast + link persistente 24h</div></div>
+          <div class="trow"><div>Técnico → Tickets</div><div>Tomar ticket</div><div>Ver Mapa / Marcar “En ruta”</div><div>“Ticket asignado. <u>Ver ruta</u> y marca <b>en ruta</b>.”</div><div>Si GPS activo, abre mapa directo</div></div>
+          <div class="trow"><div>Técnico → Mapa</div><div>Navegar al sitio</div><div>Abrir checklist de cierre</div><div>“Al llegar, abre el <b>checklist</b> y captura evidencia.”</div><div>Checklist bloquea “Cerrar” sin evidencia</div></div>
+          <div class="trow"><div>Admin → Facturación</div><div>Timbrar lote</div><div>Conciliar y notificar</div><div>“Lote timbrado. <u>Conciliar pagos</u> y <u>enviar CFDI</u>.”</div><div>Deshabilitar timbrado si hay campos incompletos</div></div>
+          <div class="trow"><div>Reportes → KPIs</div><div>Aplicar filtros</div><div>Exportar / Guardar vista</div><div>“Filtros aplicados. <u>Exporta</u> o <u>guarda esta vista</u>.”</div><div>Persistir filtros por usuario</div></div>
+        </div>
+        <div class="ann"><b>Objetivo:</b> siempre indicar “qué sigue” con 1 CTA primaria + 1 secundaria. Reduce indecisión y mejora aprendizaje.</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ROLES Y PERMISOS (RBAC) -->
+  <section class="section" id="roles-permisos">
+    <h2>🔐 Roles, permisos y superficies visibles</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>RBAC mínimo</h3><span class="tag">Seguridad · Principio de menor privilegio</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Rol</div><div>Puede ver</div><div>Puede hacer</div><div>No puede</div><div>Notas</div></div>
+          <div class="trow"><div>Admin</div><div>Todo</div><div>CRUD global, timbrar, conciliar, editar planes</div><div>—</div><div>Acciones destructivas requieren 2FA</div></div>
+          <div class="trow"><div>Ventas</div><div>Leads, clientes (parcial)</div><div>Crear leads, agendar</div><div>Timbrar, conciliar</div><div>Acceso a PII limitado</div></div>
+          <div class="trow"><div>Soporte</div><div>Tickets, topología cliente</div><div>Abrir/cerrar tickets, macros</div><div>Ver datos de pago</div><div>PII ofuscada; auditoría activa</div></div>
+          <div class="trow"><div>Técnico</div><div>Tickets asignados, mapa</div><div>Actualizar estados, subir evidencia</div><div>Editar facturas</div><div>Modo offline permitido</div></div>
+          <div class="trow"><div>Cliente</div><div>Su cuenta</div><div>Pagar, descargar CFDI, abrir ticket</div><div>Ver otros clientes</div><div>Privacidad por diseño</div></div>
+        </div>
+        <div class="ann">Todas las acciones quedan en <b>bitácora de auditoría</b> (quién, qué, cuándo, desde dónde, antes/después).</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- SEGURIDAD, PRIVACIDAD Y CUMPLIMIENTO -->
+  <section class="section" id="seguridad-privacidad">
+    <h2>🛡️ Seguridad, privacidad y cumplimiento</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Controles UI + políticas</h3><span class="tag">PCI DSS • LFPDPPP • Minimización de datos</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li><b>PII</b> se oculta por defecto; mostrar completo requiere rol + consentimiento.</li>
+          <li><b>Tarjetas</b>: nunca se muestran completas; usar tokenización del PSP.</li>
+          <li><b>Descargas</b>: CFDI con caducidad de enlace y marca de agua.</li>
+          <li><b>Auditoría visual</b>: banner “modo auditoría” al reproducir sesiones.</li>
+        </ul>
+        <div class="ann">Mensajes de error no revelan detalles internos. Se usa <b>idioma neutro</b> y orientado a solución.</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- I18N / L10N Y ACENTOS REGIONALES -->
+  <section class="section" id="i18n">
+    <h2>🌎 Localización (i18n/l10n)</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Paquetes de idioma</h3><span class="tag">ES‑MX (default) · EN‑US</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Clave</div><div>ES‑MX</div><div>EN‑US</div><div>Notas</div><div>Dueño</div></div>
+          <div class="trow"><div>cta.pay</div><div>Pagar</div><div>Pay</div><div>Botón primario en Home</div><div>UX Writing</div></div>
+          <div class="trow"><div>toast.payment_ok</div><div>Pago recibido</div><div>Payment received</div><div>Duración 4s</div><div>Frontend</div></div>
+          <div class="trow"><div>error.timeout</div><div>Tiempo de espera agotado</div><div>Request timed out</div><div>Ofrecer reintento</div><div>Plataforma</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- PLANTILLAS TRANSACCIONALES (EMAIL/SMS) -->
+  <section class="section" id="plantillas-comm">
+    <h2>✉️ Plantillas transaccionales (Email/SMS)</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Esqueleto de contenido</h3><span class="tag">Notificaciones críticas</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Evento</div><div>Canal</div><div>Asunto / Título</div><div>Contenido mínimo</div><div>CTA</div></div>
+          <div class="trow"><div>payment_success</div><div>Email + SMS</div><div>Pago recibido</div><div>Monto, folio, periodo, link CFDI</div><div>Descargar CFDI</div></div>
+          <div class="trow"><div>appointment_booked</div><div>Email</div><div>Visita programada</div><div>Fecha, ventana, nombre del técnico, mapa</div><div>Confirmar/Reprogramar</div></div>
+          <div class="trow"><div>ticket_auto_created</div><div>SMS</div><div>Ticket creado</div><div>Número, resumen, ETA</div><div>Ver estado</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ESTADOS FINITOS Y REGLAS DE TRANSICIÓN -->
+  <section class="section" id="fsm">
+    <h2>🔄 Máquinas de estado (FSM) de entidades clave</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Ticket.FSM</h3><span class="tag">new → en_ruta → on_site → done</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Estado actual</div><div>Evento</div><div>Nuevo estado</div><div>Guardas</div><div>Acciones</div></div>
+          <div class="trow"><div>new</div><div>assign</div><div>en_ruta</div><div>tech disponible</div><div>timestamp.en_ruta</div></div>
+          <div class="trow"><div>en_ruta</div><div>arrive</div><div>on_site</div><div>GPS ±300m</div><div>timestamp.on_site</div></div>
+          <div class="trow"><div>on_site</div><div>close_ok</div><div>done</div><div>checklist=100%</div><div>carga evidencia</div></div>
+        </div>
+        <div class="ann">Transiciones inválidas bloqueadas con mensajes claros y acciones sugeridas.</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- OBSERVABILIDAD Y ALERTAS -->
+  <section class="section" id="observabilidad">
+    <h2>📡 Observabilidad y salud del producto</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Panel de SRE/Producto</h3><span class="tag">SLIs/SLOs</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li><b>Disponibilidad UI</b> (apdex) por módulo.</li>
+          <li><b>Éxito</b> en activaciones, timbrado, pagos.</li>
+          <li><b>Latencia</b> p95 por flujo crítico (pago, activación).</li>
+          <li><b>Errores</b> clasificados (usuario, dependencia, red).</li>
+        </ul>
+        <div class="ann">Alertas con umbrales y on‑call definido. Modo “degradado” para mantener funciones esenciales.</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- PERFORMANCE BUDGETS -->
+  <section class="section" id="performance">
+    <h2>⚡ Presupuestos de desempeño (Front)</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>LCP/INP/TBT</h3><span class="tag">Web Vitals</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Vital</div><div>Objetivo</div><div>Métrica proxy</div><div>Estrategias</div><div>Verificación</div></div>
+          <div class="trow"><div>LCP</div><div>&lt; 2.5s</div><div>Peso hero &lt; 50KB</div><div>Preload fuentes; imágenes responsivas</div><div>Lighthouse</div></div>
+          <div class="trow"><div>INP</div><div>&lt; 200ms</div><div>Handlers livianos</div><div>Defer no‑crítico</div><div>RUM</div></div>
+          <div class="trow"><div>TBT</div><div>&lt; 200ms</div><div>Chunks</div><div>Code‑split por módulo</div><div>CI Budgets</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- OFFLINE/PWA -->
+  <section class="section" id="offline">
+    <h2>📴 Modo offline y tolerancia a fallas</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Qué debe seguir funcionando</h3><span class="tag">Service Worker</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li>Home Cliente y Soporte (self‑test) cacheados.</li>
+          <li>Tickets del técnico con <b>cola de sync</b> (optimistic UI).</li>
+          <li>Banners de estado: <i>Online</i>, <i>Conectividad intermitente</i>, <i>Offline</i>.</li>
+        </ul>
+        <div class="ann">Las colas muestran conteo de operaciones pendientes con opción de “reenviar ahora”.</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- IMPRESIÓN Y PDF -->
+  <section class="section" id="print">
+    <h2>🖨️ Versiones imprimibles</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Qué se imprime</h3><span class="tag">Comprobantes y reportes</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li>Recibo de pago y CFDI (A4, márgenes 12mm, QR).</li>
+          <li>Orden de servicio con checklist y fotos miniatura.</li>
+          <li>Reportes con pie: fecha, filtros usados, responsable.</li>
+        </ul>
+        <div class="ann">Se ocultan elementos interactivos y fondos; tipografía segura para impresión.</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ROADMAP ENTREGABLES -->
+  <section class="section" id="roadmap">
+    <h2>🗓️ Roadmap de entrega del artefacto</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Hitos</h3><span class="tag">Semanas 1–6</span></div>
+      <div class="mock">
+        <div class="table">
+          <div class="trow head"><div>Semana</div><div>Entregable</div><div>Definición de hecho</div><div>Riesgo</div><div>Mitigación</div></div>
+          <div class="trow"><div>1</div><div>Wireframes y flujos (este doc)</div><div>Revisión con partes interesadas</div><div>Alcance</div><div>Timebox + priorizar épicas</div></div>
+          <div class="trow"><div>2</div><div>UI Kit y microcopy</div><div>Tokens, estados, validaciones</div><div>Desalineación</div><div>Design review semanal</div></div>
+          <div class="trow"><div>3–4</div><div>Prototipo alta fidelidad</div><div>Click‑through + tests de usabilidad</div><div>Complejidad</div><div>Iteraciones cortas</div></div>
+          <div class="trow"><div>5–6</div><div>Handoff a dev + QA</div><div>Casos E2E + scripts</div><div>Regresión</div><div>CI con budgets</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- DARK MODE / TEMAS -->
+  <section class="section" id="tema">
+    <h2>🌙 Temas (light/dark) y accesibilidad de color</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Reglas de tema</h3><span class="tag">Tokens de color</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li>Colores semánticos (ok/warn/err) con contraste AA.</li>
+          <li>Modo alto contraste para baja visión.</li>
+          <li>Persistencia por usuario/dispositivo.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  
+  <!-- LIMPIEZA DE RELLENO / GUIAS DE CONTENIDO -->
+  <section class="section" id="limpieza">
+    <h2>🧹 Limpieza de UI y guías de contenido</h2>
+    <div class="screen">
+      <div class="screen-title"><h3>Qué se evitó</h3><span class="tag">Sin elementos innecesarios</span></div>
+      <div class="mock">
+        <ul class="intro-list">
+          <li>Sin íconos decorativos sin función.</li>
+          <li>Tablas con columnas mínimas; overflow en panel lateral.</li>
+          <li>Un call‑to‑action primario por vista; secundarios contextuales.</li>
+        </ul>
+        <div class="ann">Todo texto tiene propósito: instruye, confirma o corrige.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FIN V4 ===================== -->
+</body>
+</html>

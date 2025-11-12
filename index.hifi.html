@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOMY ISP · Demo Alta Fidelidad</title>
+  <style>
+    :root { --brand-primary:#3B82F6; --brand-contrast:#0B1220; --surface:#FFFFFF; --surface-dark:#0B1220; --text:#111827; --muted:#6B7280; --border:#E5E7EB; --success:#10B981; --warning:#F59E0B; --danger:#EF4444; --info:#06B6D4; --success-bg: rgba(16,185,129,.1); --warning-bg:rgba(245,158,11,.1); --danger-bg: rgba(239,68,68,.1); --info-bg:rgba(6,182,212,.1); --radius:12px; --shadow:0 8px 24px rgba(2,6,23,.08); --focus: 0 0 0 3px rgba(59,130,246,.35);} .theme-dark { --surface:#0B1220; --text:#E5E7EB; --muted:#9CA3AF; --border:#334155; } .theme-contrast { --focus: 0 0 0 3px #000; }
+    *{box-sizing:border-box} html,body{height:100%} body{margin:0;background:var(--surface);color:var(--text);font-family:Inter, "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial;}
+    .topbar{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:10px 16px} .brand{font-weight:800;letter-spacing:.2px}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 52px)} .sidebar{border-right:1px solid var(--border);padding:16px}
+    .nav a{display:flex;gap:10px;padding:8px 10px;border-radius:10px;color:inherit;text-decoration:none} .nav a:hover,.nav a[aria-current="page"]{background:#f1f5f9}
+    .content{padding:16px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid transparent;cursor:pointer;font-weight:600;transition:transform .08s ease,filter .12s ease,background .2s ease} .btn:hover{filter:brightness(.95);transform:scale(1.02)} .btn:active{transform:scale(.98)} .btn:focus-visible{outline:none;box-shadow:var(--focus)} .btn-primary{background:var(--brand-primary);color:#fff} .btn-secondary{background:#e5ecff;color:#0b1220;border-color:var(--border)} .btn-danger{background:var(--danger);color:#fff} .btn-ghost{background:transparent;border-color:var(--border);color:inherit} .btn-sm{padding:6px 10px;font-size:12px;border-radius:8px}
+    @keyframes spin{to{transform:rotate(360deg)}} .btn.is-loading{position:relative;color:transparent!important;pointer-events:none} .btn.is-loading::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.8);border-top-color:transparent;animation:spin 1s linear infinite}
+    .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700} .badge-success{background:var(--success-bg);color:#065F46} .badge-warning{background:var(--warning-bg);color:#92400E} .badge-info{background:var(--info-bg);color:#155E75} .badge-danger{background:var(--danger-bg);color:#991B1B}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)} .card-interactive{transition:transform .2s ease, box-shadow .2s ease;cursor:pointer} .card-interactive:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(2,6,23,.12)}
+    table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:12px;overflow:hidden} thead th{text-align:left;padding:12px;background:#f8fafc;color:#0f172a;border-bottom:1px solid var(--border);font-size:14px} tbody td{padding:12px;border-bottom:1px solid var(--border);font-size:14px}
+    .form-group{margin-bottom:12px} .form-label{display:block;font-weight:600;margin-bottom:6px} .form-input,.form-select,.form-textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff} .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;box-shadow:var(--focus);border-color:var(--brand-primary)} .form-textarea{min-height:120px} .error-message{margin-top:6px;font-size:12px;color:#991B1B}
+    @keyframes slide-down{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}} @keyframes fade-out{to{opacity:0}} .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:1000;padding:12px 16px;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);background:var(--surface);animation:slide-down 180ms ease-out} .toast[aria-live]{min-width:280px} .toast.success{background:var(--success-bg)} .toast.error{background:var(--danger-bg)} .toast .actions{margin-left:12px}
+    .banner{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);margin:8px 0} .banner.blocking{background:var(--warning-bg)}
+    @keyframes loading{0%{background-position:200% 0}100%{background-position:-200% 0}} .skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:loading 1.2s infinite;border-radius:10px} .skeleton-line{height:12px;margin:8px 0}
+    .empty{border:1px dashed var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--muted)} .hidden{display:none} .w-100{width:100%} .mt-2{margin-top:8px} .mt-3{margin-top:12px} .mt-4{margin-top:16px} .mt-6{margin-top:24px}
+  </style>
+</head>
+<body class="theme-light">
+  <header class="topbar" role="banner">
+    <div class="left"><span class="brand">DOMY ISP</span></div>
+    <div class="right" style="display:flex;gap:8px;align-items:center">
+      <span id="role-chip" class="badge badge-info" aria-live="polite">Invitado</span>
+      <button id="btn-lang" class="btn btn-ghost btn-sm" aria-label="Cambiar idioma">ES</button>
+      <button id="btn-theme" class="btn btn-ghost btn-sm" aria-label="Cambiar tema">☾</button>
+      <span id="net-banner" class="badge badge-warning hidden">Offline</span>
+      <button id="btn-sync" class="btn btn-secondary btn-sm hidden">Pendientes: <span id="sync-count">0</span></button>
+      <button class="btn btn-danger btn-sm" id="btn-logout">Salir</button>
+    </div>
+  </header>
+  <div class="app">
+    <aside class="sidebar" aria-label="Navegación">
+      <nav class="nav" id="nav-links">
+        <div class="muted mt-2" style="font-size:12px">General</div>
+        <a href="#" data-link="login" data-roles="*">Selector de rol</a>
+        <div class="muted mt-2" style="font-size:12px">Admin</div>
+        <a href="#" data-link="admin-dashboard" data-roles="dueño,admin">Dashboard</a>
+        <a href="#" data-link="admin-clientes" data-roles="dueño,admin,cobranza">Clientes</a>
+        <a href="#" data-link="admin-billing" data-roles="dueño,admin">Facturación</a>
+        <a href="#" data-link="admin-reports" data-roles="dueño,admin">Reportes</a>
+        <div class="muted mt-2" style="font-size:12px">Operación</div>
+        <a href="#" data-link="jefe-tickets" data-roles="jefe-tecnico">Bandeja/Kanban</a>
+        <a href="#" data-link="tech-tickets" data-roles="tecnico">Mis tickets</a>
+        <div class="muted mt-2" style="font-size:12px">Cliente</div>
+        <a href="#" data-link="client-home" data-roles="cliente">Inicio</a>
+      </nav>
+    </aside>
+    <main class="content">
+      <section class="page is-active" id="page-login-chooser">
+        <div class="card">
+          <h2>¿Quién eres hoy?</h2>
+          <div class="mt-3" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-width:520px">
+            <button class="btn btn-secondary" onclick="login('dueño')">Dueño/Admin</button>
+            <button class="btn btn-secondary" onclick="login('cobranza')">Cobranza</button>
+            <button class="btn btn-secondary" onclick="login('jefe-tecnico')">Jefe de Técnicos</button>
+            <button class="btn btn-secondary" onclick="login('tecnico')">Técnico (Sergio)</button>
+            <button class="btn btn-secondary" onclick="login('cliente')">Cliente (Ana)</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-admin-dashboard" data-roles="dueño,admin">
+        <div class="card skeleton" id="dash-skeleton" style="height:120px"></div>
+        <div id="dash-real" class="hidden">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+            <div class="card"><div class="muted">Clientes</div><h2 id="kpi-clientes">—</h2></div>
+            <div class="card"><div class="muted">Tickets abiertos</div><h2 id="kpi-tickets">—</h2></div>
+            <div class="card"><div class="muted">ARPU</div><h2 id="kpi-arpu">—</h2></div>
+            <div class="card"><div class="muted">SLA cumplido</div><h2 id="kpi-sla">—</h2></div>
+          </div>
+          <div class="card mt-3">
+            <h3>Tickets recientes</h3>
+            <table class="mt-2"><thead><tr><th>ID</th><th>Cliente</th><th>Problema</th><th>Estado</th><th>Técnico</th></tr></thead><tbody id="tabla-tickets-recientes"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-admin-clientes" data-roles="dueño,admin,cobranza">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center"><h3>Clientes</h3><div><button id="btn-new-client" class="btn btn-primary">Crear cliente</button></div></div>
+          <div id="clientes-loader" class="skeleton mt-3" style="height:60px"></div>
+          <div id="clientes-empty" class="empty mt-3 hidden">Aún no hay clientes — <button class="btn btn-primary btn-sm" id="empty-create">Crear cliente</button></div>
+          <div id="clientes-table" class="mt-3 hidden"><table><thead><tr><th>ID</th><th>Nombre</th><th>Plan</th><th>Estado</th><th>Saldo</th></tr></thead><tbody id="tabla-clientes"></tbody></table></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-admin-billing" data-roles="dueño,admin"><div class="card"><h3>Facturación</h3><p class="muted">Borradores, timbrado y conciliación (simulado)</p></div></section>
+      <section class="page" id="page-admin-reports" data-roles="dueño,admin"><div class="card"><h3>Reportes</h3><p class="muted">Filtros persistentes y export (simulado)</p><button class="btn btn-secondary mt-2" id="btn-export-report">Exportar CSV</button></div></section>
+
+      <section class="page" id="page-jefe-tickets" data-roles="jefe-tecnico">
+        <div class="card"><h3>Bandeja de tickets</h3>
+          <div class="mt-2" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <div><h4>Nuevo</h4><div id="col-nuevo" class="space"></div></div>
+            <div><h4>Asignado</h4><div id="col-asignado" class="space"></div></div>
+            <div><h4>Resuelto</h4><div id="col-resuelto" class="space"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-tech-tickets" data-roles="tecnico">
+        <div class="card"><div id="conn-banner" class="banner hidden" role="status"></div><h3>Mis Tickets (Sergio)</h3><div id="lista-tickets-tecnico" class="mt-2"></div></div>
+      </section>
+
+      <section class="page" id="page-tech-detalle" data-roles="tecnico">
+        <div class="card"><div id="block-banner" class="banner blocking hidden" role="alert">Checklist incompleto. <button id="btn-ir-faltante" class="btn btn-ghost btn-sm">Ir al punto faltante</button></div><h3>Ticket #1055</h3>
+          <div class="mt-2">Checklist</div>
+          <div class="mt-2"><label><input type="checkbox" id="chk-onu"> ONU instalada</label><br/><label><input type="checkbox" id="chk-pot"> Potencia OK</label><br/><label><input type="checkbox" id="chk-speed"> Speedtest adjunto</label></div>
+          <div class="form-group mt-3"><label class="form-label" for="notas-tecnico">Notas</label><textarea id="notas-tecnico" class="form-textarea"></textarea><div id="notas-error" class="error-message hidden">Mínimo 10 caracteres.</div></div>
+          <button id="btn-resolver-ticket" class="btn btn-primary w-100" disabled>Completar Ticket</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-client-home" data-roles="cliente">
+        <div class="card"><h3>Hola, Ana</h3><div class="mt-2">Saldo: <strong id="saldo-cliente">$0.00</strong> <span id="badge-pagado" class="badge badge-success hidden">Pagado</span></div><div class="mt-3"><button id="btn-ir-pago" class="btn btn-primary hidden">Pagar</button> <button id="btn-ir-reporte" class="btn btn-danger">Reportar falla</button></div></div>
+        <div class="card mt-3"><h3>Mis tickets</h3><div id="lista-tickets-cliente" class="mt-2"></div></div>
+      </section>
+
+      <section class="page" id="page-client-pago" data-roles="cliente">
+        <div class="card"><h3>Pago (3 pasos)</h3><div id="stepper" class="mt-2">Paso <span id="step-no">1</span> de 3</div>
+          <div id="step-1" class="mt-2"><label><input type="radio" name="paym" value="card" checked> Tarjeta</label><label class="mt-2"><input type="radio" name="paym" value="spei"> SPEI</label><label class="mt-2"><input type="radio" name="paym" value="oxxo"> OXXO</label><button id="to-step-2" class="btn btn-primary mt-3">Continuar</button></div>
+          <div id="step-2" class="mt-2 hidden"><div id="card-fields"><div class="form-group"><label class="form-label">Tarjeta</label><input id="card-pan" class="form-input" placeholder="4111 1111 1111 1111"/></div><div class="form-group"><label class="form-label">Exp</label><input id="card-exp" class="form-input" placeholder="MM/YY"/></div><div class="form-group"><label class="form-label">CSC</label><input id="card-csc" class="form-input" placeholder="123"/></div></div><div id="spei-fields" class="hidden"><p class="muted">Se generará CLABE y podrás deshacer por 10 min.</p></div><button id="to-step-3" class="btn btn-primary mt-3">Revisar</button></div>
+          <div id="step-3" class="mt-2 hidden"><p>Saldo a pagar: <strong id="pago-saldo">$0.00</strong></p><button id="btn-confirmar-pago" class="btn btn-primary">Confirmar</button><button class="btn btn-ghost" onclick="navigateTo('page-client-home')">Cancelar</button></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-client-reporte" data-roles="cliente"><div class="card"><h3>Reportar falla</h3><div class="form-group"><label class="form-label">Tipo</label><select id="reporte-tipo" class="form-select"><option>Sin servicio</option><option>Internet lento</option><option>Intermitencias</option></select></div><div class="form-group"><label class="form-label">Descripción</label><textarea id="reporte-desc" class="form-textarea"></textarea></div><button id="btn-enviar-reporte" class="btn btn-danger w-100">Enviar Reporte</button></div></section>
+
+      <section class="page" id="page-audit" data-roles="dueño,admin"><div class="card"><h3>Bitácora de auditoría</h3><div id="audit-list" class="mt-2"></div></div></section>
+
+      <aside id="sheet-new-client" class="hidden" aria-hidden="true"><div class="card" style="position:fixed;right:16px;top:68px;max-width:420px;width:calc(100% - 32px)"><h3>Nuevo cliente</h3><div class="form-group"><label class="form-label">Nombre</label><input id="alta-nombre" class="form-input"/></div><div class="form-group"><label class="form-label">Plan</label><select id="alta-plan" class="form-select"><option>50MB</option><option>100MB</option><option>200MB</option></select></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-ghost" onclick="hideSheet('sheet-new-client')">Cerrar</button><button id="btn-guardar-cliente" class="btn btn-primary">Guardar</button></div></div></aside>
+      <aside id="sheet-pago-ok" class="hidden" aria-live="polite"><div class="card" style="position:fixed;right:16px;top:68px;max-width:420px;width:calc(100% - 32px)"><h3>Pago recibido</h3><p class="muted">Descargar CFDI o volver a inicio</p><div style="display:flex;gap:8px;justify-content:flex-end"><button id="btn-descargar-cfdi" class="btn btn-secondary">Descargar CFDI</button><button class="btn btn-primary" onclick="navigateTo('page-client-home');hideSheet('sheet-pago-ok')">Volver</button></div></div></aside>
+    </main>
+  </div>
+
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    const I18N = { lang: 'es-MX', dict: {} }; async function loadI18n(lang){ try{ const res = await fetch(`i18n/${lang}.json`); I18N.dict = await res.json(); I18N.lang = lang; }catch{} } const t = (key, fb) => I18N.dict[key] || fb || key;
+    const Analytics = { events: [], track:(ev,props={})=>{ const e={ev,ts:new Date().toISOString(),props}; Analytics.events.push(e); console.log('[track]', e); } };
+    const Roles = { current: null };
+    function applyRBAC(){ const role = Roles.current; document.getElementById('role-chip').textContent = role?role:'Invitado'; document.querySelectorAll('[data-roles]').forEach(el=>{ const allowed = el.getAttribute('data-roles').split(','); el.classList.toggle('hidden', !(allowed.includes(role) || allowed.includes('*')) ); }); document.querySelectorAll('.nav a[data-link]').forEach(a=>{ const allowed = (a.getAttribute('data-roles')||'').split(','); const show = allowed.includes('*') || allowed.includes(role); a.style.display = show? 'flex':'none'; a.onclick = (e)=>{ e.preventDefault(); routeTo(a.getAttribute('data-link')); }; }); }
+    const Offline = { online:true, queue:[], add(action){ Offline.queue.push(action); updateSyncBadge(); }, flush(){ const q=[...Offline.queue]; Offline.queue.length=0; updateSyncBadge(); q.forEach(fn=>fn()); showToast(t('toast.sync_ok','Sincronización completada'),'success'); } };
+    function updateSyncBadge(){ const btn = document.getElementById('btn-sync'); const count = document.getElementById('sync-count'); const has = Offline.queue.length>0; btn.classList.toggle('hidden', !has); if(count) count.textContent = String(Offline.queue.length); }
+    function routeTo(page){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('is-active')); const id = `page-${page}`; const el = document.getElementById(id); if(el){ el.classList.add('is-active'); } }
+    function navigateTo(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('is-active')); const el = document.getElementById(id); if(el){ el.classList.add('is-active'); window.scrollTo(0,0); } }
+    function showToast(message, type='success', action){ const c = document.getElementById('toast-container'); const tEl = document.createElement('div'); tEl.className = `toast ${type}`; tEl.setAttribute('role','status'); tEl.setAttribute('aria-live','polite'); tEl.innerHTML = `<span>${message}</span>`; if(action){ const a = document.createElement('button'); a.className='btn btn-ghost btn-sm actions'; a.textContent = action.label; a.onclick = action.onClick; tEl.appendChild(a);} c.appendChild(tEl); setTimeout(()=>{ tEl.classList.add('fade'); tEl.style.animation = 'fade-out 420ms forwards'; }, 2000); setTimeout(()=>tEl.remove(), 2500); }
+    function showSheet(id){ document.getElementById(id).classList.remove('hidden'); } function hideSheet(id){ document.getElementById(id).classList.add('hidden'); }
+    const AppState = { loggedInUser: null, tickets: { '1054': { id:'1054', cliente:'Ana García', problema:'Sin servicio', estado:'Nuevo', tecnico:null }, '1055': { id:'1055', cliente:'Carlos Ruiz', problema:'Internet lento', estado:'Asignado', tecnico:'Sergio' } }, clientes: { '1204': { id:'1204', nombre:'Ana García', plan:'50MB', estado:'Activo', saldo:350.00 }, '1205': { id:'1205', nombre:'Carlos Ruiz', plan:'50MB', estado:'Activo', saldo:0.00 } }, audit: [] };
+    function audit(action, before, after){ AppState.audit.push({ who:Roles.current, when:new Date().toISOString(), action, before, after }); }
+    function login(role){ Roles.current = role; AppState.loggedInUser = role; applyRBAC(); document.querySelectorAll('.page').forEach(p=>p.classList.remove('is-active')); if(role==='dueño'||role==='admin'){ document.getElementById('page-admin-dashboard').classList.add('is-active'); renderDashboard(); } if(role==='cobranza'){ document.getElementById('page-admin-clientes').classList.add('is-active'); renderClientes(); } if(role==='jefe-tecnico'){ document.getElementById('page-jefe-tickets').classList.add('is-active'); renderKanban(); } if(role==='tecnico'){ document.getElementById('page-tech-tickets').classList.add('is-active'); renderTechTickets(); } if(role==='cliente'){ document.getElementById('page-client-home').classList.add('is-active'); renderClientHome(); } Analytics.track('login',{role}); }
+    function renderDashboard(){ document.getElementById('dash-real').classList.add('hidden'); document.getElementById('dash-skeleton').classList.remove('hidden'); setTimeout(()=>{ const numC=Object.keys(AppState.clientes).length; const open=Object.values(AppState.tickets).filter(t=>t.estado!=='Resuelto').length; document.getElementById('kpi-clientes').textContent=String(numC); document.getElementById('kpi-tickets').textContent=String(open); document.getElementById('kpi-arpu').textContent='$299.00'; document.getElementById('kpi-sla').textContent='98%'; const tb=document.getElementById('tabla-tickets-recientes'); tb.innerHTML=''; Object.values(AppState.tickets).forEach(t=>{ const tr=document.createElement('tr'); const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); tr.innerHTML=`<td>#${t.id}</td><td>${t.cliente}</td><td>${t.problema}</td><td><span class="badge ${badge}">${t.estado}</span></td><td>${t.tecnico||'-'}</td>`; tb.appendChild(tr); }); document.getElementById('dash-skeleton').classList.add('hidden'); document.getElementById('dash-real').classList.remove('hidden'); }, 800); }
+    function renderClientes(){ const loader = document.getElementById('clientes-loader'); const tableWrap = document.getElementById('clientes-table'); const empty = document.getElementById('clientes-empty'); loader.classList.remove('hidden'); tableWrap.classList.add('hidden'); empty.classList.add('hidden'); setTimeout(()=>{ const has = Object.keys(AppState.clientes).length>0; loader.classList.add('hidden'); if(!has){ empty.classList.remove('hidden'); } else { tableWrap.classList.remove('hidden'); const tb = document.getElementById('tabla-clientes'); tb.innerHTML=''; Object.values(AppState.clientes).forEach(c=>{ const tr = document.createElement('tr'); tr.innerHTML = `<td>${c.id}</td><td>${c.nombre}</td><td>${c.plan}</td><td>${c.estado}</td><td>$${c.saldo.toFixed(2)}</td>`; tb.appendChild(tr); }); } }, 500); }
+    function renderKanban(){ const nuevo = document.getElementById('col-nuevo'); const asig = document.getElementById('col-asignado'); const res = document.getElementById('col-resuelto'); [nuevo,asig,res].forEach(c=>c.innerHTML=''); Object.values(AppState.tickets).forEach(t=>{ const card=document.createElement('div'); const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); card.className='card card-interactive mt-2'; card.innerHTML=`<div><strong>#${t.id}</strong> · ${t.cliente} <span class="badge ${badge}" style="margin-left:6px">${t.estado}</span></div><div class="muted">${t.problema}</div>`; if(t.estado==='Nuevo'){ const btn=document.createElement('button'); btn.className='btn btn-secondary btn-sm mt-2'; btn.textContent='Asignar'; btn.onclick = ()=>{ const before = JSON.parse(JSON.stringify(t)); t.estado='Asignado'; t.tecnico='Sergio'; renderKanban(); audit('ticket_assigned', before, t); Analytics.track('assignment_recommendation_viewed',{ticket:t.id}); showToast(`Ticket asignado a ${t.tecnico}`,'success',{label:'Ver ruta', onClick:()=>alert('Ruta simulada a domicilio del cliente')}); }; card.appendChild(btn); nuevo.appendChild(card); } else if(t.estado==='Asignado'){ asig.appendChild(card); } else { res.appendChild(card); } }); }
+    function renderTechTickets(){ const cont = document.getElementById('lista-tickets-tecnico'); cont.innerHTML=''; const assigned = Object.values(AppState.tickets).filter(t=>t.tecnico==='Sergio'); if(assigned.length===0){ cont.innerHTML='<div class="empty">Sin tickets asignados.</div>'; return; } assigned.forEach(t=>{ const el=document.createElement('div'); const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); el.className='card card-interactive mt-2'; el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Ticket #${t.id}</strong> <span class="badge ${badge}">${t.estado}</span><div class="muted">${t.cliente} — ${t.problema}</div></div><div>›</div></div>`; el.onclick=()=>{ navigateTo('page-tech-detalle'); } ; cont.appendChild(el); }); }
+    function renderClientHome(){ const ana=AppState.clientes['1204']; const saldoEl=document.getElementById('saldo-cliente'); const pagarBtn=document.getElementById('btn-ir-pago'); const pagadoBadge=document.getElementById('badge-pagado'); saldoEl.textContent = `$${ana.saldo.toFixed(2)}`; document.getElementById('pago-saldo').textContent = `$${ana.saldo.toFixed(2)}`; if(ana.saldo>0){ pagarBtn.classList.remove('hidden'); pagadoBadge.classList.add('hidden'); } else { pagarBtn.classList.add('hidden'); pagadoBadge.classList.remove('hidden'); } const lista=document.getElementById('lista-tickets-cliente'); lista.innerHTML=''; Object.values(AppState.tickets).filter(t=>t.cliente==='Ana García').forEach(t=>{ const badge=t.estado==='Resuelto'?'badge-success':(t.estado==='Asignado'?'badge-info':'badge-warning'); const div=document.createElement('div'); div.innerHTML = `<strong>#${t.id}</strong> · ${t.problema} · <span class="badge ${badge}">${t.estado}</span>`; lista.appendChild(div); }); }
+    function paymentFlowInit(){ const step1=document.getElementById('step-1'), step2=document.getElementById('step-2'), step3=document.getElementById('step-3'); const stepNo=document.getElementById('step-no'); const to2=document.getElementById('to-step-2'), to3=document.getElementById('to-step-3'), confirm=document.getElementById('btn-confirmar-pago'); const cardFields=document.getElementById('card-fields'); const speiFields=document.getElementById('spei-fields'); function show(n){ step1.classList.toggle('hidden', n!==1); step2.classList.toggle('hidden', n!==2); step3.classList.toggle('hidden', n!==3); stepNo.textContent=String(n); } to2.onclick=()=>{ const method = document.querySelector('input[name="paym"]:checked').value; cardFields.classList.toggle('hidden', method!=='card'); speiFields.classList.toggle('hidden', method!=='spei'); show(2); }; to3.onclick=()=>{ const method = document.querySelector('input[name="paym"]:checked').value; if(method==='card'){ const pan=document.getElementById('card-pan').value.replace(/\s/g,''); if(!/^\d{16}$/.test(pan)){ showToast('Tarjeta inválida','error'); Analytics.track('payment_failed',{code:'pan_invalid'}); return; } } show(3); }; confirm.onclick=()=>{ const method = document.querySelector('input[name="paym"]:checked').value; confirm.classList.add('is-loading'); confirm.disabled=true; Analytics.track('payment_initiated',{method}); setTimeout(()=>{ if(method==='card'){ AppState.clientes['1204'].saldo = 0; audit('payment_card', {saldo_before:350}, {saldo_after:0}); showSheet('sheet-pago-ok'); showToast('Pago recibido','success'); Analytics.track('payment_success',{method}); renderClientHome(); navigateTo('page-client-home'); } else if(method==='spei'){ const undo = ()=>{ AppState.clientes['1204'].saldo = 350; showToast('Pago SPEI deshecho','success'); renderClientHome(); }; AppState.clientes['1204'].saldo = 0; renderClientHome(); showSheet('sheet-pago-ok'); showToast('Pago SPEI recibido','success',{label:'Deshacer', onClick:undo}); Analytics.track('payment_success',{method, undo_window:true}); setTimeout(()=>{}, 600000); } else { showToast('Referencia OXXO generada','success'); Analytics.track('payment_success',{method}); } confirm.classList.remove('is-loading'); confirm.disabled=false; }, 1200); }; }
+    function techDetailInit(){ const req = ['chk-onu','chk-pot','chk-speed']; const btn = document.getElementById('btn-resolver-ticket'); const banner = document.getElementById('block-banner'); const notas = document.getElementById('notas-tecnico'); const err = document.getElementById('notas-error'); function validate(){ const checks = req.map(id=>document.getElementById(id).checked); const okNotes = (notas.value||'').trim().length>10; const ok = checks.every(Boolean) && okNotes; btn.disabled = !ok; banner.classList.toggle('hidden', checks.every(Boolean)); err.classList.toggle('hidden', okNotes); } req.forEach(id=>document.getElementById(id).addEventListener('change', validate)); notas.addEventListener('input', validate); document.getElementById('btn-ir-faltante').onclick = ()=>{ const first = req.find(id=>!document.getElementById(id).checked); document.getElementById(first).focus(); }; btn.onclick=()=>{ btn.classList.add('is-loading'); setTimeout(()=>{ AppState.tickets['1055'].estado='Resuelto'; btn.classList.remove('is-loading'); showToast('Ticket #1055 resuelto','success'); renderTechTickets(); navigateTo('page-tech-tickets'); }, 1200); }; }
+    document.addEventListener('DOMContentLoaded', async ()=>{ await loadI18n('es-MX'); document.getElementById('btn-lang').onclick = async ()=>{ const next = I18N.lang==='es-MX'?'en-US':'es-MX'; await loadI18n(next); document.getElementById('btn-lang').textContent = next==='es-MX'?'ES':'EN'; showToast('Idioma actualizado','success'); }; document.getElementById('btn-theme').onclick = ()=>{ const b=document.body; b.classList.toggle('theme-dark'); showToast('Tema actualizado','success'); }; document.getElementById('btn-logout').onclick = ()=>{ Roles.current=null; AppState.loggedInUser=null; applyRBAC(); navigateTo('page-login-chooser'); }; document.getElementById('btn-sync').onclick = ()=> Offline.flush(); document.getElementById('btn-new-client').onclick = ()=> showSheet('sheet-new-client'); document.getElementById('empty-create').onclick = ()=> showSheet('sheet-new-client'); document.getElementById('btn-guardar-cliente').onclick = ()=>{ const btn = document.getElementById('btn-guardar-cliente'); btn.classList.add('is-loading'); btn.disabled=true; setTimeout(()=>{ const nombre=(document.getElementById('alta-nombre').value||'').trim(); const plan=document.getElementById('alta-plan').value; const ids=Object.keys(AppState.clientes).map(Number); const next = String(Math.max(...ids)+1); AppState.clientes[next]={id:next, nombre, plan, estado:'Activo', saldo:0}; audit('client_created', null, AppState.clientes[next]); hideSheet('sheet-new-client'); btn.classList.remove('is-loading'); btn.disabled=false; renderClientes(); showToast('Cliente creado','success'); }, 800); }; document.getElementById('btn-ir-pago').onclick = ()=>{ navigateTo('page-client-pago'); paymentFlowInit(); }; document.getElementById('btn-ir-reporte').onclick = ()=> navigateTo('page-client-reporte'); document.getElementById('btn-descargar-cfdi').onclick = ()=>{ const blob=new Blob([`CFDI simulado para Ana - ${new Date().toISOString()}`],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='CFDI_Ana.txt'; a.click(); URL.revokeObjectURL(url); }; applyRBAC(); });
+    if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js'); }); } window.addEventListener('online', ()=>{ Offline.online=true; document.getElementById('net-banner').classList.add('hidden'); showToast('Conectado','success'); }); window.addEventListener('offline', ()=>{ Offline.online=false; document.getElementById('net-banner').classList.remove('hidden'); showToast('Sin conexión','error'); });
+  </script>
+</body>
+</html>
