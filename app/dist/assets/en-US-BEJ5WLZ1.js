@@ -1,0 +1,1 @@
+const e={"cta.pay":"Pay","toast.payment_ok":"Payment received!","toast.sync_ok":"Sync completed","error.timeout":"Request timed out","empty.customers":"No customers yet — Create customer","error.generic":"We couldn't process your request. Please try again or contact support."};export{e as default};

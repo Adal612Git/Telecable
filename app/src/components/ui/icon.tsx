@@ -2,7 +2,8 @@ import React from 'react'
 
 type Props = React.SVGProps<SVGSVGElement> & { name: 'menu'|'bell'|'search'|'sun'|'moon'|'logout'|'user'|'settings'|'chart'|'tickets'|'users'|'dollar'|'home'|'wrench'|'user-plus'|'ticket'|'zap'|'zap-off'|'dollar-sign'|'tool'|'log-out' }
 
-const paths: Record<Props['name'], string> = {
+// Allow a subset of names and fallback in runtime mapping
+const paths: Partial<Record<Props['name'], string>> = {
   menu: 'M3 6h18M3 12h18M3 18h18',
   bell: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
   search: 'M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z',

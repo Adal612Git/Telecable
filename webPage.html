@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telecable - Internet de Fibra Óptica y Televisión de Alta Definición</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-dark: #0D1117;
+            --bg-card: #161B22;
+            --primary-accent: #2F81F7;
+            --secondary-accent: #3FB950;
+            --text-light: #E6EDF3;
+            --text-muted: #8B949E;
+            --border-color: #30363D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 0;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        h1 { font-size: 3.5rem; }
+        h2 { font-size: 2.5rem; text-align: center; margin-bottom: 40px; }
+        h3 { font-size: 1.5rem; }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-accent);
+            color: white;
+            box-shadow: 0 4px 15px rgba(47, 129, 247, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(47, 129, 247, 0.4);
+        }
+
+        /* --- Header --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .main-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav a:hover, .main-nav a.active {
+            color: var(--primary-accent);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding-top: 150px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(ellipse at top left, rgba(47, 129, 247, 0.15), transparent 50%),
+                        radial-gradient(ellipse at bottom right, rgba(63, 185, 80, 0.1), transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            background: -webkit-linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- Plans Section --- */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .plan-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .plan-card.featured {
+            border-color: var(--primary-accent);
+            transform: scale(1.05);
+        }
+
+        .plan-card h3 {
+            color: var(--primary-accent);
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .plan-features li {
+            margin-bottom: 10px;
+        }
+
+        /* --- Features Section --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-item {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .feature-item h3 {
+            margin-bottom: 10px;
+        }
+
+        /* --- Testimonials Section --- */
+        .testimonial-card {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary-accent);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .testimonial-card p {
+            font-style: italic;
+            color: var(--text-light);
+        }
+        .testimonial-author {
+            text-align: right;
+            font-weight: 600;
+            color: var(--primary-accent);
+        }
+
+        /* --- CTA Section --- */
+        .cta-section {
+            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+            text-align: center;
+            padding: 60px 20px;
+            border-radius: 12px;
+        }
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        .cta-section .btn {
+            background: white;
+            color: var(--primary-accent);
+        }
+
+        /* --- Footer --- */
+        .main-footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            text-align: center;
+        }
+        .footer-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .copyright {
+            margin-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .main-header { flex-direction: column; padding: 15px; }
+            .main-nav { margin-top: 15px; }
+            .hero { text-align: center; }
+            .plan-card.featured { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">Telecable</div>
+        <nav class="main-nav">
+            <a href="#plans" class="active">Planes</a>
+            <a href="#features">Beneficios</a>
+            <a href="#testimonials">Testimonios</a>
+            <a href="#contact" class="btn btn-primary">Contratar</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>La Conexión que Mereces. Velocidad y Entretenimiento sin Límites.</h1>
+                    <p>Descubre nuestros planes de Internet por Fibra Óptica y Televisión en Alta Definición, diseñados para darte la mejor experiencia en tu hogar o negocio.</p>
+                    <a href="#plans" class="btn btn-primary">Ver Planes</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="plans" class="container">
+            <h2>Nuestros Planes</h2>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <h3>Fibra 100</h3>
+                    <div class="price">$499<span>/mes</span></div>
+                    <p>Ideal para streaming y home office.</p>
+                    <ul class="plan-features">
+                        <li>100 Mbps de velocidad simétrica</li>
+                        <li>Internet de Fibra Óptica</li>
+                        <li>Soporte técnico 24/7</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary">Lo Quiero</a>
+                </div>
+
+                <div class="plan-card featured">
+                    <h3>Combo Fibra 200 + TV</h3>
+                    <div class="price">$799<span>/mes</span></div>
+                    <p>El paquete completo para toda la familia.</p>
+                    <ul class="plan-features">
+                        <li>200 Mbps de velocidad simétrica</li>
+                        <li>Internet de Fibra Óptica</li>
+                        <li>+120 Canales HD</li>
+                        <li>App para gestionar tu cuenta</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary">El Más Popular</a>
+                </div>
+
+                <div class="plan-card">
+                    <h3>Fibra 500 Pro</h3>
+                    <div class="price">$999<span>/mes</span></div>
+                    <p>Máxima potencia para gamers y creadores.</p>
+                    <ul class="plan-features">
+                        <li>500 Mbps de velocidad simétrica</li>
+                        <li>Internet de Fibra Óptica</li>
+                        <li>Baja latencia garantizada</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary">Contratar</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="container">
+            <h2>Beneficios Exclusivos</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h3>Gestión Total en tus Manos</h3>
+                    <p>Con nuestra app para clientes, puedes consultar tu saldo, descargar facturas, reportar fallas y realizar pagos de forma segura y rápida.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Instalación Profesional</h3>
+                    <p>Agendamos tu instalación con técnicos expertos que garantizan una configuración óptima de tus servicios de fibra y TV desde el primer día.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Soporte que Resuelve</h3>
+                    <p>Nuestro equipo de soporte técnico está disponible 24/7 para diagnosticar y solucionar cualquier inconveniente, asegurando tu conexión.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Pagos Flexibles</h3>
+                    <p>Ofrecemos múltiples pasarelas de pago (tarjeta, SPEI, y más) para que elijas la que más te convenga, con confirmación automática.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Avisos Inteligentes</h3>
+                    <p>Recibe notificaciones de pago y mantenimiento directamente en tu canal preferido: WhatsApp, SMS o correo electrónico. Tú eliges.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Sin Interrupciones</h3>
+                    <p>Nuestra red automatizada gestiona los procesos de corte y reconexión de forma eficiente, reactivando tu servicio al instante tras realizar tu pago.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="container">
+            <h2>Lo que dicen nuestros clientes</h2>
+            <div class="testimonial-card">
+                <p>"El cambio a Telecable fue increíble. La velocidad de la fibra es constante y el servicio técnico realmente ayuda. ¡Totalmente recomendado!"</p>
+                <div class="testimonial-author">- Ana L., Home Office</div>
+            </div>
+            <div class="testimonial-card">
+                <p>"Toda la familia está feliz. Los niños con sus videojuegos, mi esposo con el fútbol en HD y yo con mis series en streaming sin que nada se trabe. El combo de TV es genial."</p>
+                <div class="testimonial-author">- Familia Pérez</div>
+            </div>
+        </section>
+
+        <section id="contact" class="container">
+            <div class="cta-section">
+                <h2>¿Listo para dar el salto?</h2>
+                <a href="#" class="btn">Contacta a un Asesor</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-nav">
+            <a href="#">Sobre Nosotros</a>
+            <a href="#">Cobertura</a>
+            <a href="#">Privacidad</a>
+        </div>
+        <p class="copyright">&copy; 2025 Telecable. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>

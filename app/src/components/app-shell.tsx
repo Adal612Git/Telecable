@@ -5,19 +5,20 @@ import { Badge } from './ui/badge'
 import { loadI18n, I18N } from '../lib/i18n'
 import { Icon } from './ui/icon'
 import { AppFooter } from './app-footer'
+import { BrandDecor } from './brand-decor'
 
-type Link = { key: string; label: string; roles: string[] }
+type Link = { key: string; label: string; roles: string[]; icon?: any }
 const links: Link[] = [
-  { key:'login', label:'Selector de rol', roles:['*'] },
-  { key:'admin-dashboard', label:'Dashboard', roles:['admin','dueno'] },
-  { key:'admin-clientes', label:'Clientes', roles:['admin','cobranza','dueno'] },
-  { key:'admin-billing', label:'Facturacion', roles:['admin','dueno'] },
-  { key:'admin-reports', label:'Reportes', roles:['admin','dueno'] },
-  { key:'jefe-tickets', label:'Bandeja/Kanban', roles:['jefe-tecnico'] },
-  { key:'tech-tickets', label:'Mis tickets', roles:['tecnico'] },
-  { key:'client-home', label:'Inicio', roles:['cliente'] },
-  { key:'client-support', label:'Soporte', roles:['cliente'] },
-  { key:'client-app', label:'Cliente App', roles:['*'] },
+  { key:'login', label:'Selector de rol', roles:['*'], icon:'user' },
+  { key:'admin-dashboard', label:'Dashboard', roles:['admin','dueno'], icon:'chart' },
+  { key:'admin-clientes', label:'Clientes', roles:['admin','cobranza','dueno'], icon:'users' },
+  { key:'admin-billing', label:'Facturacion', roles:['admin','dueno'], icon:'dollar' },
+  { key:'admin-reports', label:'Reportes', roles:['admin','dueno'], icon:'chart' },
+  { key:'jefe-tickets', label:'Bandeja/Kanban', roles:['jefe-tecnico'], icon:'tickets' },
+  { key:'tech-tickets', label:'Mis tickets', roles:['tecnico'], icon:'tickets' },
+  { key:'client-home', label:'Inicio', roles:['cliente'], icon:'home' },
+  { key:'client-support', label:'Soporte', roles:['cliente'], icon:'wrench' },
+  { key:'client-app', label:'Cliente App', roles:['*'], icon:'settings' },
 ]
 
 export const AppShell: React.FC<{
@@ -50,45 +51,64 @@ export const AppShell: React.FC<{
         </div>
       )}
       {!online && <div className="h-10" />}
-      <header className="sticky top-0 z-10 bg-surface border-b border-border flex items-center justify-between px-4 py-2">
+      <header className="sticky top-0 z-10 bg-surface border-b border-border flex items-center justify-between px-4 py-2 relative">
         <div className="flex items-center gap-2">
           <button className="md:hidden btn btn-ghost btn-sm" aria-label="Abrir menu" onClick={()=> setOpenNav(true)}><Icon name="menu"/></button>
-          <div className="font-extrabold tracking-tight flex items-center gap-2">DOMY ISP</div>
-          <div className="hidden md:flex items-center bg-white border border-border rounded-lg px-2 ml-4">
+          <div className="font-extrabold tracking-tight flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-brand-gradient text-white shadow" aria-hidden>DI</span>
+            <span>DOMY ISP</span>
+          </div>
+          <div className="hidden md:flex items-center glass border rounded-lg px-2 ml-4">
             <Icon name="search" className="text-muted"/>
             <input placeholder="Buscar..." className="px-2 py-1 outline-none" />
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge intent="info">{role ?? 'Invitado'}</Badge>
+          <Badge intent="info" className="bg-[rgba(6,182,212,0.1)]">{role ?? 'Invitado'}</Badge>
           {!online && <span className="badge badge-warning">Offline</span>}
           {pendingCount>0 && <Button variant="secondary" size="sm" onClick={onSync}>Pendientes: {pendingCount}</Button>}
-          <Button variant="ghost" size="sm" aria-label="Notificaciones" onClick={()=> setShowNotif(x=>!x)}><Icon name="bell"/></Button>
-          <Button variant="ghost" size="sm" onClick={()=> setLang(I18N.lang==='es-MX'?'en-US':'es-MX')}>{I18N.lang==='es-MX'?'EN':'ES'}</Button>
-          <Button variant="ghost" size="sm" aria-label="Cambiar tema" onClick={()=> { document.documentElement.classList.toggle('dark'); const cur = document.documentElement.getAttribute('data-theme'); document.documentElement.setAttribute('data-theme', cur==='dark' ? 'light' : 'dark'); }}><Icon name="moon"/></Button>
+          <Button variant="ghost" size="sm" className="hover:bg-slate-50" aria-label="Notificaciones" onClick={()=> setShowNotif(x=>!x)}><Icon name="bell"/></Button>
+          <Button variant="ghost" size="sm" className="hover:bg-slate-50" onClick={()=> setLang(I18N.lang==='es-MX'?'en-US':'es-MX')}>{I18N.lang==='es-MX'?'EN':'ES'}</Button>
+          <Button variant="ghost" size="sm" className="hover:bg-slate-50" aria-label="Cambiar tema" onClick={()=> { document.documentElement.classList.toggle('dark'); const cur = document.documentElement.getAttribute('data-theme'); document.documentElement.setAttribute('data-theme', cur==='dark' ? 'light' : 'dark'); }}><Icon name="moon"/></Button>
           <Button variant="danger" size="sm" onClick={()=>{ setRole(null); onNavigate('login') }}>Salir</Button>
         </div>
+        <div className="absolute left-0 right-0 bottom-0 brand-divider" aria-hidden />
       </header>
       <div className="grid md:[grid-template-columns:260px_1fr] min-h-0">
         <aside className="border-r border-border p-4 hidden md:block">
           <nav className="flex flex-col gap-1">
-            {links.filter(l => canShow(l.roles)).map(l => (
-              <a key={l.key} href="#" onClick={(e)=>{ e.preventDefault(); onNavigate(l.key) }} className={`px-2 py-2 rounded-lg ${page===l.key ? 'bg-slate-100' : 'hover:bg-slate-100'}`}>{l.label}</a>
-            ))}
+            {links.filter(l => canShow(l.roles)).map(l => {
+              const active = page===l.key
+              return (
+                <a key={l.key} href="#" onClick={(e)=>{ e.preventDefault(); onNavigate(l.key) }} className={`nav-link ${active ? 'nav-link-active' : ''}`}>
+                  {l.icon && <Icon name={l.icon} className="opacity-80"/>}
+                  <span>{l.label}</span>
+                </a>
+              )
+            })}
           </nav>
         </aside>
-        <main className="p-4 overflow-auto">
-          {children}
-          <AppFooter/>
+        <main className="p-4 overflow-auto relative">
+          <BrandDecor />
+          <div className="relative z-[1]">
+            {children}
+            <AppFooter/>
+          </div>
         </main>
         {openNav && (
           <div className="fixed inset-0 z-20 bg-black/40 md:hidden" onClick={()=> setOpenNav(false)}>
             <div className="absolute left-0 top-0 bottom-0 w-64 bg-surface border-r border-border p-4" onClick={e=>e.stopPropagation()}>
               <div className="flex items-center justify-between mb-2"><strong>Menu</strong><button className="btn btn-ghost btn-sm" onClick={()=> setOpenNav(false)}>✕</button></div>
               <nav className="flex flex-col gap-1">
-                {links.filter(l => canShow(l.roles)).map(l => (
-                  <a key={l.key} href="#" onClick={(e)=>{ e.preventDefault(); onNavigate(l.key); setOpenNav(false) }} className={`px-2 py-2 rounded-lg ${page===l.key ? 'bg-slate-100' : 'hover:bg-slate-100'}`}>{l.label}</a>
-                ))}
+                {links.filter(l => canShow(l.roles)).map(l => {
+                  const active = page===l.key
+                  return (
+                    <a key={l.key} href="#" onClick={(e)=>{ e.preventDefault(); onNavigate(l.key); setOpenNav(false) }} className={`nav-link ${active ? 'nav-link-active' : ''}`}>
+                      {l.icon && <Icon name={l.icon} className="opacity-80"/>}
+                      <span>{l.label}</span>
+                    </a>
+                  )
+                })}
               </nav>
             </div>
           </div>
