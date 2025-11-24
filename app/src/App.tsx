@@ -15,6 +15,10 @@ import { SelfTest } from './features/client/SelfTest'
 import { Offline } from './lib/offline'
 import { ClientApp } from './features/clientapp/ClientApp'
 import { Billing } from './features/admin/Billing'
+import { POS } from './features/admin/POS'
+import { Reports } from './features/admin/Reports'
+import { Caja } from './features/admin/Caja'
+import { Dispatch } from './features/jefe/Dispatch'
 
 export const App: React.FC = () => {
   const [state] = useState<AppState>({ ...initialState })
@@ -34,11 +38,13 @@ export const App: React.FC = () => {
     return ()=>{ unsub(); window.removeEventListener('online', onOn); window.removeEventListener('offline', onOff) }
   },[])
 
-  const login = (r: Role) => {
+  const login = (r: Role, redirect?: string) => {
     state.loggedInUser = r
-    if(r==='dueno' || r==='admin') setPage('admin-dashboard')
-    if(r==='cobranza') setPage('admin-billing')
-    if(r==='jefe-tecnico') setPage('jefe-tickets')
+    if(redirect){ setPage(redirect); return }
+    if(r==='dueno' || r==='root') setPage('admin-dashboard')
+    if(r==='facturacion') setPage('admin-billing')
+    if(r==='cobranza') setPage('admin-pos')
+    if(r==='jefe-tecnico') setPage('jefe-dashboard')
     if(r==='tecnico') setPage('tech-tickets')
     if(r==='cliente'){ setActiveClientId('1204'); setPage('client-home') }
   }
@@ -51,9 +57,12 @@ export const App: React.FC = () => {
         {page==='admin-dashboard' && <Dashboard state={state} />}
         {page==='admin-clientes' && <Clientes state={state} />}
         {page==='admin-billing' && <Billing state={state} />}
-        {page==='admin-reports' && <div className="card">(WIP) Reportes</div>}
+        {page==='admin-pos' && <POS state={state} />}
+        {page==='admin-reports' && <Reports state={state} />}
+        {page==='admin-caja' && <Caja state={state} />}
 
         {page==='jefe-tickets' && <Kanban state={state} />}
+        {page==='jefe-dashboard' && <Dispatch state={state} />}
 
         {page==='tech-tickets' && <TechTickets state={state} onOpen={(id)=>{ setTechDetailId(id); setPage('tech-detalle') }} />}
         {page==='tech-detalle' && techDetailId && <TechDetalle state={state} id={techDetailId} onDone={()=> setPage('tech-tickets')} />}

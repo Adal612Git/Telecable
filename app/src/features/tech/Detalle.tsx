@@ -11,6 +11,8 @@ export const TechDetalle: React.FC<{ state: AppState, id: string, onDone: ()=>vo
   const [pot, setPot] = useState(false)
   const [speed, setSpeed] = useState(false)
   const [notes, setNotes] = useState('')
+  const [evidencia, setEvidencia] = useState('')
+  const [cobranza, setCobranza] = useState({ monto: 0, metodo: 'Efectivo', direccion: 'Calle Doomy 123', comentario: '' })
   const ok = useMemo(()=> onu && pot && speed && notes.trim().length>10, [onu,pot,speed,notes])
   const steps = [
     { key: 'onu', label: 'ONU instalada', done: onu },
@@ -45,8 +47,28 @@ export const TechDetalle: React.FC<{ state: AppState, id: string, onDone: ()=>vo
           <textarea className="w-full border border-border rounded-lg px-3 py-2 min-h-[120px]" value={notes} onChange={e=>setNotes(e.target.value)} />
           <div className={`text-sm text-red-800 mt-1 ${notes.trim().length>10?'hidden':'block'}`}>Minimo 10 caracteres.</div>
         </div>
+        <div className="mt-3 grid sm:grid-cols-2 gap-2">
+          <div>
+            <label className="block text-sm font-medium">Evidencia obligatoria</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2" placeholder="foto_speedtest.jpg" value={evidencia} onChange={e=> setEvidencia(e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Cobranza enviada</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2" type="number" value={cobranza.monto} onChange={e=> setCobranza({...cobranza, monto:Number(e.target.value)})} placeholder="Monto" />
+            <select className="mt-1 w-full border border-border rounded-lg px-3 py-2" value={cobranza.metodo} onChange={e=> setCobranza({...cobranza, metodo:e.target.value})}>
+              <option>Efectivo</option>
+              <option>Transferencia</option>
+              <option>Oxxo Pay</option>
+            </select>
+          </div>
+        </div>
+        <div className="mt-2">
+          <label className="block text-sm font-medium">Dirección del cliente</label>
+          <input className="w-full border border-border rounded-lg px-3 py-2" value={cobranza.direccion} onChange={e=> setCobranza({...cobranza, direccion:e.target.value})} />
+          <textarea className="w-full border border-border rounded-lg px-3 py-2 mt-1" placeholder="Checklist final" value={cobranza.comentario} onChange={e=> setCobranza({...cobranza, comentario:e.target.value})} />
+        </div>
       </div>
-      <Button className="w-full mt-3" disabled={!ok} onClick={()=>{ state.tickets[id].estado='Resuelto'; show({ message:`Ticket #${id} resuelto`, type:'success'}); onDone() }}>Completar Ticket</Button>
+      <Button className="w-full mt-3" disabled={!ok || !evidencia} onClick={()=>{ state.tickets[id].estado='Resuelto'; state.tickets[id].evidencia = evidencia; show({ message:`Ticket #${id} resuelto con checklist`, type:'success'}); onDone() }}>Completar Ticket</Button>
     </Card>
   )
 }
