@@ -1,4 +1,4 @@
-export type Role = 'dueno'|'admin'|'cobranza'|'jefe-tecnico'|'tecnico'|'cliente'|null
+export type Role = 'dueno'|'facturacion'|'cobranza'|'jefe-tecnico'|'tecnico'|'cliente'|'root'|null
 
 export const Roles = {
   current: null as Role,

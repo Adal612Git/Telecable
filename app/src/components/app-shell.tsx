@@ -9,14 +9,17 @@ import { BrandDecor } from './brand-decor'
 
 type Link = { key: string; label: string; roles: string[]; icon?: any }
 const links: Link[] = [
-  { key:'login', label:'Selector de rol', roles:['*'], icon:'user' },
-  { key:'admin-dashboard', label:'Dashboard', roles:['admin','dueno'], icon:'chart' },
-  { key:'admin-clientes', label:'Clientes', roles:['admin','cobranza','dueno'], icon:'users' },
-  { key:'admin-billing', label:'Cobranza/Facturacion', roles:['admin','cobranza','dueno'], icon:'dollar' },
-  { key:'admin-reports', label:'Reportes', roles:['admin','dueno'], icon:'chart' },
-  { key:'jefe-tickets', label:'Bandeja/Kanban', roles:['jefe-tecnico','dueno'], icon:'tickets' },
-  { key:'tech-tickets', label:'Mis tickets', roles:['tecnico','dueno'], icon:'tickets' },
-  { key:'client-home', label:'Inicio', roles:['cliente'], icon:'home' },
+  { key:'login', label:'Login', roles:['*'], icon:'user' },
+  { key:'admin-dashboard', label:'Dashboard Dueño', roles:['dueno','root'], icon:'chart' },
+  { key:'admin-clientes', label:'Clientes', roles:['dueno','cobranza','facturacion','root'], icon:'users' },
+  { key:'admin-billing', label:'Facturación', roles:['dueno','facturacion','root'], icon:'dollar' },
+  { key:'admin-pos', label:'POS', roles:['dueno','cobranza','facturacion','root'], icon:'credit-card' },
+  { key:'admin-caja', label:'Caja', roles:['dueno','facturacion','cobranza','root'], icon:'wallet' },
+  { key:'admin-reports', label:'Reportes', roles:['dueno','facturacion','root'], icon:'chart' },
+  { key:'jefe-dashboard', label:'Dashboard Técnicos', roles:['jefe-tecnico','dueno','root'], icon:'map' },
+  { key:'jefe-tickets', label:'Kanban', roles:['jefe-tecnico','dueno','root'], icon:'tickets' },
+  { key:'tech-tickets', label:'App Técnico', roles:['tecnico','dueno','root'], icon:'tickets' },
+  { key:'client-home', label:'App Cliente', roles:['cliente','dueno','root'], icon:'home' },
   { key:'client-support', label:'Soporte', roles:['cliente'], icon:'wrench' },
   { key:'client-app', label:'Cliente App', roles:['*'], icon:'settings' },
 ]
@@ -39,7 +42,10 @@ export const AppShell: React.FC<{
 
   const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
   const normRole = role ? (normalize(role) === 'dueno' ? 'dueno' : normalize(role)) : ''
-  const canShow = (rs: string[]) => rs.includes('*') || (!!role && (rs.includes(role) || rs.map(normalize).includes(normRole) || (normRole==='dueno' && rs.includes('admin'))))
+  const canShow = (rs: string[]) => {
+    if(role==='root') return true
+    return rs.includes('*') || (!!role && (rs.includes(role) || rs.map(normalize).includes(normRole) || (normRole==='dueno' && rs.includes('admin'))))
+  }
 
   return (
     <div className="h-full grid [grid-template-rows:auto_1fr]">
