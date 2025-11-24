@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCRUM Modificado - Fechas de Cobro Ajustadas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+        }
+
+        .card.payment {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, #fff 0%, #e8f6ef 100%);
+        }
+
+        .card.sprint {
+            border-left-color: #9b59b6;
+        }
+
+        .card.migration {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, #fff 0%, #ffeaea 100%);
+        }
+
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-schedule {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .payment-card {
+            background: #27ae60;
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .payment-amount {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .payment-date {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .sprint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .sprint-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #9b59b6;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .payment-milestone {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, #fff 0%, #e8f6ef 100%);
+            border: 2px solid #27ae60;
+        }
+
+        .sprint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .sprint-number {
+            background: #9b59b6;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .payment-badge {
+            background: #27ae60 !important;
+        }
+
+        .sprint-dates {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .user-story {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+        }
+
+        .story-points {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .task-list {
+            list-style: none;
+            margin: 10px 0;
+        }
+
+        .task-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-list li:before {
+            content: '▸';
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .timeline {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            min-width: 120px;
+            color: #2c3e50;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .sprint-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 SCRUM con Fechas de Cobro Ajustadas</h1>
+            <div class="subtitle">Cobros cada 2 sprints: 3 Dic • 3 Ene • 3 Feb • 3 Mar</div>
+        </div>
+
+        <!-- Cronograma de Pagos -->
+        <div class="card payment">
+            <h2>💳 Cronograma de Pagos</h2>
+            
+            <div class="payment-schedule">
+                <div class="payment-card">
+                    <div class="payment-date">Primer Pago</div>
+                    <div class="payment-amount">25%</div>
+                    <div class="payment-date">3 de Diciembre</div>
+                    <div class="payment-date">Sprints 1-2 completados</div>
+                </div>
+                
+                <div class="payment-card">
+                    <div class="payment-date">Segundo Pago</div>
+                    <div class="payment-amount">25%</div>
+                    <div class="payment-date">3 de Enero</div>
+                    <div class="payment-date">Sprints 3-4 completados</div>
+                </div>
+                
+                <div class="payment-card">
+                    <div class="payment-date">Tercer Pago</div>
+                    <div class="payment-amount">25%</div>
+                    <div class="payment-date">3 de Febrero</div>
+                    <div class="payment-date">Sprints 5-6 completados</div>
+                </div>
+                
+                <div class="payment-card">
+                    <div class="payment-date">Pago Final</div>
+                    <div class="payment-amount">25%</div>
+                    <div class="payment-date">3 de Marzo</div>
+                    <div class="payment-date">Sprints 7-8 completados</div>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <h3>📅 Timeline de Entregables por Pago</h3>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 Dic</div>
+                    <div class="timeline-content">
+                        <strong>Infraestructura + Autenticación:</strong> Servidor listo, base de datos, sistema de login
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 Ene</div>
+                    <div class="timeline-content">
+                        <strong>Gestión Clientes + Mikrotik:</strong> CRUD clientes, integración corte/reactivación
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 Feb</div>
+                    <div class="timeline-content">
+                        <strong>Facturación + Pagos:</strong> Sistema facturación completo, pagos en línea
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 Mar</div>
+                    <div class="timeline-content">
+                        <strong>Ticketing + Apps Móviles:</strong> Sistema soporte completo, apps funcionando
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sprints Ajustados para Fechas de Cobro -->
+        <div class="card">
+            <h2>🔄 Sprints Ajustados para Fechas de Cobro</h2>
+            
+            <!-- Grupo 1: Sprints 1-2 (3 Dic) -->
+            <div class="sprint-grid">
+                <!-- Sprint 1 -->
+                <div class="sprint-card">
+                    <div class="sprint-header">
+                        <div class="sprint-number">Sprint 1</div>
+                        <div class="sprint-dates">20 Nov - 24 Nov | 20h | 8pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>INF-001:</strong> Setup servidor producción con Docker
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Configurar Ubuntu Server 22.04</li>
+                            <li>Docker + Docker Compose</li>
+                            <li>Firewall y seguridad básica</li>
+                            <li>Estructura directorios</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>INF-002:</strong> Base de datos PostgreSQL
+                        <span class="story-points">3 pts</span>
+                        <div class="task-list">
+                            <li>Instalación PostgreSQL</li>
+                            <li>Configuración conexiones</li>
+                            <li>Backups automáticos</li>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sprint 2 -->
+                <div class="sprint-card payment-milestone">
+                    <div class="sprint-header">
+                        <div class="sprint-number payment-badge">Sprint 2</div>
+                        <div class="sprint-dates">27 Nov - 1 Dic | 20h | 12pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>AUTH-001:</strong> Sistema autenticación JWT
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Modelo usuarios y roles</li>
+                            <li>Login/registro seguro</li>
+                            <li>Middleware autorización</li>
+                            <li>Password hashing</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>DATA-001:</strong> Análisis datos WISPHUB
+                        <span class="story-points">4 pts</span>
+                        <div class="task-list">
+                            <li>Acceso a base de datos actual</li>
+                            <li>Análisis estructura datos</li>
+                            <li>Identificación datos críticos</li>
+                            <li>Plan migración</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>INF-003:</strong> Estructura base backend
+                        <span class="story-points">3 pts</span>
+                        <div class="task-list">
+                            <li>Proyecto Node.js + TypeScript</li>
+                            <li>ESLint + Prettier config</li>
+                            <li>Scripts desarrollo/build</li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grupo 2: Sprints 3-4 (3 Ene) -->
+            <div class="sprint-grid">
+                <!-- Sprint 3 -->
+                <div class="sprint-card">
+                    <div class="sprint-header">
+                        <div class="sprint-number">Sprint 3</div>
+                        <div class="sprint-dates">4 Dic - 8 Dic | 20h | 13pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>CLI-001:</strong> CRUD completo de clientes
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Modelo cliente completo</li>
+                            <li>Crear/editar/eliminar clientes</li>
+                            <li>Búsqueda y filtros</li>
+                            <li>Validación datos</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>CLI-002:</strong> Gestión de planes de servicio
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>CRUD planes</li>
+                            <li>Asignación planes a clientes</li>
+                            <li>Validación precios</li>
+                            <li>Características planes</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>MIG-001:</strong> Script extracción clientes WISPHUB
+                        <span class="story-points">3 pts</span>
+                        <div class="task-list">
+                            <li>Script extracción datos</li>
+                            <li>Transformación formatos</li>
+                            <li>Validación datos</li>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sprint 4 -->
+                <div class="sprint-card payment-milestone">
+                    <div class="sprint-header">
+                        <div class="sprint-number payment-badge">Sprint 4</div>
+                        <div class="sprint-dates">11 Dic - 15 Dic | 20h | 12pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>MIK-001:</strong> Integración Mikrotik - Corte servicio
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Conexión API Mikrotik</li>
+                            <li>Comando corte automático</li>
+                            <li>Auditoría de cortes</li>
+                            <li>Interfaz corte manual</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>MIK-002:</strong> Integración Mikrotik - Reactivación
+                        <span class="story-points">4 pts</span>
+                        <div class="task-list">
+                            <li>Comando reactivación</li>
+                            <li>Validación estado router</li>
+                            <li>Logs de reactivación</li>
+                            <li>Interfaz reactivación manual</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>MIG-002:</strong> Migración clientes a nuevo sistema
+                        <span class="story-points">3 pts</span>
+                        <div class="task-list">
+                            <li>Carga datos clientes</li>
+                            <li>Validación migración</li>
+                            <li>Reporte migración</li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grupo 3: Sprints 5-6 (3 Feb) -->
+            <div class="sprint-grid">
+                <!-- Sprint 5 -->
+                <div class="sprint-card">
+                    <div class="sprint-header">
+                        <div class="sprint-number">Sprint 5</div>
+                        <div class="sprint-dates">8 Ene - 12 Ene | 20h | 14pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>BILL-001:</strong> Generación automática facturas
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Sistema facturación mensual</li>
+                            <li>Generación automática</li>
+                            <li>Estados facturación</li>
+                            <li>Recordatorios automáticos</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>BILL-002:</strong> Integración pasarela pagos
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Conexión Stripe/OpenPay</li>
+                            <li>Flujo pagos en línea</li>
+                            <li>Tokens de pago</li>
+                            <li>Interfaz pagos</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>BILL-003:</strong> Sistema webhooks pagos
+                        <span class="story-points">4 pts</span>
+                        <div class="task-list">
+                            <li>Webhooks confirmación</li>
+                            <li>Sistema idempotencia</li>
+                            <li>Validación transacciones</li>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sprint 6 -->
+                <div class="sprint-card payment-milestone">
+                    <div class="sprint-header">
+                        <div class="sprint-number payment-badge">Sprint 6</div>
+                        <div class="sprint-dates">15 Ene - 19 Ene | 20h | 13pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>BILL-004:</strong> Reactivación automática por pago
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Cola Redis eventos</li>
+                            <li>Listener pagos confirmados</li>
+                            <li>Reactivación automática</li>
+                            <li>Notificaciones automáticas</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>BILL-005:</strong> Dashboard facturación
+                        <span class="story-points">4 pts</span>
+                        <div class="task-list">
+                            <li>Métricas facturación</li>
+                            <li>Gráficos ingresos</li>
+                            <li>Reportes financieros</li>
+                            <li>Exportación datos</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>MIG-003:</strong> Migración datos facturación
+                        <span class="story-points">4 pts</span>
+                        <div class="task-list">
+                            <li>Historial facturación</li>
+                            <li>Datos pagos históricos</li>
+                            <li>Conciliación datos</li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grupo 4: Sprints 7-8 (3 Mar) -->
+            <div class="sprint-grid">
+                <!-- Sprint 7 -->
+                <div class="sprint-card">
+                    <div class="sprint-header">
+                        <div class="sprint-number">Sprint 7</div>
+                        <div class="sprint-dates">5 Feb - 9 Feb | 20h | 15pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>TICK-001:</strong> Sistema tickets completo
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Modelo tickets</li>
+                            <li>Creación tickets clientes</li>
+                            <li>Categorías y prioridades</li>
+                            <li>Estados tickets</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>TICK-002:</strong> Kanban asignación tickets
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Tablero Kanban</li>
+                            <li>Drag & drop asignación</li>
+                            <li>Seguimiento estados</li>
+                            <li>Notificaciones asignación</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>MOB-001:</strong> App móvil técnicos
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Expo + React Native</li>
+                            <li>Lista tickets asignados</li>
+                            <li>Navegación a ubicación</li>
+                            <li>Estados trabajo</li>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sprint 8 -->
+                <div class="sprint-card payment-milestone">
+                    <div class="sprint-header">
+                        <div class="sprint-number payment-badge">Sprint 8</div>
+                        <div class="sprint-dates">12 Feb - 16 Feb | 20h | 14pts</div>
+                    </div>
+                    
+                    <div class="user-story">
+                        <strong>MOB-002:</strong> Checklist técnico obligatorio
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Sistema checklist</li>
+                            <li>Validación completado</li>
+                            <li>Notas técnicas</li>
+                            <li>Evidencias fotográficas</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>MOB-003:</strong> App móvil clientes
+                        <span class="story-points">5 pts</span>
+                        <div class="task-list">
+                            <li>Consulta facturas</li>
+                            <li>Pagos desde app</li>
+                            <li>Reporte fallas</li>
+                            <li>Auto-test servicio</li>
+                        </div>
+                    </div>
+
+                    <div class="user-story">
+                        <strong>MIG-004:</strong> Migración final y DNS
+                        <span class="story-points">4 pts</span>
+                        <div class="task-list">
+                            <li>Configuración DNS final</li>
+                            <li>Certificados SSL</li>
+                            <li>Redirects configuración</li>
+                            <li>Pruebas integración</li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen de Métricas -->
+        <div class="card">
+            <h2>📊 Resumen de Métricas del Proyecto</h2>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Sprints</div>
+                    <div class="metric-value">8</div>
+                    <div class="metric-label">4 meses de trabajo</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Story Points Totales</div>
+                    <div class="metric-value">101</div>
+                    <div class="metric-label">~12.6 pts/sprint</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Horas Totales</div>
+                    <div class="metric-value">160h</div>
+                    <div class="metric-label">4h/día × 40 días</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Pagos Programados</div>
+                    <div class="metric-value">4</div>
+                    <div class="metric-label">Cada 2 sprints</div>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <h3>🎯 Entregables por Fecha de Pago</h3>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 DIC</div>
+                    <div class="timeline-content">
+                        <strong>PAGO 1:</strong> Infraestructura funcionando + Autenticación + Análisis datos WISPHUB
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 ENE</div>
+                    <div class="timeline-content">
+                        <strong>PAGO 2:</strong> Gestión completa de clientes + Integración Mikrotik + Migración clientes
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 FEB</div>
+                    <div class="timeline-content">
+                        <strong>PAGO 3:</strong> Sistema facturación completo + Pagos en línea + Reactivación automática
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">3 MAR</div>
+                    <div class="timeline-content">
+                        <strong>PAGO FINAL:</strong> Ticketing completo + Apps móviles + Migración final + DNS configurado
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consideraciones Importantes -->
+        <div class="card payment">
+            <h2>⚠️ Consideraciones para el Plan</h2>
+            
+            <div class="user-story">
+                <strong>Análisis WISPHUB en Sprint 2:</strong> Requiere acceso a datos del sistema actual
+                <div class="task-list">
+                    <li>Coordinación con cliente para acceso a BD WISPHUB</li>
+                    <li>Documentación de estructura actual</li>
+                    <li>Plan de migración detallado</li>
+                </div>
+            </div>
+
+            <div class="user-story">
+                <strong>Migración incremental:</strong> Datos se migran a lo largo del proyecto
+                <div class="task-list">
+                    <li>Sprint 3: Clientes y planes</li>
+                    <li>Sprint 6: Datos de facturación</li>
+                    <li>Sprint 8: Migración final completa</li>
+                </div>
+            </div>
+
+            <div class="user-story">
+                <strong>Fechas de cobro ajustadas:</strong> Sprints terminan justo antes de fechas de pago
+                <div class="task-list">
+                    <li>Sprint 2 termina 1 Dic (pago 3 Dic)</li>
+                    <li>Sprint 4 termina 15 Dic (pago 3 Ene)</li>
+                    <li>Sprint 6 termina 19 Ene (pago 3 Feb)</li>
+                    <li>Sprint 8 termina 16 Feb (pago 3 Mar)</li>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

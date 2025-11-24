@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Datos - Sistema ISP | Documentación Completa</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: center;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #1a2a6c;
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header .subtitle {
+            font-size: 1.5em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .header .description {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2em;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-left: 8px solid;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card.schema {
+            border-left-color: #9b59b6;
+        }
+
+        .card.sql {
+            border-left-color: #e74c3c;
+        }
+
+        .card.info {
+            border-left-color: #3498db;
+        }
+
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2.2em;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .card h2 i {
+            font-size: 1.8em;
+        }
+
+        .diagram-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            overflow-x: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .diagram-container-large {
+            min-height: 1200px;
+            font-size: 1.2em;
+        }
+
+        .sql-code {
+            background: #1e2a3a;
+            color: #ecf0f1;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            line-height: 1.6;
+            font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid #3498db;
+        }
+
+        .sql-code h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin: 35px 0;
+        }
+
+        .table-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 6px solid;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .table-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .table-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+            font-size: 1.6em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .field-list {
+            list-style: none;
+        }
+
+        .field-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .field-list li:hover {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .field-name {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .field-type {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .field-pk {
+            background: #e74c3c;
+        }
+
+        .field-fk {
+            background: #f39c12;
+        }
+
+        .field-unique {
+            background: #9b59b6;
+        }
+
+        .index-list {
+            background: linear-gradient(135deg, #e8f4f8, #d1ecf1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .index-list strong {
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+
+        .migration-section {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid #ffd43b;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .migration-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .relationship-explanation {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 2px solid #28a745;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .relationship-explanation h3 {
+            color: #155724;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
+            margin: 40px 0;
+            border-radius: 2px;
+        }
+
+        .module-title {
+            text-align: center;
+            color: white;
+            font-size: 2.5em;
+            margin: 40px 0;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            .table-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .card h2 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .diagram-container-large {
+                min-height: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-database"></i> Base de Datos Completa - Sistema Gestión ISP</h1>
+            <div class="subtitle">Esquema PostgreSQL + Migración WISPHUB + Documentación Extensa</div>
+            <div class="description">
+                Este documento presenta el diseño completo de la base de datos para el sistema de gestión de ISP. 
+                Incluye diagramas ampliados para facilitar el dibujo manual, explicaciones detalladas de relaciones 
+                y scripts completos para implementación.
+            </div>
+        </div>
+
+        <!-- Diagrama ER Ampliado -->
+        <div class="card schema">
+            <h2><i class="fas fa-project-diagram"></i> Diagrama Entidad-Relación (Versión Ampliada)</h2>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #e74c3c;"></div>
+                    <span>Clave Primaria (PK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #f39c12;"></div>
+                    <span>Clave Foránea (FK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #9b59b6;"></div>
+                    <span>Campo Único</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #3498db;"></div>
+                    <span>Campo Normal</span>
+                </div>
+            </div>
+            
+            <div class="diagram-container diagram-container-large">
+                <div class="mermaid">
+erDiagram
+    %% ==================== TABLAS MAESTRAS ====================
+    roles {
+        bigint id PK "IDENTITY"
+        varchar name "NOT NULL"
+        varchar description "NULL"
+        json permissions "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    users {
+        bigint id PK "IDENTITY"
+        varchar email "UNIQUE NOT NULL"
+        varchar password_hash "NOT NULL"
+        bigint role_id FK "NOT NULL"
+        varchar name "NOT NULL"
+        varchar phone "NULL"
+        boolean is_active "DEFAULT true"
+        timestamp last_login "NULL"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    plans {
+        bigint id PK "IDENTITY"
+        varchar name "NOT NULL"
+        varchar description "NULL"
+        decimal price "NOT NULL"
+        integer download_speed "NOT NULL"
+        integer upload_speed "NOT NULL"
+        integer data_limit "NULL"
+        json features "DEFAULT '{}'"
+        boolean is_active "DEFAULT true"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO CLIENTES ====================
+    clients {
+        bigint id PK "IDENTITY"
+        bigint user_id FK "UNIQUE NOT NULL"
+        bigint plan_id FK "NOT NULL"
+        varchar full_name "NOT NULL"
+        varchar address "NOT NULL"
+        varchar coordinates "NULL"
+        varchar ip_address "UNIQUE NOT NULL"
+        varchar mac_address "NULL"
+        varchar service_status "DEFAULT 'PENDING'"
+        decimal balance "DEFAULT 0"
+        date installation_date "NULL"
+        date payment_promise "NULL"
+        json additional_data "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    client_notes {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        bigint author_id FK "NOT NULL"
+        text note "NOT NULL"
+        varchar note_type "DEFAULT 'GENERAL'"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO FACTURACIÓN ====================
+    invoices {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        varchar invoice_number "UNIQUE NOT NULL"
+        decimal amount "NOT NULL"
+        date issue_date "NOT NULL"
+        date due_date "NOT NULL"
+        varchar status "DEFAULT 'DRAFT'"
+        varchar cfdi_uuid "NULL"
+        text cfdi_xml "NULL"
+        json tax_breakdown "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    payments {
+        bigint id PK "IDENTITY"
+        bigint invoice_id FK "NOT NULL"
+        varchar transaction_id "UNIQUE NOT NULL"
+        decimal amount "NOT NULL"
+        varchar payment_method "NOT NULL"
+        varchar status "DEFAULT 'PENDING'"
+        json payment_details "DEFAULT '{}'"
+        timestamp payment_date "NULL"
+        timestamp undo_until "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    payment_webhooks {
+        bigint id PK "IDENTITY"
+        bigint payment_id FK "NULL"
+        varchar webhook_type "NOT NULL"
+        json payload "NOT NULL"
+        varchar status "DEFAULT 'RECEIVED'"
+        text response "NULL"
+        timestamp processed_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO TICKETS ====================
+    ticket_categories {
+        bigint id PK "IDENTITY"
+        varchar name "NOT NULL"
+        varchar description "NULL"
+        integer sla_hours "DEFAULT 24"
+        boolean is_active "DEFAULT true"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    tickets {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        bigint category_id FK "NOT NULL"
+        bigint assigned_tech_id FK "NULL"
+        varchar title "NOT NULL"
+        text description "NOT NULL"
+        varchar priority "DEFAULT 'MEDIUM'"
+        varchar status "DEFAULT 'NEW'"
+        json attachments "DEFAULT '[]'"
+        timestamp scheduled_date "NULL"
+        timestamp resolved_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    ticket_notes {
+        bigint id PK "IDENTITY"
+        bigint ticket_id FK "NOT NULL"
+        bigint author_id FK "NOT NULL"
+        text note "NOT NULL"
+        boolean is_technical "DEFAULT false"
+        json checklist_data "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    ticket_status_history {
+        bigint id PK "IDENTITY"
+        bigint ticket_id FK "NOT NULL"
+        varchar old_status "NULL"
+        varchar new_status "NOT NULL"
+        bigint changed_by_id FK "NOT NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO MIKROTIK ====================
+    mikrotik_commands {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        varchar command_type "NOT NULL"
+        varchar command "NOT NULL"
+        varchar status "DEFAULT 'PENDING'"
+        text response "NULL"
+        json parameters "DEFAULT '{}'"
+        timestamp executed_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    service_status_history {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        varchar old_status "NULL"
+        varchar new_status "NOT NULL"
+        varchar reason "NULL"
+        bigint changed_by_id FK "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== AUDITORÍA Y SISTEMA ====================
+    audit_logs {
+        bigint id PK "IDENTITY"
+        bigint user_id FK "NULL"
+        varchar action "NOT NULL"
+        varchar entity_type "NOT NULL"
+        bigint entity_id "NULL"
+        json old_values "NULL"
+        json new_values "NULL"
+        varchar ip_address "NULL"
+        text user_agent "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    system_settings {
+        bigint id PK "IDENTITY"
+        varchar setting_key "UNIQUE NOT NULL"
+        json setting_value "NOT NULL"
+        varchar description "NULL"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    offline_queues {
+        bigint id PK "IDENTITY"
+        bigint user_id FK "NOT NULL"
+        varchar action_type "NOT NULL"
+        json payload "NOT NULL"
+        varchar status "DEFAULT 'PENDING'"
+        integer retry_count "DEFAULT 0"
+        timestamp processed_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== RELACIONES PRINCIPALES ====================
+    roles ||--o{ users : "role_id"
+    users ||--o| clients : "user_id"
+    clients ||--o{ plans : "plan_id"
+    
+    clients ||--o{ invoices : "client_id"
+    invoices ||--|| payments : "invoice_id"
+    
+    clients ||--o{ tickets : "client_id"
+    tickets ||--o{ ticket_categories : "category_id"
+    tickets ||--o{ users : "assigned_tech_id"
+    
+    clients ||--o{ mikrotik_commands : "client_id"
+    clients ||--o{ service_status_history : "client_id"
+    
+    users ||--o{ audit_logs : "user_id"
+    users ||--o{ offline_queues : "user_id"
+    users ||--o{ client_notes : "author_id"
+    users ||--o{ ticket_notes : "author_id"
+    users ||--o{ ticket_status_history : "changed_by_id"
+
+                </div>
+            </div>
+            
+            <div class="relationship-explanation">
+                <h3><i class="fas fa-info-circle"></i> Explicación de Relaciones Principales</h3>
+                <p><strong>Relación Usuarios-Roles:</strong> Cada usuario tiene un rol que define sus permisos en el sistema (1:N).</p>
+                <p><strong>Relación Clientes-Usuarios:</strong> Cada cliente está asociado a un usuario para acceso al portal (1:1).</p>
+                <p><strong>Relación Clientes-Planes:</strong> Los clientes tienen un plan de servicio contratado (1:N).</p>
+                <p><strong>Relación Clientes-Facturas:</strong> Un cliente puede tener múltiples facturas (1:N).</p>
+                <p><strong>Relación Facturas-Pagos:</strong> Cada factura puede tener múltiples pagos asociados (1:N).</p>
+                <p><strong>Relación Clientes-Tickets:</strong> Un cliente puede abrir múltiples tickets de soporte (1:N).</p>
+                <p><strong>Relación Tickets-Usuarios:</strong> Los tickets pueden ser asignados a técnicos específicos (1:N).</p>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <div class="module-title">Módulo de Clientes</div>
+
+        <!-- Tablas Detalladas - Clientes -->
+        <div class="card info">
+            <h2><i class="fas fa-users"></i> Descripción Detallada - Módulo Clientes</h2>
+            
+            <div class="table-grid">
+                <!-- Tabla Clients -->
+                <div class="table-card">
+                    <h3><i class="fas fa-user-tie"></i> clients</h3>
+                    <p>Almacena la información principal de los clientes del servicio de internet.</p>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">user_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">plan_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">full_name</span><span class="field-type">VARCHAR(200)</span></li>
+                        <li><span class="field-name">address</span><span class="field-type">TEXT</span></li>
+                        <li><span class="field-name">coordinates</span><span class="field-type">VARCHAR(100)</span></li>
+                        <li><span class="field-name">ip_address</span><span class="field-type field-unique">VARCHAR(45) UNIQUE</span></li>
+                        <li><span class="field-name">mac_address</span><span class="field-type">VARCHAR(17)</span></li>
+                        <li><span class="field-name">service_status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">balance</span><span class="field-type">DECIMAL(10,2)</span></li>
+                        <li><span class="field-name">installation_date</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">payment_promise</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">additional_data</span><span class="field-type">JSONB</span></li>
+                        <li><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">updated_at</span><span class="field-type">TIMESTAMP</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> service_status, ip_address, balance, plan_id
+                    </div>
+                </div>
+
+                <!-- Tabla Client Notes -->
+                <div class="table-card">
+                    <h3><i class="fas fa-sticky-note"></i> client_notes</h3>
+                    <p>Registra notas y comentarios sobre los clientes realizados por el personal.</p>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">client_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">author_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">note</span><span class="field-type">TEXT</span></li>
+                        <li><span class="field-name">note_type</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> client_id, note_type, created_at
+                    </div>
+                </div>
+
+                <!-- Tabla Plans -->
+                <div class="table-card">
+                    <h3><i class="fas fa-list-alt"></i> plans</h3>
+                    <p>Define los diferentes planes de servicio ofrecidos a los clientes.</p>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">name</span><span class="field-type">VARCHAR(100)</span></li>
+                        <li><span class="field-name">description</span><span class="field-type">TEXT</span></li>
+                        <li><span class="field-name">price</span><span class="field-type">DECIMAL(10,2)</span></li>
+                        <li><span class="field-name">download_speed</span><span class="field-type">INTEGER</span></li>
+                        <li><span class="field-name">upload_speed</span><span class="field-type">INTEGER</span></li>
+                        <li><span class="field-name">data_limit</span><span class="field-type">INTEGER</span></li>
+                        <li><span class="field-name">features</span><span class="field-type">JSONB</span></li>
+                        <li><span class="field-name">is_active</span><span class="field-type">BOOLEAN</span></li>
+                        <li><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">updated_at</span><span class="field-type">TIMESTAMP</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> name, is_active, price
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <div class="module-title">Módulo de Facturación</div>
+
+        <!-- Tablas Detalladas - Facturación -->
+        <div class="card info">
+            <h2><i class="fas fa-file-invoice-dollar"></i> Descripción Detallada - Módulo Facturación</h2>
+            
+            <div class="table-grid">
+                <!-- Tabla Invoices -->
+                <div class="table-card">
+                    <h3><i class="fas fa-file-invoice"></i> invoices</h3>
+                    <p>Almacena las facturas generadas para los clientes.</p>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">client_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">invoice_number</span><span class="field-type field-unique">VARCHAR(50) UNIQUE</span></li>
+                        <li><span class="field-name">amount</span><span class="field-type">DECIMAL(10,2)</span></li>
+                        <li><span class="field-name">issue_date</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">due_date</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">cfdi_uuid</span><span class="field-type">VARCHAR(36)</span></li>
+                        <li><span class="field-name">cfdi_xml</span><span class="field-type">TEXT</span></li>
+                        <li><span class="field-name">tax_breakdown</span><span class="field-type">JSONB</span></li>
+                        <li><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">updated_at</span><span class="field-type">TIMESTAMP</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> status, due_date, client_id, issue_date
+                    </div>
+                </div>
+
+                <!-- Tabla Payments -->
+                <div class="table-card">
+                    <h3><i class="fas fa-credit-card"></i> payments</h3>
+                    <p>Registra los pagos realizados por los clientes.</p>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">invoice_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">transaction_id</span><span class="field-type field-unique">VARCHAR(100) UNIQUE</span></li>
+                        <li><span class="field-name">amount</span><span class="field-type">DECIMAL(10,2)</span></li>
+                        <li><span class="field-name">payment_method</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">payment_details</span><span class="field-type">JSONB</span></li>
+                        <li><span class="field-name">payment_date</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">undo_until</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> status, payment_date, transaction_id
+                    </div>
+                </div>
+
+                <!-- Tabla Payment Webhooks -->
+                <div class="table-card">
+                    <h3><i class="fas fa-broadcast-tower"></i> payment_webhooks</h3>
+                    <p>Registra las notificaciones recibidas de sistemas de pago externos.</p>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">payment_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">webhook_type</span><span class="field-type">VARCHAR(50)</span></li>
+                        <li><span class="field-name">payload</span><span class="field-type">JSONB</span></li>
+                        <li><span class="field-name">status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">response</span><span class="field-type">TEXT</span></li>
+                        <li><span class="field-name">processed_at</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> webhook_type, status, processed_at
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script de Creación de Base de Datos -->
+        <div class="card sql">
+            <h2><i class="fas fa-code"></i> Script de Creación - PostgreSQL</h2>
+            
+            <div class="sql-code">
+-- =============================================
+-- SISTEMA DE GESTIÓN ISP - CREACIÓN DE BASE DE DATOS
+-- =============================================
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ==================== TABLAS MAESTRAS ====================
+CREATE TABLE roles (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description TEXT,
+    permissions JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id BIGINT NOT NULL REFERENCES roles(id),
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    is_active BOOLEAN DEFAULT true,
+    last_login TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ... (resto del script de creación)
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            er: {
+                useMaxWidth: false,
+                diagramPadding: 30,
+                useHtmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

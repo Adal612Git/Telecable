@@ -12,10 +12,10 @@ const links: Link[] = [
   { key:'login', label:'Selector de rol', roles:['*'], icon:'user' },
   { key:'admin-dashboard', label:'Dashboard', roles:['admin','dueno'], icon:'chart' },
   { key:'admin-clientes', label:'Clientes', roles:['admin','cobranza','dueno'], icon:'users' },
-  { key:'admin-billing', label:'Facturacion', roles:['admin','dueno'], icon:'dollar' },
+  { key:'admin-billing', label:'Cobranza/Facturacion', roles:['admin','cobranza','dueno'], icon:'dollar' },
   { key:'admin-reports', label:'Reportes', roles:['admin','dueno'], icon:'chart' },
-  { key:'jefe-tickets', label:'Bandeja/Kanban', roles:['jefe-tecnico'], icon:'tickets' },
-  { key:'tech-tickets', label:'Mis tickets', roles:['tecnico'], icon:'tickets' },
+  { key:'jefe-tickets', label:'Bandeja/Kanban', roles:['jefe-tecnico','dueno'], icon:'tickets' },
+  { key:'tech-tickets', label:'Mis tickets', roles:['tecnico','dueno'], icon:'tickets' },
   { key:'client-home', label:'Inicio', roles:['cliente'], icon:'home' },
   { key:'client-support', label:'Soporte', roles:['cliente'], icon:'wrench' },
   { key:'client-app', label:'Cliente App', roles:['*'], icon:'settings' },
@@ -32,9 +32,10 @@ export const AppShell: React.FC<{
   const [lang, setLang] = useState<'es-MX'|'en-US'>('es-MX')
   const [role, setRole] = useState<Role>(Roles.current)
   const [openNav, setOpenNav] = useState(false)
-  const [showNotif, setShowNotif] = useState(false)
+  const [, setShowNotif] = useState(false)
   useEffect(()=>{ loadI18n(lang) },[lang])
   useEffect(()=>{ Roles.current = role },[role])
+  useEffect(()=>{ setRole(Roles.current) },[page])
 
   const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
   const normRole = role ? (normalize(role) === 'dueno' ? 'dueno' : normalize(role)) : ''
@@ -45,7 +46,7 @@ export const AppShell: React.FC<{
       {!online && (
         <div className="fixed top-0 inset-x-0 z-30 bg-amber-50 border-b border-amber-300 text-amber-900 text-sm px-4 py-2 flex items-center justify-between">
           <span>
-            Modo sin conexión — {pendingCount} {pendingCount===1 ? 'acción' : 'acciones'} pendientes
+            Modo sin conexion - {pendingCount} {pendingCount===1 ? 'accion' : 'acciones'} pendientes
           </span>
           {onSync && <Button variant="secondary" size="sm" onClick={onSync}>Sincronizar</Button>}
         </div>
@@ -98,7 +99,7 @@ export const AppShell: React.FC<{
         {openNav && (
           <div className="fixed inset-0 z-20 bg-black/40 md:hidden" onClick={()=> setOpenNav(false)}>
             <div className="absolute left-0 top-0 bottom-0 w-64 bg-surface border-r border-border p-4" onClick={e=>e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-2"><strong>Menu</strong><button className="btn btn-ghost btn-sm" onClick={()=> setOpenNav(false)}>✕</button></div>
+              <div className="flex items-center justify-between mb-2"><strong>Menu</strong><button className="btn btn-ghost btn-sm" onClick={()=> setOpenNav(false)}>x</button></div>
               <nav className="flex flex-col gap-1">
                 {links.filter(l => canShow(l.roles)).map(l => {
                   const active = page===l.key

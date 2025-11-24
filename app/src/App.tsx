@@ -11,10 +11,10 @@ import { TechTickets } from './features/tech/Tickets'
 import { TechDetalle } from './features/tech/Detalle'
 import { ClientHome } from './features/client/Home'
 import { Pago } from './features/client/Pago'
-import { Reporte } from './features/client/Reporte'
 import { SelfTest } from './features/client/SelfTest'
 import { Offline } from './lib/offline'
 import { ClientApp } from './features/clientapp/ClientApp'
+import { Billing } from './features/admin/Billing'
 
 export const App: React.FC = () => {
   const [state] = useState<AppState>({ ...initialState })
@@ -22,6 +22,7 @@ export const App: React.FC = () => {
   const [online, setOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true)
   const [pending, setPending] = useState<number>(0)
   const [techDetailId, setTechDetailId] = useState<string|null>(null)
+  const [activeClientId, setActiveClientId] = useState<string>('1204')
 
   useEffect(()=>{
     const r = Roles.current
@@ -35,11 +36,11 @@ export const App: React.FC = () => {
 
   const login = (r: Role) => {
     state.loggedInUser = r
-    if(r==='dueño' || r==='admin') setPage('admin-dashboard')
-    if(r==='cobranza') setPage('admin-clientes')
+    if(r==='dueno' || r==='admin') setPage('admin-dashboard')
+    if(r==='cobranza') setPage('admin-billing')
     if(r==='jefe-tecnico') setPage('jefe-tickets')
     if(r==='tecnico') setPage('tech-tickets')
-    if(r==='cliente') setPage('client-home')
+    if(r==='cliente'){ setActiveClientId('1204'); setPage('client-home') }
   }
 
   return (
@@ -49,7 +50,7 @@ export const App: React.FC = () => {
 
         {page==='admin-dashboard' && <Dashboard state={state} />}
         {page==='admin-clientes' && <Clientes state={state} />}
-        {page==='admin-billing' && <div className="card">(WIP) Facturación</div>}
+        {page==='admin-billing' && <Billing state={state} />}
         {page==='admin-reports' && <div className="card">(WIP) Reportes</div>}
 
         {page==='jefe-tickets' && <Kanban state={state} />}
@@ -57,10 +58,9 @@ export const App: React.FC = () => {
         {page==='tech-tickets' && <TechTickets state={state} onOpen={(id)=>{ setTechDetailId(id); setPage('tech-detalle') }} />}
         {page==='tech-detalle' && techDetailId && <TechDetalle state={state} id={techDetailId} onDone={()=> setPage('tech-tickets')} />}
 
-        {page==='client-home' && <ClientHome state={state} onPay={()=> setPage('client-pago')} onReport={()=> setPage('client-reporte')} onSelfTest={()=> setPage('client-support')} />}
-        {page==='client-pago' && <Pago state={state} onDone={()=> setPage('client-home')} />}
-        {page==='client-reporte' && <Reporte state={state} onDone={()=> setPage('client-home')} />}
-        {page==='client-support' && <SelfTest state={state} onDone={()=> setPage('client-home')} />}
+        {page==='client-home' && <ClientHome state={state} clientId={activeClientId} onSwitchClient={setActiveClientId} onPay={()=> setPage('client-pago')} onSupport={()=> setPage('client-support')} />}
+        {page==='client-pago' && <Pago state={state} clientId={activeClientId} onDone={()=> setPage('client-home')} />}
+        {page==='client-support' && <SelfTest state={state} clientId={activeClientId} onDone={()=> setPage('client-home')} />}
         {page==='client-app' && <ClientApp state={state} />}
       </AppShell>
     </ToastProvider>

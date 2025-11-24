@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { AppState } from '../../state/app-state'
 import { Card } from '../../components/ui/card'
 import { EmptyState } from '../../components/ui/empty-state'
@@ -15,6 +15,8 @@ export const Clientes: React.FC<{ state: AppState }> = ({ state }) => {
   const [open, setOpen] = useState(false)
   const [nombre, setNombre] = useState('')
   const [plan, setPlan] = useState('50MB')
+  const [password, setPassword] = useState('')
+  const [telefono, setTelefono] = useState('')
   const [segment, setSegment] = useState<Segment>('all')
   const [search, setSearch] = useState('')
   const [planFilter, setPlanFilter] = useState<string[]>([])
@@ -41,16 +43,18 @@ export const Clientes: React.FC<{ state: AppState }> = ({ state }) => {
   const clientes = all.slice((page-1)*perPage, page*perPage)
 
   const create = () => {
-    const nextId = String(Math.max(...Object.keys(state.clientes).map(Number))+1)
-    state.clientes[nextId] = { id: nextId, nombre, plan, estado:'Activo', saldo:0, moraDays: 0, promesaPago: null }
-    setOpen(false); setNombre(''); setPlan('50MB')
+    if(!nombre.trim() || !password.trim()){
+      show({ message:'Nombre y password demo son requeridos', type:'error' }); return
+    }
+    const nextIdNum = Object.keys(state.clientes).map(Number)
+    const nextId = String(Math.max(...nextIdNum)+1)
+    state.clientes[nextId] = { id: nextId, nombre, plan, estado:'Activo', saldo:0, moraDays: 0, promesaPago: null, telefono: telefono || undefined, password }
+    setOpen(false); setNombre(''); setPlan('50MB'); setPassword(''); setTelefono('')
     show({ message:'Cliente creado', type:'success'})
   }
 
   const sendReminder = (id: string) => {
-    const c = state.clientes[id]
     const action = () => {
-      // 25% chance of provider down
       const fail = Math.random() < 0.25
       if(fail){ show({ message: (window as any).__I18N?.dict?.['error.generic'] || 'No pudimos procesar tu solicitud. Intenta nuevamente o contacta soporte.', type:'error' }); Analytics.track('reminder_failed',{channel:'sms', id}); return }
       show({ message:'Recordatorio enviado', type:'success' }); Analytics.track('reminder_sent',{channel:'sms', id})
@@ -83,17 +87,16 @@ export const Clientes: React.FC<{ state: AppState }> = ({ state }) => {
         <h3 className="font-semibold">Clientes</h3>
         <Button onClick={()=> setOpen(true)}>Crear cliente</Button>
       </div>
-      {/* Segments toolbar */}
       <div className="mt-3 flex items-center gap-2">
         <Button variant={segment==='all'?'primary':'ghost'} onClick={()=> setSegment('all')}>Todos</Button>
-        <Button variant={segment==="0-30"?"primary":"ghost"} onClick={()=> setSegment("0-30")}>0-30</Button>
-        <Button variant={segment==="31-60"?"primary":"ghost"} onClick={()=> setSegment("31-60")}>31-60</Button>
+        <Button variant={segment==='0-30'?'primary':'ghost'} onClick={()=> setSegment('0-30')}>0-30</Button>
+        <Button variant={segment==='31-60'?'primary':'ghost'} onClick={()=> setSegment('31-60')}>31-60</Button>
         <Button variant={segment==='60+'?'primary':'ghost'} onClick={()=> setSegment('60+')}>60+</Button>
         <div className="ml-auto flex items-center gap-2">
           <input className="border border-border rounded-lg px-3 py-2" placeholder="Buscar nombre..." value={search} onChange={e=>{ setSearch(e.target.value); setPage(1) }} />
           <select className="border border-border rounded-lg px-2 py-2" onChange={e=>{ const v=e.target.value; setPlanFilter(v? [v]:[]); setPage(1) }}>
             <option value="">Plan</option>
-            <option>50MB</option><option>100MB</option><option>200MB</option>
+            <option>50MB</option><option>100MB</option><option>200MB</option><option>300MB</option><option>500MB</option>
           </select>
           <select className="border border-border rounded-lg px-2 py-2" onChange={e=>{ const v=e.target.value; setStatusFilter(v? [v]:[]); setPage(1) }}>
             <option value="">Estado</option>
@@ -120,17 +123,18 @@ export const Clientes: React.FC<{ state: AppState }> = ({ state }) => {
           <div>
             <div className="mt-3 overflow-auto">
               <table className="w-full">
-                <thead><tr><th className="text-left p-2">ID</th><th className="text-left p-2">Nombre</th><th className="text-left p-2">Plan</th><th className="text-left p-2">Estado</th><th className="text-left p-2">Saldo</th><th className="text-left p-2">Mora</th><th className="text-left p-2">Promesa</th><th className="text-left p-2">Acciones</th></tr></thead>
+                <thead><tr><th className="text-left p-2">ID</th><th className="text-left p-2">Nombre</th><th className="text-left p-2">Plan</th><th className="text-left p-2">Estado</th><th className="text-left p-2">Saldo</th><th className="text-left p-2">Mora</th><th className="text-left p-2">Promesa</th><th className="text-left p-2">Password demo</th><th className="text-left p-2">Acciones</th></tr></thead>
                 <tbody>
                   {clientes.map(c => (
                     <tr key={c.id} className="border-t border-border">
                       <td className="p-2">{c.id}</td>
-                      <td className="p-2">{c.nombre}</td>
+                      <td className="p-2">{c.nombre}<div className="text-xs text-muted">{c.telefono || ''}</div></td>
                       <td className="p-2">{c.plan}</td>
                       <td className="p-2">{c.estado}</td>
                       <td className="p-2">${c.saldo.toFixed(2)}</td>
                       <td className="p-2">{(c.moraDays??0)}d</td>
                       <td className="p-2">{c.promesaPago ?? '-'}</td>
+                      <td className="p-2 text-xs">{c.password}</td>
                       <td className="p-2">
                         <div className="flex flex-wrap gap-1">
                           <Button size="sm" variant="secondary" onClick={()=> sendReminder(c.id)} disabled={(c.saldo||0)<=0}>Recordatorio</Button>
@@ -149,7 +153,7 @@ export const Clientes: React.FC<{ state: AppState }> = ({ state }) => {
       })()}
 
       {open && (
-        <div className="fixed right-4 top-16 w-[420px] max-w-[calc(100%-2rem)]">
+        <div className="fixed right-4 top-16 w-[440px] max-w-[calc(100%-2rem)]">
           <Card>
             <h3 className="font-semibold">Nuevo cliente</h3>
             <div className="mt-2 space-y-3">
@@ -158,10 +162,18 @@ export const Clientes: React.FC<{ state: AppState }> = ({ state }) => {
                 <input className="form-input w-full border border-border rounded-lg px-3 py-2" value={nombre} onChange={e=>setNombre(e.target.value)} />
               </div>
               <div>
+                <label className="block text-sm font-medium">Telefono</label>
+                <input className="form-input w-full border border-border rounded-lg px-3 py-2" value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Opcional" />
+              </div>
+              <div>
                 <label className="block text-sm font-medium">Plan</label>
-                <select className="form-select w-full border border-border rounded-lg px-3 py-2" value={plan} onChange={e=>setPlan(e.target.value)}>
-                  <option>50MB</option><option>100MB</option><option>200MB</option>
+                <select className="form-select w-full border border-border rounded-lg px-3 py-2" value={plan} onChange={e=> setPlan(e.target.value)}>
+                  <option>50MB</option><option>100MB</option><option>200MB</option><option>300MB</option><option>500MB</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Password demo (se guardara en texto plano para pruebas)</label>
+                <input className="form-input w-full border border-border rounded-lg px-3 py-2" value={password} onChange={e=> setPassword(e.target.value)} placeholder="Ej: cliente123" />
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" onClick={()=> setOpen(false)}>Cerrar</Button>
@@ -174,7 +186,3 @@ export const Clientes: React.FC<{ state: AppState }> = ({ state }) => {
     </Card>
   )
 }
-
-
-
-

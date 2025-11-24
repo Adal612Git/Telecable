@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas del Sistema de Gestión ISP</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .diagram-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+        .diagram {
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diagramas del Sistema de Gestión ISP</h1>
+    
+    <div class="section">
+        <h2>1. Diagramas de Arquitectura (Modelo C4)</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">A. Contexto del Sistema (Nivel 1)</div>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TD
+    subgraph ExternalSystems [Sistemas Externos]
+        Mikrotik[Mikrotik Router]
+        PaymentGateway[Pasarela de Pagos]
+        SMSProvider[Proveedor SMS/Email]
+    end
+
+    subgraph ISPManagementSystem [Sistema de Gestión ISP]
+        ISP[Sistema de Gestión ISP]
+    end
+
+    subgraph People [Personas/Usuarios]
+        Customer[Cliente]
+        Owner[Dueño/Admin]
+        Billing[Cobranza]
+        TechLead[Jefe Técnico]
+        Technician[Técnico]
+    end
+
+    Customer --> ISP
+    Owner --> ISP
+    Billing --> ISP
+    TechLead --> ISP
+    Technician --> ISP
+    
+    ISP --> Mikrotik
+    ISP --> PaymentGateway
+    ISP --> SMSProvider
+                </div>
+            </div>
+        </div>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">B. Diagrama de Contenedores (Nivel 2)</div>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TB
+    subgraph Frontend [Frontend Applications]
+        WebApp[Web App<br/>Vite + React]
+        MobileApp[Mobile App<br/>Expo + React Native]
+        ServiceWorker[Service Worker<br/>JavaScript]
+    end
+
+    subgraph Backend [Backend Services]
+        APIGateway[API Gateway<br/>FastAPI / Python]
+        
+        subgraph Microservices [Microservicios]
+            Auth[Auth Service<br/>Node.js]
+            Billing[Billing Service<br/>Node.js]
+            WorkOrders[Work Orders Service<br/>NestJS]
+            MTIK[MTIK Service<br/>NestJS Service]
+        end
+    end
+
+    subgraph DataLayer [Capa de Datos]
+        PostgreSQL[(PostgreSQL DB)]
+        Redis[(Redis Queue<br/>BullMQ)]
+    end
+
+    subgraph External [Sistemas Externos]
+        Mikrotik[Mikrotik Router]
+        PaymentGateway[Pasarela de Pagos]
+        SMSProvider[Proveedor SMS/Email]
+    end
+
+    WebApp --> APIGateway
+    MobileApp --> APIGateway
+    ServiceWorker --> WebApp
+    
+    APIGateway --> Auth
+    APIGateway --> Billing
+    APIGateway --> WorkOrders
+    
+    Auth --> PostgreSQL
+    Billing --> PostgreSQL
+    WorkOrders --> PostgreSQL
+    
+    Billing --> Redis
+    MTIK --> Redis
+    Redis --> MTIK
+    
+    MTIK --> Mikrotik
+    Billing --> PaymentGateway
+    Billing --> SMSProvider
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Diagramas de Casos de Uso</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Casos de Uso Principales</div>
+            <div class="diagram">
+                <div class="mermaid">
+useCaseDiagram
+    actor Cliente
+    actor Dueño
+    actor Cobranza
+    actor JefeTécnico
+    actor Técnico
+    
+    rectangle Sistema {
+        usecase "CU-1: Gestión de Clientes" as UC1
+        usecase "CU-2: Registrar Pago" as UC2
+        usecase "CU-3: Control de Servicio" as UC3
+        usecase "CU-4: Reporte de Falla" as UC4
+        usecase "CU-5: Asignación de Tickets" as UC5
+        usecase "CU-6: Resolución de Ticket" as UC6
+        usecase "CU-7: Gestión de Staff" as UC7
+        usecase "CU-8: Monitoreo Central" as UC8
+    }
+    
+    Cliente --> UC2
+    Cliente --> UC4
+    Dueño --> UC1
+    Dueño --> UC7
+    Dueño --> UC8
+    Cobranza --> UC1
+    Cobranza --> UC2
+    Cobranza --> UC3
+    JefeTécnico --> UC5
+    Técnico --> UC6
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Diagramas de Máquina de Estados</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">A. Máquina de Estados: Tickets</div>
+            <div class="diagram">
+                <div class="mermaid">
+stateDiagram-v2
+    [*] --> Nuevo
+    
+    Nuevo --> Asignado : assign
+    Asignado --> EnRuta : start_route
+    Asignado --> Cancelado : cancel
+    EnRuta --> EnSitio : arrive
+    EnRuta --> Cancelado : cancel
+    EnSitio --> Resuelto : resolve
+    EnSitio --> Asignado : reopen
+    EnSitio --> Cancelado : cancel
+    Resuelto --> Asignado : reopen
+    Resuelto --> Cerrado : close
+    Cancelado --> Asignado : reopen
+    
+    Cerrado --> [*]
+                </div>
+            </div>
+        </div>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">B. Máquina de Estados: Facturas</div>
+            <div class="diagram">
+                <div class="mermaid">
+stateDiagram-v2
+    [*] --> Borrador
+    
+    Borrador --> Timbrada : stamp
+    Timbrada --> Pagada : pay
+    Timbrada --> Fallida : fail
+    Timbrada --> Cancelada : cancel
+    Fallida --> Pagada : pay
+    Pagada --> Cancelada : credit_note
+    Pagada --> Cancelada : cancel
+    
+    Cancelada --> [*]
+    Pagada --> [*]
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Diagramas de Secuencia</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">A. Pago en Línea con Reactivación Automática</div>
+            <div class="diagram">
+                <div class="mermaid">
+sequenceDiagram
+    actor Cliente
+    participant WebApp
+    participant APIGateway
+    participant BillingService
+    participant PostgreSQL
+    participant PaymentGateway
+    participant RedisQueue
+    participant MTIKListener
+    participant MTIKService
+    participant Mikrotik
+    participant SMSProvider
+
+    Cliente->>WebApp: Inicia flujo de pago (3 pasos)
+    WebApp->>APIGateway: Solicita token de pago
+    APIGateway->>BillingService: Registra factura 'Pago Pendiente'
+    BillingService->>PostgreSQL: Actualiza estado factura
+    BillingService->>PaymentGateway: Inicia transacción
+    PaymentGateway->>BillingService: Webhook pago_confirmado
+    BillingService->>PostgreSQL: Actualiza estado → pagada
+    BillingService->>RedisQueue: Publica evento ClientePagado
+    RedisQueue->>MTIKListener: Escucha evento
+    MTIKListener->>MTIKService: Llama removeFromAddressList
+    MTIKService->>Mikrotik: Ejecuta reconexión
+    BillingService->>SMSProvider: Notifica "Servicio Reactivado"
+                </div>
+            </div>
+        </div>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">B. Asignación y Resolución de Ticket</div>
+            <div class="diagram">
+                <div class="mermaid">
+sequenceDiagram
+    actor Cliente
+    participant WebApp
+    participant APIGateway
+    participant WorkOrdersService
+    participant PostgreSQL
+    actor JefeTécnico
+    actor Técnico
+    participant MobileApp
+
+    Cliente->>WebApp: Reporta falla (Crea Ticket)
+    WebApp->>APIGateway: Envía datos
+    APIGateway->>WorkOrdersService: Crea Ticket estado Nuevo
+    WorkOrdersService->>PostgreSQL: Guarda Ticket
+    
+    JefeTécnico->>WebApp: Arrastra Ticket → Técnico
+    WebApp->>APIGateway: Acción assign
+    APIGateway->>WorkOrdersService: Asigna Ticket
+    WorkOrdersService->>PostgreSQL: Actualiza → Asignado
+    WorkOrdersService->>MobileApp: Notificación Push
+    
+    Técnico->>MobileApp: Consulta lista, inicia ruta
+    MobileApp->>APIGateway: Acción start_route
+    APIGateway->>WorkOrdersService: Actualiza estado
+    WorkOrdersService->>PostgreSQL: Actualiza → En ruta
+    
+    Técnico->>MobileApp: Completa checklist, notas, marca resuelto
+    MobileApp->>APIGateway: Acción resolve
+    APIGateway->>WorkOrdersService: Resuelve Ticket
+    WorkOrdersService->>PostgreSQL: Actualiza → Resuelto
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>5. Diagrama Entidad-Relación</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Modelo de Datos</div>
+            <div class="diagram">
+                <div class="mermaid">
+erDiagram
+    USUARIO {
+        int id PK
+        string email
+        string password_hash
+        int rol_id FK
+        string nombre
+        string telefono
+    }
+    
+    ROL {
+        int id PK
+        string nombre
+    }
+    
+    CLIENTE {
+        int id PK
+        string nombre
+        string direccion
+        int plan_id FK
+        string estado_servicio
+        decimal saldo
+    }
+    
+    PLAN {
+        int id PK
+        string nombre
+        decimal precio
+        int velocidad
+    }
+    
+    FACTURA {
+        int id PK
+        int cliente_id FK
+        decimal monto
+        date fecha_vencimiento
+        string estado
+        string cfdi_path
+    }
+    
+    PAGO {
+        int id PK
+        int factura_id FK
+        decimal monto
+        string metodo
+        date fecha_pago
+        string tx_id
+    }
+    
+    TICKET {
+        int id PK
+        int cliente_id FK
+        int tecnico_id FK
+        string estado
+        string descripcion
+        string notas_tecnico
+        date fecha_asignacion
+    }
+    
+    LOG_AUDITORIA {
+        int id PK
+        int usuario_id FK
+        string accion
+        string detalle
+        timestamp timestamp
+    }
+    
+    TOKEN_OFFLINE {
+        int id PK
+        int usuario_id FK
+        string token
+        date caducidad
+        json cola_acciones
+    }
+    
+    USUARIO ||--o{ ROL : tiene
+    CLIENTE ||--o{ PLAN : suscrito_a
+    CLIENTE ||--o{ FACTURA : genera
+    CLIENTE ||--o{ TICKET : reporta
+    FACTURA ||--|| PAGO : tiene
+    TICKET }o--|| USUARIO : asignado_a
+    LOG_AUDITORIA }o--|| USUARIO : realizado_por
+    TOKEN_OFFLINE ||--|| USUARIO : pertenece_a
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>6. Diagrama de Componentes</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Arquitectura de Componentes</div>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TB
+    subgraph FrontendComponents [Componentes Frontend]
+        AppShell[AppShell]
+        Dashboard[Dashboard]
+        ClientManagement[Gestión Clientes]
+        TicketKanban[Kanban Tickets]
+        PaymentFlow[Flujo Pago]
+        TechChecklist[Checklist Técnico]
+        OfflineService[Servicio Offline]
+    end
+    
+    subgraph BackendComponents [Componentes Backend]
+        AuthService[Servicio Autenticación]
+        BillingEngine[Motor Facturación]
+        PaymentProcessor[Procesador Pagos]
+        TicketManager[Gestor Tickets]
+        MTIKConnector[Conector MTIK]
+        AuditLogger[Logger Auditoría]
+        NotificationService[Servicio Notificaciones]
+    end
+    
+    subgraph ExternalSystems [Sistemas Externos]
+        Mikrotik
+        PaymentGateway
+        SMSProvider
+    end
+    
+    AppShell --> Dashboard
+    AppShell --> ClientManagement
+    AppShell --> TicketKanban
+    AppShell --> PaymentFlow
+    AppShell --> TechChecklist
+    AppShell --> OfflineService
+    
+    Dashboard --> AuthService
+    ClientManagement --> AuthService
+    ClientManagement --> BillingEngine
+    TicketKanban --> TicketManager
+    PaymentFlow --> PaymentProcessor
+    TechChecklist --> TicketManager
+    OfflineService --> TicketManager
+    
+    AuthService --> PostgreSQL
+    BillingEngine --> PostgreSQL
+    TicketManager --> PostgreSQL
+    PaymentProcessor --> PostgreSQL
+    
+    BillingEngine --> PaymentProcessor
+    PaymentProcessor --> PaymentGateway
+    BillingEngine --> MTIKConnector
+    MTIKConnector --> Mikrotik
+    NotificationService --> SMSProvider
+    AuditLogger --> PostgreSQL
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>7. Diagrama de Navegación</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Flujo de Navegación por Rol</div>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TD
+    Login[Página Login] --> Auth{Autenticación}
+    
+    Auth -->|Dueño/Admin| OwnerFlow[Dueño/Admin]
+    Auth -->|Cobranza| BillingFlow[Cobranza]
+    Auth -->|Jefe Técnico| TechLeadFlow[Jefe Técnico]
+    Auth -->|Técnico| TechFlow[Técnico]
+    Auth -->|Cliente| ClientFlow[Cliente]
+    
+    subgraph OwnerFlow [Dueño/Admin]
+        OwnerDashboard[Dashboard KPIs]
+        OwnerClients[Gestión Clientes]
+        OwnerStaff[Gestión Staff]
+        OwnerReports[Reportes]
+        OwnerConfig[Configuración]
+    end
+    
+    subgraph BillingFlow [Cobranza]
+        BillingDashboard[Dashboard]
+        BillingClients[Clientes]
+        BillingPayments[Pagos]
+        BillingReports[Reportes Morosos]
+        BillingServiceControl[Control Servicio]
+    end
+    
+    subgraph TechLeadFlow [Jefe Técnico]
+        TechLeadDashboard[Dashboard]
+        TechLeadTickets[Tickets Kanban]
+        TechLeadTeam[Gestión Equipo]
+        TechLeadAssignments[Asignaciones]
+    end
+    
+    subgraph TechFlow [Técnico - Mobile App]
+        TechTickets[Lista Tickets]
+        TechTicketDetail[Detalle Ticket]
+        TechChecklist[Checklist]
+        TechProfile[Perfil]
+    end
+    
+    subgraph ClientFlow [Cliente]
+        ClientHome[Inicio]
+        ClientBilling[Facturación y Pagos]
+        ClientSupport[Soporte]
+        ClientProfile[Perfil]
+        ClientSelfTest[Auto-Test]
+    end
+    
+    OwnerDashboard --> OwnerClients
+    OwnerDashboard --> OwnerStaff
+    OwnerDashboard --> OwnerReports
+    
+    BillingDashboard --> BillingClients
+    BillingDashboard --> BillingPayments
+    BillingClients --> BillingServiceControl
+    
+    TechLeadDashboard --> TechLeadTickets
+    TechLeadTickets --> TechLeadAssignments
+    
+    TechTickets --> TechTicketDetail
+    TechTicketDetail --> TechChecklist
+    
+    ClientHome --> ClientBilling
+    ClientHome --> ClientSupport
+    ClientSupport --> ClientSelfTest
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            fontFamily: 'Arial',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

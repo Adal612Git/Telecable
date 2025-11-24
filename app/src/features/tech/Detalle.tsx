@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import type { AppState } from '../../state/app-state'
 import { Card } from '../../components/ui/card'
 import { Button } from '../../components/ui/button'
@@ -23,7 +23,7 @@ export const TechDetalle: React.FC<{ state: AppState, id: string, onDone: ()=>vo
         <div className="border border-amber-300 bg-[rgba(245,158,11,0.1)] text-amber-900 rounded-lg p-3">Checklist incompleto. <Button variant="ghost" size="sm" className="ml-2" onClick={()=> document.getElementById(!onu?'chk-onu':!pot?'chk-pot':'chk-speed')?.scrollIntoView({behavior:'smooth'})}>Ir al punto faltante</Button></div>
       </div>
       <h3 className="font-semibold">Ticket #{t.id}</h3>
-      <p className="text-muted">Cliente: {t.cliente} — {t.problema}</p>
+      <p className="text-muted">Cliente: {t.cliente} - {t.problema}</p>
       <div className="mt-3 flex items-center justify-between">
         {steps.map((s, idx) => (
           <div key={s.key} className="flex-1 flex items-center">
@@ -43,13 +43,10 @@ export const TechDetalle: React.FC<{ state: AppState, id: string, onDone: ()=>vo
         <div className="mt-3">
           <label className="block text-sm font-medium">Notas</label>
           <textarea className="w-full border border-border rounded-lg px-3 py-2 min-h-[120px]" value={notes} onChange={e=>setNotes(e.target.value)} />
-          <div className={`text-sm text-red-800 mt-1 ${notes.trim().length>10?'hidden':'block'}`}>Mínimo 10 caracteres.</div>
+          <div className={`text-sm text-red-800 mt-1 ${notes.trim().length>10?'hidden':'block'}`}>Minimo 10 caracteres.</div>
         </div>
       </div>
       <Button className="w-full mt-3" disabled={!ok} onClick={()=>{ state.tickets[id].estado='Resuelto'; show({ message:`Ticket #${id} resuelto`, type:'success'}); onDone() }}>Completar Ticket</Button>
     </Card>
   )
 }
-
-
-

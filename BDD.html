@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Datos - Sistema ISP</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+        }
+
+        .card.schema {
+            border-left-color: #9b59b6;
+        }
+
+        .card.sql {
+            border-left-color: #e74c3c;
+        }
+
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .sql-code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .table-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .table-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .field-list {
+            list-style: none;
+        }
+
+        .field-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .field-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .field-type {
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .field-pk {
+            background: #e74c3c;
+        }
+
+        .field-fk {
+            background: #f39c12;
+        }
+
+        .index-list {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .migration-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .table-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗄️ Base de Datos Completa - Sistema Gestión ISP</h1>
+            <div class="subtitle">PostgreSQL Schema + Migración WISPHUB</div>
+        </div>
+
+        <!-- Diagrama ER -->
+        <div class="card schema">
+            <h2>🔗 Diagrama Entidad-Relación</h2>
+            <div class="diagram-container">
+                <div class="mermaid">
+erDiagram
+    %% ==================== TABLAS MAESTRAS ====================
+    roles {
+        bigint id PK "IDENTITY"
+        varchar name "NOT NULL"
+        varchar description "NULL"
+        json permissions "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    users {
+        bigint id PK "IDENTITY"
+        varchar email "UNIQUE NOT NULL"
+        varchar password_hash "NOT NULL"
+        bigint role_id FK "NOT NULL"
+        varchar name "NOT NULL"
+        varchar phone "NULL"
+        boolean is_active "DEFAULT true"
+        timestamp last_login "NULL"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    plans {
+        bigint id PK "IDENTITY"
+        varchar name "NOT NULL"
+        varchar description "NULL"
+        decimal price "NOT NULL"
+        integer download_speed "NOT NULL"
+        integer upload_speed "NOT NULL"
+        integer data_limit "NULL"
+        json features "DEFAULT '{}'"
+        boolean is_active "DEFAULT true"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO CLIENTES ====================
+    clients {
+        bigint id PK "IDENTITY"
+        bigint user_id FK "UNIQUE NOT NULL"
+        bigint plan_id FK "NOT NULL"
+        varchar full_name "NOT NULL"
+        varchar address "NOT NULL"
+        varchar coordinates "NULL"
+        varchar ip_address "UNIQUE NOT NULL"
+        varchar mac_address "NULL"
+        varchar service_status "DEFAULT 'PENDING'"
+        decimal balance "DEFAULT 0"
+        date installation_date "NULL"
+        date payment_promise "NULL"
+        json additional_data "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    client_notes {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        bigint author_id FK "NOT NULL"
+        text note "NOT NULL"
+        varchar note_type "DEFAULT 'GENERAL'"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO FACTURACIÓN ====================
+    invoices {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        varchar invoice_number "UNIQUE NOT NULL"
+        decimal amount "NOT NULL"
+        date issue_date "NOT NULL"
+        date due_date "NOT NULL"
+        varchar status "DEFAULT 'DRAFT'"
+        varchar cfdi_uuid "NULL"
+        text cfdi_xml "NULL"
+        json tax_breakdown "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    payments {
+        bigint id PK "IDENTITY"
+        bigint invoice_id FK "NOT NULL"
+        varchar transaction_id "UNIQUE NOT NULL"
+        decimal amount "NOT NULL"
+        varchar payment_method "NOT NULL"
+        varchar status "DEFAULT 'PENDING'"
+        json payment_details "DEFAULT '{}'"
+        timestamp payment_date "NULL"
+        timestamp undo_until "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    payment_webhooks {
+        bigint id PK "IDENTITY"
+        bigint payment_id FK "NULL"
+        varchar webhook_type "NOT NULL"
+        json payload "NOT NULL"
+        varchar status "DEFAULT 'RECEIVED'"
+        text response "NULL"
+        timestamp processed_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO TICKETS ====================
+    ticket_categories {
+        bigint id PK "IDENTITY"
+        varchar name "NOT NULL"
+        varchar description "NULL"
+        integer sla_hours "DEFAULT 24"
+        boolean is_active "DEFAULT true"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    tickets {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        bigint category_id FK "NOT NULL"
+        bigint assigned_tech_id FK "NULL"
+        varchar title "NOT NULL"
+        text description "NOT NULL"
+        varchar priority "DEFAULT 'MEDIUM'"
+        varchar status "DEFAULT 'NEW'"
+        json attachments "DEFAULT '[]'"
+        timestamp scheduled_date "NULL"
+        timestamp resolved_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    ticket_notes {
+        bigint id PK "IDENTITY"
+        bigint ticket_id FK "NOT NULL"
+        bigint author_id FK "NOT NULL"
+        text note "NOT NULL"
+        boolean is_technical "DEFAULT false"
+        json checklist_data "DEFAULT '{}'"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    ticket_status_history {
+        bigint id PK "IDENTITY"
+        bigint ticket_id FK "NOT NULL"
+        varchar old_status "NULL"
+        varchar new_status "NOT NULL"
+        bigint changed_by_id FK "NOT NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== MÓDULO MIKROTIK ====================
+    mikrotik_commands {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        varchar command_type "NOT NULL"
+        varchar command "NOT NULL"
+        varchar status "DEFAULT 'PENDING'"
+        text response "NULL"
+        json parameters "DEFAULT '{}'"
+        timestamp executed_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    service_status_history {
+        bigint id PK "IDENTITY"
+        bigint client_id FK "NOT NULL"
+        varchar old_status "NULL"
+        varchar new_status "NOT NULL"
+        varchar reason "NULL"
+        bigint changed_by_id FK "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== AUDITORÍA Y SISTEMA ====================
+    audit_logs {
+        bigint id PK "IDENTITY"
+        bigint user_id FK "NULL"
+        varchar action "NOT NULL"
+        varchar entity_type "NOT NULL"
+        bigint entity_id "NULL"
+        json old_values "NULL"
+        json new_values "NULL"
+        varchar ip_address "NULL"
+        text user_agent "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    system_settings {
+        bigint id PK "IDENTITY"
+        varchar setting_key "UNIQUE NOT NULL"
+        json setting_value "NOT NULL"
+        varchar description "NULL"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    offline_queues {
+        bigint id PK "IDENTITY"
+        bigint user_id FK "NOT NULL"
+        varchar action_type "NOT NULL"
+        json payload "NOT NULL"
+        varchar status "DEFAULT 'PENDING'"
+        integer retry_count "DEFAULT 0"
+        timestamp processed_at "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% ==================== RELACIONES PRINCIPALES ====================
+    users ||--o{ roles : "role_id"
+    users ||--o| clients : "user_id"
+    clients ||--o{ plans : "plan_id"
+    
+    clients ||--o{ invoices : "client_id"
+    invoices ||--|| payments : "invoice_id"
+    
+    clients ||--o{ tickets : "client_id"
+    tickets ||--o{ ticket_categories : "category_id"
+    tickets ||--o{ users : "assigned_tech_id"
+    
+    clients ||--o{ mikrotik_commands : "client_id"
+    clients ||--o{ service_status_history : "client_id"
+    
+    users ||--o{ audit_logs : "user_id"
+    users ||--o{ offline_queues : "user_id"
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Script de Creación de Base de Datos -->
+        <div class="card sql">
+            <h2>📝 Script de Creación - PostgreSQL</h2>
+            
+            <div class="sql-code">
+-- =============================================
+-- SISTEMA DE GESTIÓN ISP - CREACIÓN DE BASE DE DATOS
+-- =============================================
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ==================== TABLAS MAESTRAS ====================
+CREATE TABLE roles (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description TEXT,
+    permissions JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id BIGINT NOT NULL REFERENCES roles(id),
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    is_active BOOLEAN DEFAULT true,
+    last_login TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE plans (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    download_speed INTEGER NOT NULL,
+    upload_speed INTEGER NOT NULL,
+    data_limit INTEGER,
+    features JSONB DEFAULT '{}',
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ==================== MÓDULO CLIENTES ====================
+CREATE TABLE clients (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT UNIQUE NOT NULL REFERENCES users(id),
+    plan_id BIGINT NOT NULL REFERENCES plans(id),
+    full_name VARCHAR(200) NOT NULL,
+    address TEXT NOT NULL,
+    coordinates VARCHAR(100),
+    ip_address VARCHAR(45) UNIQUE NOT NULL,
+    mac_address VARCHAR(17),
+    service_status VARCHAR(20) DEFAULT 'PENDING',
+    balance DECIMAL(10,2) DEFAULT 0,
+    installation_date DATE,
+    payment_promise DATE,
+    additional_data JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE client_notes (
+    id BIGSERIAL PRIMARY KEY,
+    client_id BIGINT NOT NULL REFERENCES clients(id),
+    author_id BIGINT NOT NULL REFERENCES users(id),
+    note TEXT NOT NULL,
+    note_type VARCHAR(20) DEFAULT 'GENERAL',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ==================== MÓDULO FACTURACIÓN ====================
+CREATE TABLE invoices (
+    id BIGSERIAL PRIMARY KEY,
+    client_id BIGINT NOT NULL REFERENCES clients(id),
+    invoice_number VARCHAR(50) UNIQUE NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    issue_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'DRAFT',
+    cfdi_uuid VARCHAR(36),
+    cfdi_xml TEXT,
+    tax_breakdown JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE payments (
+    id BIGSERIAL PRIMARY KEY,
+    invoice_id BIGINT NOT NULL REFERENCES invoices(id),
+    transaction_id VARCHAR(100) UNIQUE NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_method VARCHAR(20) NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    payment_details JSONB DEFAULT '{}',
+    payment_date TIMESTAMP,
+    undo_until TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE payment_webhooks (
+    id BIGSERIAL PRIMARY KEY,
+    payment_id BIGINT REFERENCES payments(id),
+    webhook_type VARCHAR(50) NOT NULL,
+    payload JSONB NOT NULL,
+    status VARCHAR(20) DEFAULT 'RECEIVED',
+    response TEXT,
+    processed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ==================== MÓDULO TICKETS ====================
+CREATE TABLE ticket_categories (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    sla_hours INTEGER DEFAULT 24,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE tickets (
+    id BIGSERIAL PRIMARY KEY,
+    client_id BIGINT NOT NULL REFERENCES clients(id),
+    category_id BIGINT NOT NULL REFERENCES ticket_categories(id),
+    assigned_tech_id BIGINT REFERENCES users(id),
+    title VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
+    priority VARCHAR(20) DEFAULT 'MEDIUM',
+    status VARCHAR(20) DEFAULT 'NEW',
+    attachments JSONB DEFAULT '[]',
+    scheduled_date TIMESTAMP,
+    resolved_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE ticket_notes (
+    id BIGSERIAL PRIMARY KEY,
+    ticket_id BIGINT NOT NULL REFERENCES tickets(id),
+    author_id BIGINT NOT NULL REFERENCES users(id),
+    note TEXT NOT NULL,
+    is_technical BOOLEAN DEFAULT false,
+    checklist_data JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE ticket_status_history (
+    id BIGSERIAL PRIMARY KEY,
+    ticket_id BIGINT NOT NULL REFERENCES tickets(id),
+    old_status VARCHAR(20),
+    new_status VARCHAR(20) NOT NULL,
+    changed_by_id BIGINT NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ==================== MÓDULO MIKROTIK ====================
+CREATE TABLE mikrotik_commands (
+    id BIGSERIAL PRIMARY KEY,
+    client_id BIGINT NOT NULL REFERENCES clients(id),
+    command_type VARCHAR(50) NOT NULL,
+    command TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    response TEXT,
+    parameters JSONB DEFAULT '{}',
+    executed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE service_status_history (
+    id BIGSERIAL PRIMARY KEY,
+    client_id BIGINT NOT NULL REFERENCES clients(id),
+    old_status VARCHAR(20),
+    new_status VARCHAR(20) NOT NULL,
+    reason TEXT,
+    changed_by_id BIGINT REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ==================== AUDITORÍA Y SISTEMA ====================
+CREATE TABLE audit_logs (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id),
+    action VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
+    entity_id BIGINT,
+    old_values JSONB,
+    new_values JSONB,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE system_settings (
+    id BIGSERIAL PRIMARY KEY,
+    setting_key VARCHAR(100) UNIQUE NOT NULL,
+    setting_value JSONB NOT NULL,
+    description TEXT,
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE offline_queues (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    action_type VARCHAR(50) NOT NULL,
+    payload JSONB NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    retry_count INTEGER DEFAULT 0,
+    processed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+            </div>
+        </div>
+
+        <!-- Índices y Optimización -->
+        <div class="card sql">
+            <h2>⚡ Índices y Optimización</h2>
+            
+            <div class="sql-code">
+-- =============================================
+-- ÍNDICES PARA OPTIMIZACIÓN
+-- =============================================
+
+-- Índices para búsquedas frecuentes
+CREATE INDEX idx_clients_service_status ON clients(service_status);
+CREATE INDEX idx_clients_ip_address ON clients(ip_address);
+CREATE INDEX idx_clients_balance ON clients(balance);
+CREATE INDEX idx_clients_plan_id ON clients(plan_id);
+
+CREATE INDEX idx_invoices_status ON invoices(status);
+CREATE INDEX idx_invoices_due_date ON invoices(due_date);
+CREATE INDEX idx_invoices_client_id ON invoices(client_id);
+CREATE INDEX idx_invoices_issue_date ON invoices(issue_date);
+
+CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_payments_payment_date ON payments(payment_date);
+CREATE INDEX idx_payments_transaction_id ON payments(transaction_id);
+
+CREATE INDEX idx_tickets_status ON tickets(status);
+CREATE INDEX idx_tickets_priority ON tickets(priority);
+CREATE INDEX idx_tickets_assigned_tech_id ON tickets(assigned_tech_id);
+CREATE INDEX idx_tickets_client_id ON tickets(client_id);
+CREATE INDEX idx_tickets_created_at ON tickets(created_at);
+
+CREATE INDEX idx_mikrotik_commands_status ON mikrotik_commands(status);
+CREATE INDEX idx_mikrotik_commands_client_id ON mikrotik_commands(client_id);
+
+CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
+CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
+
+-- Índices para ordenamiento
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_role_id ON users(role_id);
+
+-- Índices para relaciones
+CREATE INDEX idx_client_notes_client_id ON client_notes(client_id);
+CREATE INDEX idx_ticket_notes_ticket_id ON ticket_notes(ticket_id);
+CREATE INDEX idx_ticket_status_history_ticket_id ON ticket_status_history(ticket_id);
+
+-- =============================================
+-- FUNCIONES Y TRIGGERS
+-- =============================================
+
+-- Función para actualizar updated_at
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Triggers para updated_at
+CREATE TRIGGER trigger_users_updated_at 
+    BEFORE UPDATE ON users 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER trigger_clients_updated_at 
+    BEFORE UPDATE ON clients 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER trigger_invoices_updated_at 
+    BEFORE UPDATE ON invoices 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER trigger_tickets_updated_at 
+    BEFORE UPDATE ON tickets 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- Función para generar número de factura
+CREATE OR REPLACE FUNCTION generate_invoice_number()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.invoice_number := 'FACT-' || TO_CHAR(NEW.issue_date, 'YYYYMM') || '-' || LPAD(NEW.id::TEXT, 6, '0');
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_invoice_number 
+    BEFORE INSERT ON invoices 
+    FOR EACH ROW EXECUTE FUNCTION generate_invoice_number();
+            </div>
+        </div>
+
+        <!-- Datos Iniciales -->
+        <div class="card sql">
+            <h2>🌱 Datos Iniciales del Sistema</h2>
+            
+            <div class="sql-code">
+-- =============================================
+-- DATOS INICIALES DEL SISTEMA
+-- =============================================
+
+-- Roles del sistema
+INSERT INTO roles (name, description, permissions) VALUES
+('owner', 'Dueño/Administrador', '{"all": true}'),
+('billing', 'Personal de Cobranza', '{"clients": true, "invoices": true, "payments": true, "reports": true}'),
+('tech_lead', 'Jefe de Técnicos', '{"tickets": true, "tech_management": true, "reports": true}'),
+('technician', 'Técnico de Campo', '{"tickets": true, "checklists": true}'),
+('client', 'Cliente Final', '{"self_service": true, "payments": true, "tickets": true}');
+
+-- Planes de servicio iniciales
+INSERT INTO plans (name, description, price, download_speed, upload_speed, data_limit, features) VALUES
+('Básico 10 Mbps', 'Plan básico para uso residencial', 299.00, 10, 5, 100, '["internet", "wifi", "soporte_básico"]'),
+('Estándar 20 Mbps', 'Plan estándar para familias', 499.00, 20, 10, 200, '["internet", "wifi", "soporte_prioritario", "ip_fija"]'),
+('Avanzado 50 Mbps', 'Plan para negocios y gamers', 799.00, 50, 25, NULL, '["internet", "wifi", "soporte_24h", "ip_fija", "prioridad_red"]'),
+('Premium 100 Mbps', 'Plan premium sin límites', 1299.00, 100, 50, NULL, '["internet", "wifi", "soporte_24h", "ip_fija", "prioridad_maxima", "backup_line"]');
+
+-- Usuario administrador inicial (password: Admin123!)
+INSERT INTO users (email, password_hash, role_id, name, phone) VALUES
+('admin@isp.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'Administrador Principal', '+525512345678');
+
+-- Configuraciones del sistema
+INSERT INTO system_settings (setting_key, setting_value, description) VALUES
+('company_name', '"Mi ISP"', 'Nombre de la empresa'),
+('company_address', '{"street": "Av. Principal 123", "city": "Ciudad", "state": "Estado", "zip": "12345"}'', 'Dirección de la empresa'),
+('billing_settings', '{"currency": "MXN", "tax_rate": 0.16, "invoice_due_days": 15, "late_fee_rate": 0.05}'', 'Configuración de facturación'),
+('mikrotik_settings', '{"host": "192.168.88.1", "username": "admin", "ssl": false, "timeout": 30}'', 'Configuración Mikrotik'),
+('payment_settings', '{"spei_undo_window": 10, "allowed_methods": ["spei", "card", "cash"]}'', 'Configuración de pagos'),
+('ticket_settings', '{"sla_urgent": 4, "sla_high": 8, "sla_medium": 24, "sla_low": 48}'', 'Configuración de tickets');
+
+-- Categorías de tickets
+INSERT INTO ticket_categories (name, description, sla_hours) VALUES
+('Sin servicio', 'Cliente reporta falta total de internet', 4),
+('Lentitud', 'Queja sobre velocidad baja', 8),
+('Inestabilidad', 'Conexión intermitente o inestable', 8),
+('Configuración', 'Problemas con configuración de equipo', 24),
+('Facturación', 'Consultas sobre facturación y pagos', 24),
+('Otros', 'Otros tipos de problemas', 48);
+            </div>
+        </div>
+
+        <!-- Script de Migración WISPHUB -->
+        <div class="card sql">
+            <h2>🔄 Script de Migración desde WISPHUB</h2>
+            
+            <div class="migration-section">
+                <h3>📋 Consideraciones para la Migración</h3>
+                <p><strong>Nota:</strong> Estos scripts asumen que tienes acceso a la base de datos de WISPHUB. 
+                Ajusta los nombres de tabla y campos según la estructura real de tu instalación.</p>
+            </div>
+
+            <div class="sql-code">
+-- =============================================
+-- MIGRACIÓN DESDE WISPHUB - CLIENTES Y PLANES
+-- =============================================
+
+-- 1. Migración de planes (ajusta según tu estructura WISPHUB)
+INSERT INTO plans (name, description, price, download_speed, upload_speed, features)
+SELECT 
+    plan_name,
+    plan_description,
+    plan_price,
+    download_speed,
+    upload_speed,
+    json_build_object(
+        'wispHub_id', plan_id,
+        'legacy_data', true
+    ) as features
+FROM wisphub_plans WHERE plan_active = true;
+
+-- 2. Migración de usuarios/clientes
+INSERT INTO users (email, password_hash, role_id, name, phone, created_at)
+SELECT 
+    COALESCE(client_email, CONCAT('client_', client_id, '@legacy.isp')),
+    -- Password temporal para migración (deben resetear)
+    '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    5, -- role client
+    COALESCE(client_name, 'Cliente Migrado'),
+    client_phone,
+    COALESCE(registration_date, NOW())
+FROM wisphub_clients;
+
+-- 3. Migración de datos de clientes
+INSERT INTO clients (
+    user_id, plan_id, full_name, address, ip_address, 
+    service_status, balance, installation_date, additional_data
+)
+SELECT 
+    u.id,
+    COALESCE(p.id, 1), -- Plan por defecto si no hay match
+    COALESCE(c.client_name, 'Cliente Migrado'),
+    COALESCE(c.client_address, 'Dirección no especificada'),
+    c.ip_address,
+    CASE 
+        WHEN c.service_status = 'active' THEN 'ACTIVE'
+        WHEN c.service_status = 'suspended' THEN 'SUSPENDED'
+        WHEN c.service_status = 'disabled' THEN 'CUT_OFF'
+        ELSE 'PENDING'
+    END,
+    COALESCE(c.balance, 0),
+    COALESCE(c.installation_date, NOW()),
+    json_build_object(
+        'wispHub_id', c.client_id,
+        'legacy_balance', c.balance,
+        'migration_date', NOW(),
+        'original_data', row_to_json(c)
+    )
+FROM wisphub_clients c
+INNER JOIN users u ON u.email = COALESCE(c.client_email, CONCAT('client_', c.client_id, '@legacy.isp'))
+LEFT JOIN plans p ON p.name = c.plan_name;
+
+-- =============================================
+-- MIGRACIÓN DE DATOS DE FACTURACIÓN
+-- =============================================
+
+-- 4. Migración de facturas (si existen en WISPHUB)
+INSERT INTO invoices (
+    client_id, invoice_number, amount, issue_date, due_date, status, additional_data
+)
+SELECT 
+    cl.id,
+    i.invoice_number,
+    i.amount,
+    i.issue_date,
+    i.due_date,
+    CASE 
+        WHEN i.status = 'paid' THEN 'PAID'
+        WHEN i.status = 'pending' THEN 'ISSUED'
+        ELSE 'DRAFT'
+    END,
+    json_build_object(
+        'wispHub_invoice_id', i.invoice_id,
+        'migration_note', 'Migrado desde WISPHUB'
+    )
+FROM wisphub_invoices i
+INNER JOIN clients cl ON cl.additional_data->>'wispHub_id' = i.client_id::text;
+
+-- =============================================
+-- MIGRACIÓN DE HISTORIAL DE PAGOS
+-- =============================================
+
+-- 5. Migración de pagos
+INSERT INTO payments (
+    invoice_id, transaction_id, amount, payment_method, status, payment_date, payment_details
+)
+SELECT 
+    inv.id,
+    CONCAT('MIG_', p.payment_id),
+    p.amount,
+    CASE 
+        WHEN p.method = 'cash' THEN 'CASH'
+        WHEN p.method = 'transfer' THEN 'SPEI'
+        ELSE 'OTHER'
+    END,
+    'CONFIRMED',
+    p.payment_date,
+    json_build_object(
+        'wispHub_payment_id', p.payment_id,
+        'original_method', p.method,
+        'migration_note', 'Migrado desde WISPHUB'
+    )
+FROM wisphub_payments p
+INNER JOIN invoices inv ON inv.additional_data->>'wispHub_invoice_id' = p.invoice_id::text;
+
+-- =============================================
+-- ACTUALIZACIÓN DE ESTADOS POST-MIGRACIÓN
+-- =============================================
+
+-- 6. Actualizar balances de clientes basado en pagos migrados
+UPDATE clients 
+SET balance = (
+    SELECT COALESCE(SUM(i.amount), 0) - COALESCE(SUM(p.amount), 0)
+    FROM invoices i
+    LEFT JOIN payments p ON p.invoice_id = i.id AND p.status = 'CONFIRMED'
+    WHERE i.client_id = clients.id AND i.status != 'PAID'
+)
+WHERE additional_data->>'wispHub_id' IS NOT NULL;
+
+-- 7. Marcar facturas como pagadas si el balance está cubierto
+UPDATE invoices 
+SET status = 'PAID'
+WHERE id IN (
+    SELECT i.id
+    FROM invoices i
+    INNER JOIN clients c ON c.id = i.client_id
+    WHERE i.amount <= (
+        SELECT COALESCE(SUM(p.amount), 0)
+        FROM payments p
+        WHERE p.invoice_id = i.id AND p.status = 'CONFIRMED'
+    )
+);
+
+-- 8. Insertar en historial de servicio
+INSERT INTO service_status_history (client_id, new_status, reason, created_at)
+SELECT 
+    id,
+    service_status,
+    'Migración inicial desde WISPHUB',
+    NOW()
+FROM clients 
+WHERE additional_data->>'wispHub_id' IS NOT NULL;
+            </div>
+        </div>
+
+        <!-- Tablas Detalladas -->
+        <div class="card">
+            <h2>📊 Descripción Detallada de Tablas Principales</h2>
+            
+            <div class="table-grid">
+                <!-- Tabla Clients -->
+                <div class="table-card">
+                    <h3>👥 clients</h3>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">user_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">plan_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">full_name</span><span class="field-type">VARCHAR(200)</span></li>
+                        <li><span class="field-name">ip_address</span><span class="field-type">VARCHAR(45) UNIQUE</span></li>
+                        <li><span class="field-name">service_status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">balance</span><span class="field-type">DECIMAL(10,2)</span></li>
+                        <li><span class="field-name">installation_date</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">payment_promise</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">additional_data</span><span class="field-type">JSONB</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> service_status, ip_address, balance, plan_id
+                    </div>
+                </div>
+
+                <!-- Tabla Invoices -->
+                <div class="table-card">
+                    <h3>🧾 invoices</h3>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">client_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">invoice_number</span><span class="field-type">VARCHAR(50) UNIQUE</span></li>
+                        <li><span class="field-name">amount</span><span class="field-type">DECIMAL(10,2)</span></li>
+                        <li><span class="field-name">issue_date</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">due_date</span><span class="field-type">DATE</span></li>
+                        <li><span class="field-name">status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">cfdi_uuid</span><span class="field-type">VARCHAR(36)</span></li>
+                        <li><span class="field-name">tax_breakdown</span><span class="field-type">JSONB</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> status, due_date, client_id, issue_date
+                    </div>
+                </div>
+
+                <!-- Tabla Payments -->
+                <div class="table-card">
+                    <h3>💳 payments</h3>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">invoice_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">transaction_id</span><span class="field-type">VARCHAR(100) UNIQUE</span></li>
+                        <li><span class="field-name">amount</span><span class="field-type">DECIMAL(10,2)</span></li>
+                        <li><span class="field-name">payment_method</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">undo_until</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">payment_details</span><span class="field-type">JSONB</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> status, payment_date, transaction_id
+                    </div>
+                </div>
+
+                <!-- Tabla Tickets -->
+                <div class="table-card">
+                    <h3>🎫 tickets</h3>
+                    <ul class="field-list">
+                        <li><span class="field-name">id</span><span class="field-type field-pk">BIGSERIAL PK</span></li>
+                        <li><span class="field-name">client_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">category_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">assigned_tech_id</span><span class="field-type field-fk">BIGINT FK</span></li>
+                        <li><span class="field-name">title</span><span class="field-type">VARCHAR(200)</span></li>
+                        <li><span class="field-name">priority</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">status</span><span class="field-type">VARCHAR(20)</span></li>
+                        <li><span class="field-name">attachments</span><span class="field-type">JSONB</span></li>
+                        <li><span class="field-name">scheduled_date</span><span class="field-type">TIMESTAMP</span></li>
+                        <li><span class="field-name">resolved_at</span><span class="field-type">TIMESTAMP</span></li>
+                    </ul>
+                    <div class="index-list">
+                        <strong>Índices:</strong> status, priority, assigned_tech_id, client_id
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            er: {
+                useMaxWidth: true,
+                diagramPadding: 15
+            }
+        });
+    </script>
+</body>
+</html>

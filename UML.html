@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas UML - Sistema Gestión ISP</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .diagram-container {
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .diagram {
+            text-align: center;
+            overflow-x: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .diagram-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Diagramas UML Completos - Sistema de Gestión ISP</h1>
+
+    <div class="note">
+        <strong>📋 Nota:</strong> Todos los diagramas están basados en la documentación completa del sistema y los artefactos proporcionados.
+    </div>
+
+    <div class="section">
+        <h2>1. Diagrama de Clases UML</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Modelo de Dominio Completo</div>
+            <div class="diagram">
+                <div class="mermaid">
+classDiagram
+    %% Entidades Principales
+    class Usuario {
+        +id: int <<PK>>
+        +email: string
+        +password_hash: string
+        +nombre: string
+        +telefono: string
+        +fecha_creacion: datetime
+        +esta_activo: boolean
+        +login()
+        +cambiarPassword()
+    }
+
+    class Rol {
+        +id: int <<PK>>
+        +nombre: string
+        +descripcion: string
+        +permisos: json
+    }
+
+    class Cliente {
+        +id: int <<PK>>
+        +direccion: string
+        +coordenadas_gps: string
+        +ip_asignada: string
+        +estado_servicio: EstadoServicio
+        +saldo_pendiente: decimal
+        +fecha_instalacion: date
+        +promesa_pago: date
+        +reportarFalla()
+        +realizarPago()
+        +solicitarAutotest()
+    }
+
+    class Plan {
+        +id: int <<PK>>
+        +nombre: string
+        +precio: decimal
+        +velocidad_descarga: int
+        +velocidad_subida: int
+        +limite_datos: int
+        +caracteristicas: json
+        +esta_activo: boolean
+    }
+
+    %% Entidades de Negocio
+    class Factura {
+        +id: int <<PK>>
+        +folio: string
+        +monto: decimal
+        +fecha_emision: date
+        +fecha_vencimiento: date
+        +estado: EstadoFactura
+        +cfdi_uuid: string
+        +cfdi_xml: text
+        +timbrar()
+        +cancelar()
+        +generarNotaCredito()
+    }
+
+    class Pago {
+        +id: int <<PK>>
+        +monto: decimal
+        +metodo: MetodoPago
+        +referencia: string
+        +tx_id: string <<Idempotencia>>
+        +fecha_pago: datetime
+        +estado: EstadoPago
+        +ventana_deshacer: datetime
+        +confirmarWebhook()
+        +marcarComoFallido()
+    }
+
+    class Ticket {
+        +id: int <<PK>>
+        +titulo: string
+        +descripcion: text
+        +categoria: CategoriaTicket
+        +prioridad: Prioridad
+        +estado: EstadoTicket
+        +fecha_creacion: datetime
+        +fecha_cierre: datetime
+        +notas_tecnico: text
+        +evidencias: json
+        +asignar(tecnico)
+        +cambiarEstado(nuevoEstado)
+        +agregarNotaTecnica(nota)
+        +cerrar(checklistCompleto)
+    }
+
+    class ChecklistTicket {
+        +id: int <<PK>>
+        +items: json
+        +completado: boolean
+        +fecha_completado: datetime
+        +validarChecklist()
+        +marcarItemCompletado(item)
+    }
+
+    %% Entidades de Soporte
+    class LogAuditoria {
+        +id: int <<PK>>
+        +accion: string
+        +entidad_afectada: string
+        +id_entidad: int
+        +detalles: json
+        +timestamp: datetime
+        +ip_origen: string
+        +registrarAccion()
+    }
+
+    class TokenOffline {
+        +id: int <<PK>>
+        +token: string
+        +caducidad: datetime
+        +cola_acciones: json
+        +esta_activo: boolean
+        +generarToken()
+        +agregarAccionCola(accion)
+        +sincronizarAcciones()
+    }
+
+    %% Enumeraciones
+    class EstadoServicio {
+        <<enumeration>>
+        ACTIVO
+        CORTADO
+        SUSPENDIDO
+        PENDIENTE_INSTALACION
+    }
+
+    class EstadoFactura {
+        <<enumeration>>
+        BORRADOR
+        TIMBRADA
+        PAGADA
+        FALLIDA
+        CANCELADA
+    }
+
+    class EstadoTicket {
+        <<enumeration>>
+        NUEVO
+        ASIGNADO
+        EN_RUTA
+        EN_SITIO
+        RESUELTO
+        CERRADO
+        CANCELADO
+    }
+
+    class MetodoPago {
+        <<enumeration>>
+        SPEI
+        TARJETA_CREDITO
+        EFECTIVO
+        TRANSFERENCIA
+    }
+
+    %% Relaciones
+    Usuario "1" -- "1" Rol : tiene
+    Usuario <|-- Cliente : es_un
+    Usuario <|-- Tecnico : es_un
+    Usuario <|-- StaffCobranza : es_un
+    Usuario <|-- JefeTecnico : es_un
+    Usuario <|-- DueñoAdmin : es_un
+
+    Cliente "1" -- "N" Factura : genera
+    Cliente "1" -- "N" Ticket : reporta
+    Cliente "1" -- "1" Plan : suscrito_a
+    Cliente "1" -- "N" Pago : realiza
+
+    Factura "1" -- "1" Pago : tiene
+    Ticket "1" -- "1" ChecklistTicket : requiere
+    Ticket "N" -- "1" Tecnico : asignado_a
+    
+    Usuario "1" -- "N" LogAuditoria : realiza
+    Usuario "1" -- "1" TokenOffline : posee
+
+    Plan "1" -- "N" Cliente : ofrecido_a
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Diagrama de Componentes UML</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Arquitectura de Componentes del Sistema</div>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TB
+    subgraph FrontendLayer [Capa Frontend]
+        subgraph WebApp [Aplicación Web - Vite + React]
+            AppShell[AppShell Component]
+            Dashboard[Dashboard Component]
+            ClientMgmt[Gestión Clientes]
+            TicketKanban[Kanban de Tickets]
+            PaymentFlow[Flujo de Pagos]
+            TechInterface[Interfaz Técnicos]
+            OfflineHandler[Manejador Offline]
+        end
+
+        subgraph MobileApp [App Móvil - Expo/React Native]
+            MobileHome[Inicio Móvil]
+            MobileTickets[Tickets Técnico]
+            MobileChecklist[Checklist Móvil]
+            ClientApp[App Cliente]
+            PaymentMobile[Pagos Móvil]
+        end
+
+        ServiceWorker[Service Worker]
+    end
+
+    subgraph APILayer [Capa API Gateway]
+        APIGateway[API Gateway<br/>FastAPI/Python]
+        AuthMiddleware[Middleware Auth]
+        RateLimiting[Rate Limiting]
+        RequestValidation[Validación Requests]
+    end
+
+    subgraph BusinessLayer [Capa de Negocio - Microservicios]
+        subgraph AuthService [Servicio Autenticación]
+            AuthController[Auth Controller]
+            JWTManager[JWT Manager]
+            RoleManager[Role Manager]
+            SessionManager[Session Manager]
+        end
+
+        subgraph BillingService [Servicio Facturación]
+            BillingEngine[Motor Facturación]
+            PaymentProcessor[Procesador Pagos]
+            CFDIHandler[Manejador CFDI]
+            WebhookManager[Manager Webhooks]
+        end
+
+        subgraph WorkOrderService [Servicio Órdenes Trabajo]
+            TicketManager[Gestor Tickets]
+            AssignmentEngine[Motor Asignación]
+            ChecklistService[Servicio Checklist]
+            NotificationService[Servicio Notificaciones]
+        end
+
+        subgraph MTIKService [Servicio MTIK]
+            MTIKConnector[Conector MTIK]
+            CommandExecutor[Ejecutor Comandos]
+            QueueListener[Listener Cola]
+            NetworkManager[Manager Red]
+        end
+    end
+
+    subgraph DataLayer [Capa de Datos]
+        PostgreSQL[(PostgreSQL<br/>Base de Datos)]
+        Redis[(Redis<br/>Cola & Cache)]
+        BlobStorage[(Almacenamiento<br/>Archivos)]
+    end
+
+    subgraph ExternalSystems [Sistemas Externos]
+        Mikrotik[Mikrotik Router]
+        PaymentGateway[Pasarela de Pagos]
+        SMSProvider[Proveedor SMS/Email]
+        SATService[Servicio SAT]
+    end
+
+    %% Conexiones Frontend
+    WebApp --> APIGateway
+    MobileApp --> APIGateway
+    ServiceWorker --> WebApp
+
+    %% Conexiones API Gateway
+    APIGateway --> AuthService
+    APIGateway --> BillingService
+    APIGateway --> WorkOrderService
+    APIGateway --> MTIKService
+
+    %% Conexiones Servicios
+    AuthService --> PostgreSQL
+    BillingService --> PostgreSQL
+    WorkOrderService --> PostgreSQL
+    MTIKService --> PostgreSQL
+    
+    BillingService --> Redis
+    WorkOrderService --> Redis
+    MTIKService --> Redis
+
+    BillingService --> BlobStorage
+    WorkOrderService --> BlobStorage
+
+    %% Conexiones Externas
+    BillingService --> PaymentGateway
+    BillingService --> SATService
+    WorkOrderService --> SMSProvider
+    MTIKService --> Mikrotik
+
+    %% Comunicación entre Servicios
+    BillingService -.->|Eventos Pago| Redis
+    Redis -.->|Consume Eventos| MTIKService
+    WorkOrderService -.->|Notificaciones| SMSProvider
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Diagrama de Secuencia - Control de Servicio</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Flujo Completo: Corte y Reactivación de Servicio</div>
+            <div class="diagram">
+                <div class="mermaid">
+sequenceDiagram
+    participant C as Cobranza
+    participant WA as WebApp
+    participant AG as API Gateway
+    participant BS as Billing Service
+    participant MT as MTIK Service
+    participant DB as PostgreSQL
+    participant RQ as Redis Queue
+    participant MR as Mikrotik Router
+    participant PG as Payment Gateway
+
+    Note over C,MR: 1. FLUJO: CORTE MANUAL POR MOROSIDAD
+
+    C->>WA: Selecciona cliente moroso
+    WA->>AG: POST /api/clientes/{id}/corte
+    AG->>BS: cortarServicio(clienteId, motivo)
+    
+    BS->>DB: SELECT estado_servicio FROM clientes
+    DB-->>BS: estado_servicio = 'ACTIVO'
+    
+    BS->>DB: UPDATE clientes SET estado_servicio = 'CORTADO'
+    BS->>MT: addToAddressList(ip, "MOROSOS")
+    MT->>MR: /ip/firewall/address-list/add
+    MR-->>MT: OK
+    MT-->>BS: Corte ejecutado
+    
+    BS->>DB: INSERT log_auditoria (corte_manual)
+    BS-->>AG: 200 OK - Servicio cortado
+    AG-->>WA: Confirmación
+    WA-->>C: "Servicio cortado exitosamente"
+
+    Note over C,MR: 2. FLUJO: REACTIVACIÓN AUTOMÁTICA POR PAGO
+
+    PG->>BS: Webhook: pago_confirmado (tx_id)
+    BS->>DB: SELECT * FROM pagos WHERE tx_id = ?
+    DB-->>BS: Pago no existe
+    
+    BS->>DB: INSERT pagos (tx_id, monto, metodo)
+    BS->>DB: UPDATE facturas SET estado = 'PAGADA'
+    BS->>DB: SELECT estado_servicio FROM clientes WHERE id = ?
+    DB-->>BS: estado_servicio = 'CORTADO'
+    
+    BS->>RQ: PUBLISH cliente_pagado {clienteId, monto}
+    RQ->>MT: Consume evento cliente_pagado
+    
+    MT->>BS: GET /api/clientes/{id}/estado
+    BS-->>MT: {estado: 'CORTADO', ip: 'x.x.x.x'}
+    
+    MT->>MR: /ip/firewall/address-list/remove
+    MR-->>MT: OK
+    MT->>DB: UPDATE clientes SET estado_servicio = 'ACTIVO'
+    MT->>BS: POST /api/notificaciones/reactivacion
+    BS->>RQ: PUBLISH notificacion_reactivado
+
+    Note over C,MR: 3. FLUJO: REACTIVACIÓN MANUAL
+
+    C->>WA: Selecciona cliente y "Reactivar"
+    WA->>AG: POST /api/clientes/{id}/reactivar
+    AG->>BS: reactivarServicio(clienteId)
+    
+    BS->>DB: SELECT estado_servicio FROM clientes
+    DB-->>BS: estado_servicio = 'CORTADO'
+    
+    BS->>DB: UPDATE clientes SET estado_servicio = 'ACTIVO'
+    BS->>MT: removeFromAddressList(ip, "MOROSOS")
+    MT->>MR: Comando remoción
+    MR-->>MT: OK
+    MT-->>BS: Reactivación exitosa
+    
+    BS->>DB: INSERT log_auditoria (reactivacion_manual)
+    BS-->>AG: 200 OK
+    AG-->>WA: Confirmación
+    WA-->>C: "Servicio reactivado exitosamente"
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Diagrama de Actividad - Reporte de Falla</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">CU-4: Flujo Completo de Reporte de Falla</div>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TD
+    Start([Cliente inicia sesión]) --> Nav[Navega a sección Soporte]
+    Nav --> Select[Selecciona Reportar Falla]
+    
+    Select --> AutoTestQuestion{Sistema pregunta:<br/>¿Desea Auto-Test?}
+    
+    AutoTestQuestion -->|Sí| ExecuteTest[Ejecuta Auto-Test automático]
+    ExecuteTest --> TestResult{Resultado Auto-Test}
+    
+    TestResult -->|Éxito| SuggestFAQ[Sugiere FAQs relevantes]
+    SuggestFAQ --> Final1([Fin - No se crea ticket])
+    
+    TestResult -->|Falla| AutoTicket[Sistema crea ticket automático]
+    AutoTicket --> SetCategory1[Establece categoría: AUTO_TEST_FAIL]
+    
+    AutoTestQuestion -->|No| ShowForm[Muestra formulario de reporte]
+    ShowForm --> FillForm[Cliente completa formulario]
+    FillForm --> UploadEvidence{¿Agregar evidencia?}
+    
+    UploadEvidence -->|Sí| Upload[Sube fotos/archivos]
+    Upload --> SetCategory2[Selecciona categoría manual]
+    UploadEvidence -->|No| SetCategory2
+    
+    SetCategory1 --> CreateTicket[Crear Ticket en sistema]
+    SetCategory2 --> CreateTicket
+    
+    CreateTicket --> SetStateNuevo[Estado: NUEVO]
+    SetStateNuevo --> AssignZone[Asignar por zona/reglas]
+    
+    AssignZone --> NotifyJefe[Notificar Jefe Técnico]
+    NotifyJefe --> NotifyClient[Notificar Cliente vía Push/SMS]
+    
+    NotifyJefe --> WaitAssignment{Esperar asignación}
+    WaitAssignment -->|Jefe asigna| UpdateState[Actualizar estado: ASIGNADO]
+    
+    UpdateState --> NotifyTech[Notificar Técnico vía Push]
+    NotifyTech --> TechAccepts{Técnico acepta asignación?}
+    
+    TechAccepts -->|Sí| StartRoute[Estado: EN_RUTA]
+    TechAccepts -->|No| Reassign[Reasignar a otro técnico]
+    Reassign --> UpdateState
+    
+    StartRoute --> ArriveSite[Técnico llega al sitio]
+    ArriveSite --> StateOnSite[Estado: EN_SITIO]
+    
+    StateOnSite --> PerformChecklist[Realizar checklist obligatorio]
+    PerformChecklist --> AllItemsComplete{Todos los items completos?}
+    
+    AllItemsComplete -->|No| ShowError[Muestra error: Checklist incompleto]
+    ShowError --> PerformChecklist
+    
+    AllItemsComplete -->|Sí| AddNotes[Agregar notas técnicas]
+    AddNotes --> UploadTechEvidence[Subir evidencias técnicas]
+    AddNotes --> MarkResolved[Marcar como RESUELTO]
+    
+    MarkResolved --> NotifyClientResolved[Notificar cliente: Ticket resuelto]
+    NotifyClientResolved --> WaitFeedback{Esperar confirmación cliente}
+    
+    WaitFeedback -->|Cliente confirma| CloseTicket[Estado: CERRADO]
+    WaitFeedback -->|Cliente rechaza| Reopen[Reabrir ticket]
+    
+    Reopen --> StateOnSite
+    CloseTicket --> Final2([Fin - Proceso completado])
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>5. Diagrama de Secuencia - Flujo Completo de Pago</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Pago en Línea con Todos los Escenarios</div>
+            <div class="diagram">
+                <div class="mermaid">
+sequenceDiagram
+    participant Cliente
+    participant WebApp
+    participant AG as API Gateway
+    participant BS as Billing Service
+    participant DB as PostgreSQL
+    participant PG as Payment Gateway
+    participant RQ as Redis Queue
+    participant MT as MTIK Service
+    participant MR as Mikrotik Router
+    participant SMS as SMS Provider
+
+    Note over Cliente,MR: Escenario Principal: Pago Exitoso con Reactivación
+
+    Cliente->>WebApp: Navega a sección Pagos
+    WebApp->>AG: GET /api/facturas/pendientes
+    AG->>BS: obtenerFacturasPendientes(clienteId)
+    BS->>DB: SELECT facturas WHERE estado = 'TIMBRADA'
+    DB-->>BS: Lista facturas pendientes
+    BS-->>AG: 200 OK con facturas
+    AG-->>WebApp: Datos de facturas
+    WebApp-->>Cliente: Muestra interfaz de pago
+
+    Cliente->>WebApp: Selecciona factura y método (SPEI/Tarjeta)
+    WebApp->>AG: POST /api/pagos/iniciar
+    AG->>BS: iniciarPago(facturaId, metodo)
+    
+    BS->>DB: INSERT pagos (estado: 'PENDIENTE')
+    BS->>PG: createPaymentIntent(monto, referencia)
+    PG-->>BS: {payment_id, instructions}
+    BS-->>AG: 200 OK con instrucciones
+    AG-->>WebApp: Datos para pago
+    WebApp-->>Cliente: Muestra instrucciones/forma de pago
+
+    Note over Cliente,MR: Flujo SPEI con ventana de deshacer
+    Cliente->>PG: Realiza transferencia SPEI
+    PG->>BS: Webhook: payment.confirmed (tx_id)
+    
+    BS->>DB: SELECT COUNT(*) FROM pagos WHERE tx_id = ?
+    DB-->>BS: 0 (idempotencia: pago nuevo)
+    
+    BS->>DB: UPDATE pagos SET estado = 'CONFIRMADO'
+    BS->>DB: UPDATE facturas SET estado = 'PAGADA'
+    BS->>DB: SELECT estado_servicio FROM clientes
+    DB-->>BS: estado_servicio = 'CORTADO'
+    
+    BS->>RQ: PUBLISH cliente_pagado {clienteId, monto, tx_id}
+    BS->>DB: INSERT undo_window (expira_en: NOW() + 10min)
+    
+    RQ->>MT: Consume evento cliente_pagado
+    MT->>BS: GET /api/clientes/{id}
+    BS-->>MT: {ip: 'x.x.x.x', estado: 'CORTADO'}
+    
+    MT->>MR: removeFromAddressList(ip, "MOROSOS")
+    MR-->>MT: OK
+    MT->>DB: UPDATE clientes SET estado_servicio = 'ACTIVO'
+    MT->>BS: POST /api/notificaciones
+    BS->>SMS: Enviar SMS: "Servicio reactivado"
+    
+    Note over Cliente,MR: Escenario: Deshacer Pago SPEI
+    Cliente->>WebApp: Clic "Deshacer Pago" (dentro de 10min)
+    WebApp->>AG: POST /api/pagos/{id}/undo
+    AG->>BS: deshacerPago(pagoId)
+    
+    BS->>DB: SELECT * FROM undo_window WHERE pago_id = ?
+    DB-->>BS: {expira_en: timestamp}
+    BS->>BS: validarVentanaDeshacer(expira_en)
+    
+    alt Ventana activa
+        BS->>DB: UPDATE pagos SET estado = 'REVERTIDO'
+        BS->>DB: UPDATE facturas SET estado = 'TIMBRADA'
+        BS->>DB: UPDATE clientes SET estado_servicio = 'CORTADO'
+        BS->>RQ: PUBLISH pago_revertido {clienteId}
+        RQ->>MT: Consume evento pago_revertido
+        MT->>MR: addToAddressList(ip, "MOROSOS")
+        BS-->>AG: 200 OK - Pago revertido
+    else Ventana expirada
+        BS-->>AG: 400 ERROR - Ventana expirada
+    end
+    
+    AG-->>WebApp: Resultado deshacer
+    WebApp-->>Cliente: Muestra resultado
+
+    Note over Cliente,MR: Escenario: Pago Fallido
+    PG->>BS: Webhook: payment.failed
+    BS->>DB: UPDATE pagos SET estado = 'FALLIDO'
+    BS->>SMS: Enviar SMS: "Pago fallido, reintente"
+    BS->>DB: INSERT log_auditoria (pago_fallido)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>6. Diagrama de Estados - Tickets & Facturas</h2>
+        
+        <div class="diagram-container">
+            <div class="diagram-title">Máquinas de Estado Complejas</div>
+            <div class="diagram">
+                <div class="mermaid">
+stateDiagram-v2
+    note right of TicketFSM : MÁQUINA DE ESTADO - TICKETS
+    [*] --> Nuevo : crearTicket()
+    
+    state TicketFSM {
+        Nuevo --> Asignado : asignar(técnico)
+        Asignado --> EnRuta : iniciarRuta()
+        Asignado --> Cancelado : cancelar(2FA)
+        
+        EnRuta --> EnSitio : llegarAlSitio()
+        EnRuta --> Cancelado : cancelar(2FA)
+        
+        EnSitio --> Resuelto : resolver(checklist)
+        EnSitio --> Asignado : reabrir(motivo)
+        EnSitio --> Cancelado : cancelar(2FA)
+        
+        Resuelto --> Cerrado : cerrar(confirmación)
+        Resuelto --> Asignado : reabrir(motivo)
+        
+        Cancelado --> Asignado : reabrir(motivo)
+        
+        Cerrado --> [*]
+    }
+
+    note right of FacturaFSM : MÁQUINA DE ESTADO - FACTURAS
+    [*] --> Borrador : crearFactura()
+    
+    state FacturaFSM {
+        Borrador --> Timbrada : timbrar(SAT)
+        Timbrada --> Pagada : pagar(confirmado)
+        Timbrada --> Fallida : pagoFallido()
+        Timbrada --> Cancelada : cancelar(motivo)
+        
+        Fallida --> Pagada : pagar(reintento)
+        Pagada --> Cancelada : cancelar(notaCrédito)
+        
+        Cancelada --> [*]
+        Pagada --> [*]
+    }
+
+    note right of ClienteFSM : MÁQUINA DE ESTADO - CLIENTE SERVICIO
+    [*] --> PendienteInstalacion : altaCliente()
+    
+    state ClienteFSM {
+        PendienteInstalacion --> Activo : completarInstalación()
+        
+        Activo --> Cortado : cortarPorMorosidad()
+        Activo --> Suspendido : suspenderTemporalmente()
+        
+        Cortado --> Activo : reactivarPorPago()
+        Cortado --> Suspendido : suspenderTemporalmente()
+        
+        Suspendido --> Activo : reanudarServicio()
+        Suspendido --> Cortado : cortarPorMorosidad()
+        
+        Activo --> [*] : bajaCliente()
+        Cortado --> [*] : bajaCliente()
+    }
+
+    note right of PagoFSM : MÁQUINA DE ESTADO - PAGOS
+    [*] --> Pendiente : crearPago()
+    
+    state PagoFSM {
+        Pendiente --> Confirmado : webhookConfirmación()
+        Pendiente --> Fallido : webhookFallo()
+        Pendiente --> Expirado : timeout()
+        
+        Confirmado --> Revertido : deshacer(ventana)
+        Confirmado --> Finalizado : finVentanaDeshacer()
+        
+        Fallido --> Pendiente : reintentar()
+        Revertido --> [*]
+        Finalizado --> [*]
+        Expirado --> [*]
+    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            fontFamily: 'Arial',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                useMaxWidth: true,
+                showSequenceNumbers: true,
+                actorMargin: 50
+            },
+            class: {
+                useMaxWidth: true
+            }
+        });
+    </script>
+</body>
+</html>
